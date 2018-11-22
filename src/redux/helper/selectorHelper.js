@@ -1,17 +1,18 @@
 import { createSelector, createStructuredSelector } from 'reselect'
 import { isPendingStatus, isSucceededStatus, isFailedStatus, isEmptyStatus } from './statusHelper'
+
 const createSelectors = (baseSelector) => {
-  const selectData = state => baseSelector(state).data;
-  const selectList = state => baseSelector(state).list;
-  const selectStatus = state => baseSelector(state).meta.status;
-  const selectError = state => selectStatus(state).error || {};
-  const selectOperation = state => selectStatus(state).operation;
+  const selectData =  createSelector(baseSelector, (state) => state.data);
+  const selectList =  createSelector(baseSelector, (state) => state.list);
+  const selectStatus = createSelector(baseSelector, (state) => state.meta.status);
+  const selectError = createSelector(selectStatus, status => status.error);
+  const selectOperation =  createSelector(selectStatus, status => status.operation);
   const selectDataById = id => (data) => data[id]
 
-  const hasSucceeded = state => isSucceededStatus(selectStatus(state));
-  const hasFailed = state => isFailedStatus(selectStatus(state));
-  const isPending = state => isPendingStatus(selectStatus(state));
-  const isEmpty = state => isEmptyStatus(selectStatus(state));
+  const hasSucceeded = createSelector(selectStatus, isSucceededStatus);
+  const hasFailed = createSelector(selectStatus, isFailedStatus);
+  const isPending = createSelector(selectStatus, isPendingStatus);
+  const isEmpty = createSelector(selectStatus, isEmptyStatus);
 
   return {
     selectData,
@@ -27,6 +28,9 @@ const createSelectors = (baseSelector) => {
       hasSucceeded,
       hasFailed,
       isEmpty,
+      status: selectStatus,
+      error: selectError,
+      operation: selectOperation,
     })
   }
 }
