@@ -16,6 +16,11 @@ export const createDataReducer = (NAMESPACE, initialState = {}) => {
           }
         }
       }
+      case failed(fetch(NAMESPACE)):
+      return {
+        ...state,
+        ...payload
+      }
       case succeeded(fetch(NAMESPACE)):
         return {
           meta: { ...state.meta, ...payload.meta },
