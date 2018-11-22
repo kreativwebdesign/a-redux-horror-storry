@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'redux-react-hook';
 import User from './User';
-import WithHandledState from 'src/commons/components/WithHandledState'
+import WithHandledState from 'src/commons/components/state/WithHandledState'
 import { selectors, types } from '../redux';
 
 const UserList = () => {
