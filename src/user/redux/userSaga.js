@@ -8,8 +8,8 @@ export const FETCH_USER_SUCCESS = 'USER/FETCH:SUCCESS'
 
 export function* fetchUser() {
   yield put({ type: FETCH_USER_PENDING })
-  const user = yield call(api.fetchUser);
-  yield put({ type: FETCH_USER_SUCCESS, data: user })
+  const response = yield call(api.fetchUser);
+  yield put({ type: FETCH_USER_SUCCESS, payload: response })
 }
 
 export function* watchFetchUser() {

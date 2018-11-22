@@ -2,8 +2,7 @@ const PENDING = 'PENDING'
 const SUCCESS = 'SUCCESS'
 const FAILED = 'FAILED'
 
-const prefix = (NAMESPACE, PREFIX) =>
-  `${NAMESPACE}:${PREFIX}`
+const prefix = (NAMESPACE, PREFIX) => `${NAMESPACE}:${PREFIX}`
 
 export const pending = NAMESPACE =>
   prefix(NAMESPACE, PENDING)

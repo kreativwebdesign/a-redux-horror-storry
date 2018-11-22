@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
-import { useMappedState, useDispatch } from 'redux-react-hook'
-import User from './User'
-import { FETCH_USER } from '../redux/userSaga'
+import React from 'react';
+import { useMappedState, useDispatch } from 'redux-react-hook';
+import User from './User';
+import { selectors } from '../redux';
+import { FETCH_USER } from '../redux/userSaga';
 
-const mapState = (state) => state && state[0] ? state[0] : undefined
+const mapState = selectors.selectList
 
 const UserList = () => {
-  const user = useMappedState(mapState);
+  const userList = useMappedState(mapState);
   const dispatch = useDispatch();
+  console.log(userList)
 
-  if (user) {
-    return <User user={ user} key={ user.id} />
+  if (userList) {
+    return userList.map(userId => <User userId={userId} key={ userId} />)
   }
   dispatch({ type: FETCH_USER })
   return 'Loading...'
