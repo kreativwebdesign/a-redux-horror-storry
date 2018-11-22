@@ -4,14 +4,14 @@ import Success from './Success'
 import Empty from './Empty'
 import Error from './Error'
 
-const WithHandledState = ({ state, whenEmpty, children }) => {
+const WithHandledState = ({ state, whenEmpty, children, onError, whileLoading }) => {
   return (
     <>
       <Success succeeded={state.hasSucceeded}>
         { children }
       </Success>
-      <Loading isPending={state.isPending} />
-      <Error hasFailed={state.hasFailed} />
+      <Loading isPending={state.isPending}>{whileLoading}</Loading>
+      <Error hasFailed={state.hasFailed}>{onError}</Error>
       <Empty isEmpty={state.isEmpty}>{whenEmpty}</Empty>
     </>
   )
