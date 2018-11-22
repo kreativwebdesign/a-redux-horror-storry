@@ -9,7 +9,6 @@ const mapState = selectors.selectList
 const UserList = () => {
   const userList = useMappedState(mapState);
   const dispatch = useDispatch();
-  console.log(userList)
 
   if (userList) {
     return userList.map(userId => <User userId={userId} key={ userId} />)

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect'
 
 const createSelectors = (baseSelector) => {
-  const selectData = state => console.log('selectData ran', state) || baseSelector(state).data;
+  const selectData = state => baseSelector(state).data;
   const selectList = state => baseSelector(state).list;
   const selectStatus = state => baseSelector(state).status;
   const selectError = state => selectStatus(state).error || {};
