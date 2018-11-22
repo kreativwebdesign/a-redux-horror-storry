@@ -5,8 +5,8 @@ import Success from './Success'
 import Empty from './Empty'
 import Error from './Error'
 
-const WithHandledState = ({ selector, whenEmpty, children, onError, whileLoading }) => {
-  const state = useMappedState(selector)
+const WithHandledState = ({ stateSelector, whenEmpty, children, onError, whileLoading }) => {
+  const state = useMappedState(stateSelector)
   return (
     <>
       <Success succeeded={state.hasSucceeded}>

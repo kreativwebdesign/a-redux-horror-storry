@@ -7,7 +7,7 @@ import { selectors, types } from '../redux';
 const UserList = () => {
   const fetchUser = useFetchUser();
   return (
-    <WithHandledState selector={selectors.selectComplete} whenEmpty={fetchUser}>
+    <WithHandledState stateSelector={selectors.selectComplete} whenEmpty={fetchUser}>
       { (state) => state.list.map(userId => <User userId={userId} key={ userId} />) }
     </WithHandledState>
   )
