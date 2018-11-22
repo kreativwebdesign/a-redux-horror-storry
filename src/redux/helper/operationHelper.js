@@ -1,11 +1,7 @@
+import { FETCH, ADD, DELETE, UPDATE } from 'src/commons/constants/api'
 import suffix from './suffix'
 
 const DELIMITER = '/'
-
-const FETCH = 'FETCH'
-const ADD = 'ADD'
-const DELETE = 'DELETE'
-const UPDATE = 'UPDATE'
 
 export const fetch = NAMESPACE =>
   suffix(NAMESPACE, DELIMITER, FETCH)

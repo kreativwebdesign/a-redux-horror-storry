@@ -1,4 +1,4 @@
-// import { delay } from 'redux-saga'
+import { FETCH } from 'src/commons/constants/api'
 import { put, takeEvery, call } from 'redux-saga/effects'
 import * as api from '../../api/api'
 
@@ -10,6 +10,7 @@ export const FETCH_USER_FAILED = 'USER/FETCH:FAILED'
 export function* fetchUser() {
   yield put({ type: FETCH_USER_PENDING })
   const response = yield call(api.fetchUser);
+  response.meta.status.operation = FETCH
   if (response.meta.status.error) {
     yield put({ type: FETCH_USER_FAILED, payload: response })
   } else {
