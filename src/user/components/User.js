@@ -4,6 +4,7 @@ import { selectors } from '../redux';
 
 const User = ({ userId }) => {
   const user = useMappedState(selectors.selectDataById(userId));
+  // const user2 = useMappedState(selectors.selectDataById(userId));
 
   if (!user) {
     return 'sorry user could not be found'
