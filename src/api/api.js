@@ -1,11 +1,10 @@
+import normalize from './normalize';
+
 const url = 'https://randomuser.me/api'
 
 export const fetchUser = () => {
-  console.log('fetching user')
   return fetch(url)
     .then(res => res.json())
-    .then(res => {
-      return res.results
-    })
+    .then(normalize)
     .catch(console.log)
 }
