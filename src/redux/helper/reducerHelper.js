@@ -1,6 +1,6 @@
 import { pending, succeeded, failed } from "./statusHelper";
 import { fetch } from './operationHelper'
-import { PENDING } from 'src/commons/constants/apiStates'
+import { PENDING } from 'src/commons/constants/api'
 
 export const createDataReducer = (NAMESPACE, initialState = {}) => {
   return (state = initialState, { type, payload, error }) => {

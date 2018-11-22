@@ -1,4 +1,4 @@
-import { SUCCESS } from 'src/commons/constants/apiStates'
+import { SUCCESS } from 'src/commons/constants/api'
 
 const handleStatus = (payload) => {
   return {

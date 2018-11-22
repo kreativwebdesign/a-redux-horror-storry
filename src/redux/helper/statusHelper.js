@@ -1,4 +1,4 @@
-import { PENDING, SUCCESS, FAILED, REJECTED } from 'src/commons/constants/apiStates'
+import { PENDING, SUCCESS, FAILED, REJECTED } from 'src/commons/constants/api'
 import suffix from './suffix'
 
 const DELIMITER = ':'
