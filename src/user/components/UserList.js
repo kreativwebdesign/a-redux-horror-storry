@@ -1,18 +1,14 @@
 import React from 'react';
-import { useMappedState, useDispatch } from 'redux-react-hook';
+import { useDispatch } from 'redux-react-hook';
 import User from './User';
 import WithHandledState from 'src/commons/components/WithHandledState'
 import { selectors, types } from '../redux';
 
-const mapState = selectors.selectComplete
-
 const UserList = () => {
-  const state = useMappedState(mapState);
   const fetchUser = useFetchUser();
-
   return (
-    <WithHandledState state={state} whenEmpty={fetchUser}>
-      { () => state.list.map(userId => <User userId={userId} key={ userId} />) }
+    <WithHandledState selector={selectors.selectComplete} whenEmpty={fetchUser}>
+      { (state) => state.list.map(userId => <User userId={userId} key={ userId} />) }
     </WithHandledState>
   )
 }
