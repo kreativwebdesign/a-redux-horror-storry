@@ -7,13 +7,18 @@ const mapState = selectors.selectList
 
 const UserList = () => {
   const userList = useMappedState(mapState);
-  const dispatch = useDispatch();
+  const fetchUser = useFetchUser();
 
   if (userList) {
     return userList.map(userId => <User userId={userId} key={ userId} />)
   }
-  dispatch({ type: types.FETCH_USER })
+  fetchUser()
   return 'Loading...'
+}
+
+const useFetchUser = () => {
+  const dispatch = useDispatch()
+  return () => dispatch({ type: types.FETCH_USER })
 }
 
 export default UserList
