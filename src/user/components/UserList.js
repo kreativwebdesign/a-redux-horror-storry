@@ -1,8 +1,7 @@
 import React from 'react';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import User from './User';
-import { selectors } from '../redux';
-import { FETCH_USER } from '../redux/userSaga';
+import { selectors, types } from '../redux';
 
 const mapState = selectors.selectList
 
@@ -13,7 +12,7 @@ const UserList = () => {
   if (userList) {
     return userList.map(userId => <User userId={userId} key={ userId} />)
   }
-  dispatch({ type: FETCH_USER })
+  dispatch({ type: types.FETCH_USER })
   return 'Loading...'
 }
 

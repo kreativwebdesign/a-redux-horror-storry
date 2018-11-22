@@ -1,3 +1,4 @@
+import types from './types'
 import { createDataReducer } from 'src/redux/helper/reducerHelper'
 import { createSelectors } from 'src/redux/helper/selectorHelper';
 
@@ -8,4 +9,5 @@ const reducer = createDataReducer('USER')
 export {
   selectors,
   reducer,
+  types
 }

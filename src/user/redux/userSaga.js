@@ -1,23 +1,19 @@
 import { FETCH } from 'src/commons/constants/api'
+import types from './types'
 import { put, takeEvery, call } from 'redux-saga/effects'
-import * as api from '../../api/api'
-
-export const FETCH_USER = 'USER/FETCH'
-export const FETCH_USER_PENDING = 'USER/FETCH:PENDING'
-export const FETCH_USER_SUCCESS = 'USER/FETCH:SUCCESS'
-export const FETCH_USER_FAILED = 'USER/FETCH:FAILED'
+import * as api from 'src/api/api'
 
 export function* fetchUser() {
-  yield put({ type: FETCH_USER_PENDING })
+  yield put({ type: types.FETCH_USER_PENDING })
   const response = yield call(api.fetchUser);
   response.meta.status.operation = FETCH
   if (response.meta.status.error) {
-    yield put({ type: FETCH_USER_FAILED, payload: response })
+    yield put({ type: types.FETCH_USER_FAILED, payload: response })
   } else {
-    yield put({ type: FETCH_USER_SUCCESS, payload: response })
+    yield put({ type: types.FETCH_USER_SUCCEEDED, payload: response })
   }
 }
 
 export function* watchFetchUser() {
-  yield takeEvery(FETCH_USER, fetchUser)
+  yield takeEvery(types.FETCH_USER, fetchUser)
 }
