@@ -1,8 +1,16 @@
 import { pending, succeeded, failed } from "./statusHelper";
 import { fetch } from './operationHelper'
-import { PENDING } from 'src/commons/constants/api'
+import { PENDING, EMPTY } from 'src/commons/constants/api'
 
-export const createDataReducer = (NAMESPACE, initialState = {}) => {
+const initState = {
+  meta: {
+    status: {
+      status: EMPTY
+    }
+  }
+}
+
+export const createDataReducer = (NAMESPACE, initialState = initState) => {
   return (state = initialState, { type, payload, error }) => {
     // TO-DO
     switch(type) {

@@ -1,19 +1,28 @@
 import React from 'react';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import User from './User';
+import Loading from 'src/commons/components/Loading'
+import Success from 'src/commons/components/Success'
+import Empty from 'src/commons/components/Empty'
+import Error from 'src/commons/components/Error'
 import { selectors, types } from '../redux';
 
-const mapState = selectors.selectList
+const mapState = selectors.selectComplete
 
 const UserList = () => {
-  const userList = useMappedState(mapState);
+  const state = useMappedState(mapState);
   const fetchUser = useFetchUser();
 
-  if (userList) {
-    return userList.map(userId => <User userId={userId} key={ userId} />)
-  }
-  fetchUser()
-  return 'Loading...'
+  return (
+    <>
+      <Success succeeded={state.hasSucceeded}>
+        { () => state.list.map(userId => <User userId={userId} key={ userId} />) }
+      </Success>
+      <Loading isPending={state.isPending} />
+      <Error hasFailed={state.hasFailed} />
+      <Empty isEmpty={state.isEmpty}>{fetchUser}</Empty>
+    </>
+  )
 }
 
 const useFetchUser = () => {
