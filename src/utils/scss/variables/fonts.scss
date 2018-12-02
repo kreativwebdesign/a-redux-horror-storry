@@ -1,0 +1,33 @@
+// Font management
+// -------------------------
+$default-font-family: 'Quicksand', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+$default-font: 'default';
+
+$fonts: (
+  'default': (
+    'family': $default-font-family,
+    'weights': (
+      'regular': 400,
+      'medium': 500,
+      'semi-bold': 600,
+      'bold': 700,
+    ),
+  )
+);
+$font-types: (
+  'nav-link': (
+    font-size: 40px,
+    line-height: 50px,
+    'config': (
+      'font': $default-font,
+      'weight': 'regular',
+    ),
+    'media': (
+      'small': (
+        font-size: 44px,
+        line-height: 62px
+      ),
+    ),
+  )
+)

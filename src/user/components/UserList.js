@@ -18,4 +18,8 @@ const useFetchUser = () => {
   return () => dispatch({ type: types.FETCH_USER })
 }
 
+
+UserList.displayName = 'Users'
+UserList.url = '/users'
+
 export default UserList

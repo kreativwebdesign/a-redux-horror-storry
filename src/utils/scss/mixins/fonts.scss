@@ -1,0 +1,54 @@
+/**
+ * Mixin to print any kind of font contained in the $font-types map
+ * @param   { String } $id:        'font-type-1'
+ * @param   { Boolean } $use-media: true
+ */
+ @mixin font-type($id: $default-font-type, $use-media: true, $use-font-config: true) {
+
+  @if map-has-key($font-types, $id) == false {
+    @error 'No font-type `#{$id}` found. ' + 'Please make sure it is defined in `$font-types` map.';
+  }
+
+  $fontType: map-get($font-types, $id);
+  // loop all the properties found in this font type
+  @each $prop, $val in $fontType {
+    // check if this font has special media values
+    // normally they should be a map as well
+    @if ($prop == 'media' and $use-media) {
+      // loop all the media types
+      @each $media-type, $media-values in $val {
+        // create the responsive rules
+        @include respond-to($media-type) {
+          // print all the media rules
+          @each $prop, $val in $media-values {
+            #{$prop}: #{$val};
+          }
+        }
+      }
+    } @elseif ($prop == 'config' and $use-font-config) {
+        $font: map_get($val, 'font');
+        $font-weight: map_get($val, 'weight');
+        @include font-family($font);
+        @include font-weight($font-weight, $font);
+    } @else {
+      @if ($prop != 'media') {
+        #{$prop}: #{$val};
+      }
+    }
+  }
+}
+
+// Return font-weight
+@mixin font-weight($weight: $default-font-weight, $font: $default-font) {
+    $font-config: map_get($fonts, $font);
+    $font-weights: map_get($font-config, 'weights');
+    $font-weight: map_get($font-weights, $weight);
+    font-weight: $font-weight;
+}
+
+// Return font-family
+@mixin font-family($font: $default-font) {
+    $font-config: map_get($fonts, $font);
+    $font-family: map_get($font-config, 'family');
+    font-family: $font-family;
+}
