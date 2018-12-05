@@ -1,0 +1,12 @@
+@import 'style';
+
+.app {
+  @include square(100%);
+  display: flex;
+  flex-direction: row;
+
+  .page-body {
+    flex-grow: 1;
+    height: 100%;
+  }
+}
