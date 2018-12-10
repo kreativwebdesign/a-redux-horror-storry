@@ -30,11 +30,11 @@ const Client = ({ client, fetchClient, addClient, match }) => {
         /* and other goodies */
       }) => (
         <form onSubmit={handleSubmit}>
-          <Field name="firstName" type="text"/>
+          <Field name="firstName" type="text" placeholder="Firstname" />
           <ErrorMessage name="firstName" component="div" />
-          <Field name="lastName" type="text"/>
+          <Field name="lastName" type="text" placeholder="Lastname" />
           <ErrorMessage name="lastName" component="div" />
-          <Field name="emailAddress" type="text"/>
+          <Field name="emailAddress" type="text" placeholder="E-Mail" />
           <ErrorMessage name="emailAddress" component="div" />
           <button type="submit" disabled={isSubmitting}>
             Submit
