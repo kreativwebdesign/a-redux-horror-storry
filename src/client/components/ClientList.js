@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import ClientRow from './ClientRow'
 import WithHandledState from 'src/commons/components/state/WithHandledState'
 import { selectors, types } from '../redux'
@@ -14,6 +15,7 @@ const ClientList = ({ fetchClients }) => {
     >
       {state => (
         <div className={styles.clientList}>
+          <Link to="/clients/new">Neuer Kunde</Link>
           <table className={styles.table}>
             <tbody>
               {state.list.map(clientId => (
