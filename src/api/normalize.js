@@ -1,4 +1,4 @@
-const normalize = response => {
+export const normalizeFetch = response => {
   const list = [];
   const data = {}
   return {
@@ -7,9 +7,14 @@ const normalize = response => {
       list.push(obj.id)
       return data
     }, data),
-    list,
-    meta: response.info
+    list
   }
 }
 
-export default normalize
+export const normalizePost = response => {
+  return {
+    data: { [response.id]: response },
+    meta: undefined,
+    list: [ response.id ]
+  }
+}
