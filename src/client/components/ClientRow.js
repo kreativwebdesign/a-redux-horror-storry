@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { selectors } from '../redux';
 
-const Client = ({ client }) => {
+const ClientRow = ({ client }) => {
   if (!client) {
     return 'sorry client could not be found'
   }
@@ -17,4 +17,4 @@ const mapStateToProps = (state, props) => ({
   client: selectors.selectDataById(props.clientId)(state)
 })
 
-export default connect(mapStateToProps)(Client)
+export default connect(mapStateToProps)(ClientRow)
