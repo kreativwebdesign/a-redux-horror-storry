@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { selectors } from '../redux'
 
 const ClientRow = ({ client }) => {
@@ -11,6 +12,7 @@ const ClientRow = ({ client }) => {
       <td>{client.firstName}</td>
       <td>{client.lastName}</td>
       <td>{client.emailAddress}</td>
+      <td><Link to={`/clients/${client.id}`}>Detail</Link></td>
     </tr>
   )
 }
