@@ -1,0 +1,101 @@
+/**
+ * Mixin to print any kind of font contained in the $font-types map
+ * @param   { String } $id:        'font-type-1'
+ * @param   { Boolean } $use-media: true
+ */
+.clientList__client-list--3FFDf {
+  height: 100%; }
+  .clientList__client-list--3FFDf .clientList__table--1P_l- {
+    width: 100%; }
+
+/**
+ * Mixin to print any kind of font contained in the $font-types map
+ * @param   { String } $id:        'font-type-1'
+ * @param   { Boolean } $use-media: true
+ */
+.navbar__navbar--1-rm4 {
+  height: 100%;
+  width: 295px;
+  background: linear-gradient(135deg, #39F 0%, #3781CA 100%);
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; }
+  .navbar__navbar--1-rm4 .navbar__nav-container--3YLmW {
+    margin-bottom: 50px; }
+  .navbar__navbar--1-rm4 .navbar__title--1Sxb1 a {
+    color: #F8FAFF;
+    font-family: Quicksand;
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 63px;
+    text-decoration: none; }
+  .navbar__navbar--1-rm4 ul {
+    list-style: none;
+    padding-left: 0; }
+  .navbar__navbar--1-rm4 .navbar__nav-entry--2GPnm {
+    color: #F8FAFF;
+    font-size: 40px;
+    line-height: 50px;
+    font-family: "Quicksand", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    margin-bottom: 45px;
+    display: block;
+    text-decoration: none; }
+    @media only screen and (max-width: 680px) {
+      .navbar__navbar--1-rm4 .navbar__nav-entry--2GPnm {
+        font-size: 44px;
+        line-height: 62px; } }
+    .navbar__navbar--1-rm4 .navbar__nav-entry--2GPnm:not(.navbar__-current--1Ri4p) {
+      opacity: 0.55; }
+    .navbar__navbar--1-rm4 .navbar__nav-entry--2GPnm:last-child() {
+      margin-bottom: 0; }
+  .navbar__navbar--1-rm4 .navbar__delimitter--2NglK {
+    box-sizing: border-box;
+    width: 100%;
+    opacity: 0.55;
+    border-top: 3px solid #E0E0E0;
+    transform: translateX(-35px); }
+  .navbar__navbar--1-rm4 .navbar__sub--28mkv {
+    margin-top: 40px; }
+  .navbar__navbar--1-rm4 .navbar__sub-nav-entry--36woP {
+    opacity: 0.6;
+    color: #F8FAFF;
+    font-family: Quicksand;
+    font-size: 30px;
+    line-height: 38px; }
+
+/**
+ * Mixin to print any kind of font contained in the $font-types map
+ * @param   { String } $id:        'font-type-1'
+ * @param   { Boolean } $use-media: true
+ */
+.app__app--ElxS3 {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row; }
+  .app__app--ElxS3 .app__page-body--32GoR {
+    flex-grow: 1;
+    height: 100%; }
+
+/**
+ * Mixin to print any kind of font contained in the $font-types map
+ * @param   { String } $id:        'font-type-1'
+ * @param   { Boolean } $use-media: true
+ */
+body,
+html {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0; }
+
+#root__root--3QNmd {
+  width: 100%;
+  height: 100%;
+  background-color: #F8FAFF; }
+
+* {
+  box-sizing: border-box; }
+
