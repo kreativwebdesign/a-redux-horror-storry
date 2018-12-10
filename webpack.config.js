@@ -63,4 +63,7 @@ module.exports = {
       chunkFilename: '[id].css',
     }),
   ],
+  output: {
+    publicPath: '/'
+  }
 };
