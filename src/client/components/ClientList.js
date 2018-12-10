@@ -4,17 +4,25 @@ import ClientRow from './ClientRow'
 import WithHandledState from 'src/commons/components/state/WithHandledState'
 import { selectors, types } from '../redux'
 
+import styles from './styles/clientList.scss'
+
 const ClientList = ({ fetchClients }) => {
   return (
     <WithHandledState
       stateSelector={selectors.selectComplete}
       whenEmpty={fetchClients}
     >
-      {state =>
-        state.list.map(clientId => (
-          <ClientRow clientId={clientId} key={clientId} />
-        ))
-      }
+      {state => (
+        <div className={styles.clientList}>
+          <table className={styles.table}>
+            <tbody>
+              {state.list.map(clientId => (
+                <ClientRow clientId={clientId} key={clientId} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </WithHandledState>
   )
 }

@@ -1,15 +1,17 @@
-import React from 'react';
+import React from 'react'
 import { connect } from 'react-redux'
-import { selectors } from '../redux';
+import { selectors } from '../redux'
 
 const ClientRow = ({ client }) => {
   if (!client) {
     return 'sorry client could not be found'
   }
   return (
-    <div>
-      {client.firstName} {client.lastName}
-    </div>
+    <tr>
+      <td>{client.firstName}</td>
+      <td>{client.lastName}</td>
+      <td>{client.emailAddress}</td>
+    </tr>
   )
 }
 
