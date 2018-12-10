@@ -1,12 +1,11 @@
 import React from 'react';
-import { useMappedState } from 'redux-react-hook';
+import { connect } from 'react-redux';
 import Loading from './Loading'
 import Success from './Success'
 import Empty from './Empty'
 import Error from './Error'
 
-const WithHandledState = ({ stateSelector, whenEmpty, children, onError, whileLoading }) => {
-  const state = useMappedState(stateSelector)
+const WithHandledState = ({ state = {}, whenEmpty, children, onError, whileLoading }) => {
   return (
     <>
       <Success succeeded={state.hasSucceeded}>
@@ -19,4 +18,8 @@ const WithHandledState = ({ stateSelector, whenEmpty, children, onError, whileLo
   )
 }
 
-export default WithHandledState
+const mapStateToProps = (state, props) => ({
+  state: props.stateSelector(state)
+})
+
+export default connect(mapStateToProps, WithHandledState)(WithHandledState)

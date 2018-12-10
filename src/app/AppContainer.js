@@ -1,14 +1,14 @@
 import React from "react";
-import { StoreProvider } from 'redux-react-hook';
+import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from "react-router-dom";
 import store from '../redux/store';
 
 const AppContainer = ({ children }) => (
-  <StoreProvider value={store}>
+  <Provider store={store}>
     <Router>
       { children }
     </Router>
-  </StoreProvider>
+  </Provider>
 );
 
 export default AppContainer;

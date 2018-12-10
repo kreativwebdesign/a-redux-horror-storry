@@ -11,7 +11,7 @@ const ClientRouter = () => {
       <Link to="/clients/">Alle Kunden</Link>
       <Link to="/clients/4321">Detail Kunde</Link>
       <Switch>
-        <Route path="/clients" component={ClientList} />
+        <Route path="/clients" exact component={ClientList} />
         <Route path="/clients/new" component={newClient} />
         <Route path="/clients/:clientId" component={ClientDetail} />
       </Switch>

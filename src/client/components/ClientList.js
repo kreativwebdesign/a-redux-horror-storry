@@ -1,25 +1,24 @@
 import React from 'react';
-import { useDispatch } from 'redux-react-hook';
+import { connect } from 'react-redux';
 import Client from './Client';
 import WithHandledState from 'src/commons/components/state/WithHandledState'
 import { selectors, types } from '../redux';
 
-const ClientList = () => {
-  const fetchClient = useFetchClient();
+const ClientList = ({ fetchClients }) => {
   return (
-    <WithHandledState stateSelector={selectors.selectComplete} whenEmpty={fetchClient}>
+    <WithHandledState stateSelector={selectors.selectComplete} whenEmpty={fetchClients}>
       { (state) => state.list.map(clientId => <Client clientId={clientId} key={ clientId} />) }
     </WithHandledState>
   )
 }
 
-const useFetchClient = () => {
-  const dispatch = useDispatch()
-  return () => dispatch({ type: types.FETCH_CLIENT })
-}
+const mapDispatchToProps = (dispatch) => ({
+  fetchClients: () => dispatch({ type: types.FETCH_CLIENT })
+})
 
+const Connected = connect(() => ({}), mapDispatchToProps)(ClientList)
 
-ClientList.displayName = 'Clients'
-ClientList.url = '/clients'
+Connected.displayName = 'Clients'
+Connected.url = '/clients'
 
-export default ClientList
+export default Connected

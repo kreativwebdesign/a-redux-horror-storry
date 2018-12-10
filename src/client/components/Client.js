@@ -1,10 +1,8 @@
 import React from 'react';
-import { useMappedState } from 'redux-react-hook';
+import { connect } from 'react-redux'
 import { selectors } from '../redux';
 
-const Client = ({ clientId }) => {
-  const client = useMappedState(selectors.selectDataById(clientId));
-
+const Client = ({ client }) => {
   if (!client) {
     return 'sorry client could not be found'
   }
@@ -15,4 +13,8 @@ const Client = ({ clientId }) => {
   )
 }
 
-export default Client
+const mapStateToProps = (state, props) => ({
+  client: selectors.selectDataById(props.clientId)(state)
+})
+
+export default connect(mapStateToProps)(Client)
