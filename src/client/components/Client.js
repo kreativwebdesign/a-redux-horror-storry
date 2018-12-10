@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux'
+import { Input, Button } from 'semantic-ui-react'
 import { Formik, Field, ErrorMessage } from 'formik'
 import { selectors, types } from '../redux'
+import styles from './styles/client.scss'
 
 const defaultClient = {
   id: undefined,
@@ -17,7 +19,6 @@ const Client = ({ client, status, fetchClient, addClient, match }) => {
     fetchClient()
     return 'Fetching client'
   }
-  console.log(status)
   const wasSuccessfull = () => status && status.status === 'SUCCESS' && status.operation === 'ADD'
 
   return (
@@ -33,17 +34,17 @@ const Client = ({ client, status, fetchClient, addClient, match }) => {
         setSubmitting,
         /* and other goodies */
       }) => (
-        <form onSubmit={handleSubmit}>
-          <Field name="firstName" type="text" placeholder="Firstname" />
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <Field name="firstName" component={Input} type="text" placeholder="Firstname" />
           <ErrorMessage name="firstName" component="div" />
-          <Field name="lastName" type="text" placeholder="Lastname" />
+          <Field name="lastName" component={Input} type="text" placeholder="Lastname" />
           <ErrorMessage name="lastName" component="div" />
-          <Field name="emailAddress" type="text" placeholder="E-Mail" />
+          <Field name="emailAddress" component={Input} type="text" placeholder="E-Mail" />
           <ErrorMessage name="emailAddress" component="div" />
-          <button type="submit" disabled={isSubmitting}>
+          <Button type="submit" primary disabled={isSubmitting}>
             Submit
-          </button>
-          { wasSuccessfull() && <div>
+          </Button>
+          { wasSuccessfull() && <div className={styles.success}>
             Operation Erfolgreich
           </div>}
         </form>
