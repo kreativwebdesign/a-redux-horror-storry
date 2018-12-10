@@ -7,7 +7,7 @@ const createSelectors = (baseSelector) => {
   const selectStatus = createSelector(baseSelector, (state) => state.meta.status);
   const selectError = createSelector(selectStatus, status => status.error);
   const selectOperation =  createSelector(selectStatus, status => status.operation);
-  const selectDataById = id => (data) => data[id]
+  const selectDataById = id => (data) => data ? data[id] : undefined
 
   const hasSucceeded = createSelector(selectStatus, isSucceededStatus);
   const hasFailed = createSelector(selectStatus, isFailedStatus);
