@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/kreativwebdesign/a-redux-horror-story#readme",
   "dependencies": {
+    "formik": "^1.4.0",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2",
     "react-redux": "^5.1.1",
