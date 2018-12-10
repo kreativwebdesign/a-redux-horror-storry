@@ -10,12 +10,15 @@ const defaultClient = {
   emailAddress: undefined,
 }
 
-const Client = ({ client, fetchClient, addClient, match }) => {
+const Client = ({ client, status, fetchClient, addClient, match }) => {
+
   const { clientId } = match.params
   if (clientId && !client) {
     fetchClient()
     return 'Fetching client'
   }
+  console.log(status)
+  const wasSuccessfull = () => status && status.status === 'SUCCESS' && status.operation === 'ADD'
 
   return (
     <Formik
@@ -27,6 +30,7 @@ const Client = ({ client, fetchClient, addClient, match }) => {
       {({
         handleSubmit,
         isSubmitting,
+        setSubmitting,
         /* and other goodies */
       }) => (
         <form onSubmit={handleSubmit}>
@@ -39,6 +43,9 @@ const Client = ({ client, fetchClient, addClient, match }) => {
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
+          { wasSuccessfull() && <div>
+            Operation Erfolgreich
+          </div>}
         </form>
       )}
     </Formik>
@@ -48,7 +55,8 @@ const Client = ({ client, fetchClient, addClient, match }) => {
 const mapStateToProps = (state, props) => {
   const { clientId } = props.match.params
   return {
-    client: clientId ? selectors.selectDataById(clientId)(state) : undefined
+    client: clientId ? selectors.selectDataById(clientId)(state) : undefined,
+    status: selectors.selectStatus(state)
   }
 }
 
