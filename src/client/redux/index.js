@@ -2,9 +2,9 @@ import types from './types'
 import { createDataReducer } from 'src/redux/helper/reducerHelper'
 import { createSelectors } from 'src/redux/helper/selectorHelper';
 
-const selectors = createSelectors(({ user }) => user)
+const selectors = createSelectors(({ clients }) => clients)
 
-const reducer = createDataReducer('USER')
+const reducer = createDataReducer('clients')
 
 export {
   selectors,

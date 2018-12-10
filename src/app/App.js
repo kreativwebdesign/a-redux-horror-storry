@@ -1,6 +1,6 @@
 import React from "react";
-import { Route } from "react-router-dom";
-import UserList from '../user/components/UserList';
+import { Route, Switch } from "react-router-dom";
+import ClientRouter from 'src/client/components/clientRouter';
 import Navbar from 'src/routing/Navbar';
 import AppContainer from './AppContainer'
 import styles from './styles/app.scss';
@@ -13,9 +13,10 @@ const App = () => (
     <main className={styles.app}>
       <Navbar />
       <section className={styles.pageBody}>
-
-      <Route path="/" exact component={Index} />
-      <Route path="/users/" component={UserList} />
+      <Switch>
+        <Route path="/" exact component={Index} />
+        <Route path="/clients" component={ClientRouter} />
+      </Switch>
       </section>
     </main>
   </AppContainer>

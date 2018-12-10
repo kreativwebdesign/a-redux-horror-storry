@@ -1,3 +1,3 @@
-import UserList from 'src/user/components/UserList';
+import ClientList from 'src/client/components/ClientList';
 
-export default [ UserList ];
+export default [ ClientList ];

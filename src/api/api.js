@@ -6,7 +6,7 @@ const baseUrl = 'http://lines-written-in-early-spring.herokuapp.com/'
 
 const clientUrl = baseUrl + '/clients'
 
-export const fetchUser = () => {
+export const fetchClient = () => {
   return fetch(clientUrl)
     .then(res => res.json())
     .then(normalize)

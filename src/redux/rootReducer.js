@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import { reducer as user} from 'src/user/redux'
+import { reducer as clients} from 'src/client/redux'
 
 export default combineReducers({
-  user
+  clients
 })
