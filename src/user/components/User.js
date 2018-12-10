@@ -10,7 +10,7 @@ const User = ({ userId }) => {
   }
   return (
     <div>
-      {user.name.first} {user.name.last}
+      {user.firstName} {user.lastName}
     </div>
   )
 }

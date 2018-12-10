@@ -2,10 +2,12 @@ import normalize from './normalize';
 import handleStatus from './handleStatus';
 import handleError from './handleError';
 
-const url = 'https://randomuser.me/api'
+const baseUrl = 'http://lines-written-in-early-spring.herokuapp.com/'
+
+const clientUrl = baseUrl + '/clients'
 
 export const fetchUser = () => {
-  return fetch(url)
+  return fetch(clientUrl)
     .then(res => res.json())
     .then(normalize)
     .then(handleStatus)
