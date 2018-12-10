@@ -4,7 +4,7 @@ import { createSelectors } from 'src/redux/helper/selectorHelper';
 
 const selectors = createSelectors(({ clients }) => clients)
 
-const reducer = createDataReducer('clients')
+const reducer = createDataReducer('CLIENT')
 
 export {
   selectors,
