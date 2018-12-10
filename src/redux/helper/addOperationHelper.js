@@ -1,4 +1,4 @@
-import { FETCH } from 'src/commons/constants/api'
+import { FETCH, ADD } from 'src/commons/constants/api'
 
 const addOperationHelper = operation => payload => ({
   ...payload,
@@ -12,5 +12,6 @@ const addOperationHelper = operation => payload => ({
 })
 
 export const setFetchOperation = addOperationHelper(FETCH)
+export const setAddOperation = addOperationHelper(ADD)
 
 export default addOperationHelper
