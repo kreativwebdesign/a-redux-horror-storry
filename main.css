@@ -28,14 +28,17 @@
     margin-bottom: 15px !important; }
   .client__form--2lrOx > * {
     width: 250px; }
-  .client__form--2lrOx .client__error--1PUUK {
-    color: indianred; }
+  .client__form--2lrOx .client__error--1PUUK,
   .client__form--2lrOx .client__success--1XhUw {
-    color: forestgreen;
-    border: 1px solid forestgreen;
     border-radius: 5px;
     padding: 10px 20px;
     margin-top: 20px; }
+  .client__form--2lrOx .client__error--1PUUK {
+    color: indianred;
+    border: 1px solid indianred; }
+  .client__form--2lrOx .client__success--1XhUw {
+    color: forestgreen;
+    border: 1px solid forestgreen; }
 
 /**
  * Mixin to print any kind of font contained in the $font-types map
