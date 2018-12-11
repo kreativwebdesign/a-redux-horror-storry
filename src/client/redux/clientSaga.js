@@ -1,34 +1,14 @@
 import { types } from './index'
-import { put, takeEvery, call } from 'redux-saga/effects'
 import * as api from 'src/api/api'
-import { setFetchOperation, setAddOperation } from 'src/redux/helper/addOperationHelper';
+import { createFetchSaga, createWatchFetch, createAddSaga, createWatchAdd } from 'src/redux/helper/sagaHelper'
 
-export function* fetchClient() {
-  yield put({ type: types.FETCH.PENDING })
-  const response = yield call(api.fetchClient);
-  const payload = setFetchOperation(response);
-  if (response.meta.status.error) {
-    yield put({ type: types.FETCH.FAILED, payload })
-  } else {
-    yield put({ type: types.FETCH.SUCCESS, payload })
-  }
-}
 
-export function* watchFetchClient() {
-  yield takeEvery(types.FETCH.DO, fetchClient)
-}
+const fetchClient = createFetchSaga({ apiCall: api.fetchClient, types })
 
-export function* addClient({ payload: client }) {
-  yield put({ type: types.ADD.PENDING })
-  const response = yield call(() => api.postClient(client));
-  const payload = setAddOperation(response);
-  if (response.meta.status.error) {
-    yield put({ type: types.ADD.FAILED, payload })
-  } else {
-    yield put({ type: types.ADD.SUCCESS, payload })
-  }
-}
+const watchFetchClient = createWatchFetch({ types, fetchSaga: fetchClient })
 
-export function* watchAddClient() {
-  yield takeEvery(types.ADD.DO, addClient)
-}
+const addClient = createAddSaga({ apiCall: api.postClient, types })
+
+const watchAddClient = createWatchAdd({ types, addSaga: addClient })
+
+export { fetchClient, watchFetchClient, addClient, watchAddClient }
