@@ -12,7 +12,9 @@ const ClientRow = ({ client }) => {
       <td>{client.firstName}</td>
       <td>{client.lastName}</td>
       <td>{client.emailAddress}</td>
-      <td><Link to={`/clients/${client.id}`}>Detail</Link></td>
+      <td>
+        <Link to={`/clients/${client.id}`}>Detail</Link>
+      </td>
     </tr>
   )
 }

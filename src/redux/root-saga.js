@@ -7,6 +7,6 @@ export default function* rootSaga() {
     clientSagas.watchFetch(),
     clientSagas.watchAdd(),
     bookingSagas.watchFetch(),
-    bookingSagas.watchAdd(),
+    bookingSagas.watchAdd()
   ])
 }

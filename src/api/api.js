@@ -1,6 +1,6 @@
-import { normalizeFetch, normalizePost } from './normalize';
-import handleStatus from './handle-status';
-import handleError from './handle-error';
+import { normalizeFetch, normalizePost } from './normalize'
+import handleStatus from './handle-status'
+import handleError from './handle-error'
 
 const baseUrl = 'https://lines-written-in-early-spring.herokuapp.com/'
 
@@ -20,7 +20,7 @@ const createPost = url => payload => {
   return fetch(url, {
     body: JSON.stringify(payload),
     method: 'POST',
-    headers: { 'Content-Type': 'application/json'}
+    headers: { 'Content-Type': 'application/json' }
   })
     .then(res => res.json())
     .then(normalizePost)

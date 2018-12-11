@@ -1,4 +1,4 @@
-import { ClientList } from 'src/client';
-import { BookingList } from 'src/booking';
+import { ClientList } from 'src/client'
+import { BookingList } from 'src/booking'
 
-export default [ ClientList, BookingList ];
+export default [ClientList, BookingList]

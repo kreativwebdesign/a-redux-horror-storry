@@ -1,12 +1,13 @@
-import React from 'react';
+import React from 'react'
 
-export const DefaultError = () => 'An error occurred, please try again later. Sorry about that!';
+export const DefaultError = () =>
+  'An error occurred, please try again later. Sorry about that!'
 
 const Error = ({ hasFailed, children }) => {
   if (hasFailed) {
-    return children ? children : <DefaultError />;
+    return children ? children : <DefaultError />
   }
-  return null;
+  return null
 }
 
-export default Error;
+export default Error

@@ -1,6 +1,6 @@
 import { createDataReducer } from 'src/redux/helper/reducer-helper'
-import { createSelectors } from 'src/redux/helper/selector-helper';
-import createTypes from "src/redux/helper/type-helper";
+import { createSelectors } from 'src/redux/helper/selector-helper'
+import createTypes from 'src/redux/helper/type-helper'
 
 const NAMESPACE = 'CLIENT'
 
@@ -10,8 +10,4 @@ const reducer = createDataReducer(NAMESPACE)
 
 const types = createTypes(NAMESPACE)
 
-export {
-  selectors,
-  reducer,
-  types
-}
+export { selectors, reducer, types }

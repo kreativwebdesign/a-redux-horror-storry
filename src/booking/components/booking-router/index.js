@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 import { Route, Switch } from 'react-router-dom'
-import BookingList from '../booking-list';
+import BookingList from '../booking-list'
 import Booking from '../booking'
 
 const BookingRouter = () => {
@@ -15,4 +15,4 @@ const BookingRouter = () => {
   )
 }
 
-export default BookingRouter;
+export default BookingRouter

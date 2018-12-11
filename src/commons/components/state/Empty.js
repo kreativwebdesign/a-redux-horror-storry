@@ -1,10 +1,10 @@
-import React from 'react';
+import React from 'react'
 
 const Loading = ({ isEmpty, children }) => {
   if (isEmpty) {
     children()
   }
-  return null;
+  return null
 }
 
-export default Loading;
+export default Loading

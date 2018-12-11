@@ -11,8 +11,12 @@ const BookingRow = ({ booking }) => {
     <tr>
       <td>{booking.course}</td>
       <td>{booking.price} CHF</td>
-      <td><Link to={`/clients/${booking.client}`}>{booking.client}# Client</Link></td>
-      <td><Link to={`/bookings/${booking.id}`}>Detail</Link></td>
+      <td>
+        <Link to={`/clients/${booking.client}`}>{booking.client}# Client</Link>
+      </td>
+      <td>
+        <Link to={`/bookings/${booking.id}`}>Detail</Link>
+      </td>
     </tr>
   )
 }

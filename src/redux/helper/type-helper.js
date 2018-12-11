@@ -7,7 +7,7 @@ const operationHelpers = {
   FETCH: allOperationHelpers.fetch,
   ADD: allOperationHelpers.add,
   DELETE: allOperationHelpers.del,
-  UPDATE: allOperationHelpers.update,
+  UPDATE: allOperationHelpers.update
 }
 
 const statusHelpers = {
@@ -18,14 +18,17 @@ const statusHelpers = {
 }
 
 const createTypes = NAMESPACE => {
-  return [ FETCH, ADD, DELETE, UPDATE ].reduce((types, operation) => {
+  return [FETCH, ADD, DELETE, UPDATE].reduce((types, operation) => {
     const OPERATION_NAMESPACE = operationHelpers[operation](NAMESPACE)
-    types[operation] = [ PENDING, SUCCESS, FAILED, REJECTED ].reduce((states, status) => {
-      states[status] = statusHelpers[status](OPERATION_NAMESPACE)
-      return states;
-    }, {})
+    types[operation] = [PENDING, SUCCESS, FAILED, REJECTED].reduce(
+      (states, status) => {
+        states[status] = statusHelpers[status](OPERATION_NAMESPACE)
+        return states
+      },
+      {}
+    )
     types[operation].DO = OPERATION_NAMESPACE
-    return types;
+    return types
   }, {})
 }
 

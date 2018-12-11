@@ -1,42 +1,48 @@
 import { put, takeEvery, call } from 'redux-saga/effects'
 import { setFetchOperation, setAddOperation } from './add-operation-helper'
 
-const createWatch = ({ type, saga }) => function* watchSaga() {
-  yield takeEvery(type, saga)
-}
-
-const createSaga = ({ apiCall, types, setOperation }) => function* saga(data = {}) {
-  yield put({ type: types.PENDING })
-  const response = yield call(() => apiCall(data.payload));
-  const payload = setOperation(response);
-  if (response.meta.status.error) {
-    yield put({ type: types.FAILED, payload })
-  } else {
-    yield put({ type: types.SUCCESS, payload })
+const createWatch = ({ type, saga }) =>
+  function* watchSaga() {
+    yield takeEvery(type, saga)
   }
-}
 
-export const createFetchSaga = ({ apiCall, types }) => createSaga({
-  types: types.FETCH,
-  apiCall,
-  setOperation: setFetchOperation
-})
+const createSaga = ({ apiCall, types, setOperation }) =>
+  function* saga(data = {}) {
+    yield put({ type: types.PENDING })
+    const response = yield call(() => apiCall(data.payload))
+    const payload = setOperation(response)
+    if (response.meta.status.error) {
+      yield put({ type: types.FAILED, payload })
+    } else {
+      yield put({ type: types.SUCCESS, payload })
+    }
+  }
 
-export const createAddSaga = ({ apiCall, types }) => createSaga({
-  types: types.ADD,
-  apiCall,
-  setOperation: setAddOperation
-})
+export const createFetchSaga = ({ apiCall, types }) =>
+  createSaga({
+    types: types.FETCH,
+    apiCall,
+    setOperation: setFetchOperation
+  })
 
-export const createWatchFetch = ({ types, fetchSaga }) => createWatch({
-  type: types.FETCH.DO,
-  saga: fetchSaga
-})
+export const createAddSaga = ({ apiCall, types }) =>
+  createSaga({
+    types: types.ADD,
+    apiCall,
+    setOperation: setAddOperation
+  })
 
-export const createWatchAdd =  ({ types, addSaga }) => createWatch({
-  type: types.ADD.DO,
-  saga: addSaga
-})
+export const createWatchFetch = ({ types, fetchSaga }) =>
+  createWatch({
+    type: types.FETCH.DO,
+    saga: fetchSaga
+  })
+
+export const createWatchAdd = ({ types, addSaga }) =>
+  createWatch({
+    type: types.ADD.DO,
+    saga: addSaga
+  })
 
 export const createBasicSagas = ({ api, types }) => {
   const fetchSaga = createFetchSaga({ apiCall: api.fetch, types })
@@ -45,6 +51,6 @@ export const createBasicSagas = ({ api, types }) => {
     fetchSaga,
     addSaga,
     watchFetch: createWatchFetch({ types, fetchSaga }),
-    watchAdd: createWatchAdd({ types, addSaga }),
+    watchAdd: createWatchAdd({ types, addSaga })
   }
 }

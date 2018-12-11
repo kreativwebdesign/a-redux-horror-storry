@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Button, Table } from 'semantic-ui-react';
+import { Button, Table } from 'semantic-ui-react'
 import BookingRow from '../booking-row'
 import WithHandledState from 'src/commons/components/state/with-handled-state'
 import { selectors, types } from 'src/redux/booking'
@@ -17,7 +17,12 @@ const BookingList = ({ fetchBookings }) => {
       {state => (
         <div className={styles.bookingList}>
           <Link to="/bookings/new">
-            <Button color="green" content="Add new Booking" icon="add" labelPosition="right"/>
+            <Button
+              color="green"
+              content="Add new Booking"
+              icon="add"
+              labelPosition="right"
+            />
           </Link>
           <Table className={styles.table}>
             <Table.Body>

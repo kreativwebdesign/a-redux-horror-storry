@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 import { Route, Switch } from 'react-router-dom'
-import ClientList from '../client-list';
+import ClientList from '../client-list'
 import Client from '../client'
 
 const ClientRouter = () => {
@@ -15,4 +15,4 @@ const ClientRouter = () => {
   )
 }
 
-export default ClientRouter;
+export default ClientRouter

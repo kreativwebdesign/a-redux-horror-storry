@@ -1,10 +1,10 @@
-import React from 'react';
+import React from 'react'
 
 const Success = ({ succeeded, children }) => {
   if (succeeded) {
-    return children();
+    return children()
   }
-  return null;
+  return null
 }
 
 export default Success

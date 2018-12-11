@@ -1,5 +1,5 @@
 export const normalizeFetch = response => {
-  const list = [];
+  const list = []
   const data = {}
   return {
     data: response.reduce((data, obj) => {
@@ -18,6 +18,6 @@ export const normalizePost = response => {
   return {
     data: { [response.id]: response },
     meta: undefined,
-    list: [ response.id ]
+    list: [response.id]
   }
 }

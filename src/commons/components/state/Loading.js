@@ -1,12 +1,12 @@
-import React from 'react';
+import React from 'react'
 
-export const DefaultLoader = () => 'Loading...';
+export const DefaultLoader = () => 'Loading...'
 
 const Loading = ({ isPending, children }) => {
   if (isPending) {
-    return children ? children : <DefaultLoader />;
+    return children ? children : <DefaultLoader />
   }
-  return null;
+  return null
 }
 
-export default Loading;
+export default Loading

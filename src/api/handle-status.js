@@ -1,12 +1,14 @@
 import { SUCCESS, FAILED } from 'src/commons/constants/api'
 
-const handleStatus = (payload) => {
-  const status = payload.error ? {
-    status: FAILED,
-    error: payload.error
-  } : {
-    status: SUCCESS
-  }
+const handleStatus = payload => {
+  const status = payload.error
+    ? {
+        status: FAILED,
+        error: payload.error
+      }
+    : {
+        status: SUCCESS
+      }
   return {
     ...(payload.error ? {} : payload),
     meta: {

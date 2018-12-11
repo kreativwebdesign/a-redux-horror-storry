@@ -1,6 +1,6 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import pages from '../../pages';
+import React from 'react'
+import { NavLink, Link } from 'react-router-dom'
+import pages from '../../pages'
 import styles from './index.scss'
 
 const NavigationBar = () => (
@@ -25,6 +25,6 @@ const NavigationBar = () => (
       <div className={styles.delimitter} />
     </div>
   </nav>
-);
+)
 
-export default NavigationBar;
+export default NavigationBar
