@@ -23,9 +23,6 @@ const Navbar = () => (
         ))}
       </ul>
       <div className={styles.delimitter} />
-      <ul>
-        <li className={styles.subNavEntry}>Einstellungen</li>
-      </ul>
     </div>
   </nav>
 );
