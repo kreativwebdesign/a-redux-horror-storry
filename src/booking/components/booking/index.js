@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux'
 import { Input, Button } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
-import { selectors, types } from 'src/redux/client'
+import { selectors, types } from 'src/redux/booking'
 import styles from './index.scss'
 
 const defaultBooking = {
