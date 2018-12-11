@@ -8,7 +8,7 @@ const handleStatus = (payload) => {
     status: SUCCESS
   }
   return {
-    ...payload,
+    ...(payload.error ? {} : payload),
     meta: {
       ...payload.meta,
       status
