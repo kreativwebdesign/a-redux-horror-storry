@@ -26,6 +26,7 @@ export const createDataReducer = (NAMESPACE, initialState = initState) => {
         }
       }
       case failed(fetch(NAMESPACE)):
+      case failed(add(NAMESPACE)):
       return {
         ...state,
         ...payload

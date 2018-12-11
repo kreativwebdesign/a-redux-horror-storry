@@ -12,6 +12,9 @@ export const normalizeFetch = response => {
 }
 
 export const normalizePost = response => {
+  if (response.error) {
+    return response
+  }
   return {
     data: { [response.id]: response },
     meta: undefined,

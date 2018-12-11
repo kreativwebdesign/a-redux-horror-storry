@@ -24,7 +24,7 @@ const Client = ({ client, status, fetchClient, addClient, match }) => {
     return 'Fetching client'
   }
   const wasSuccessfull = () => status && status.status === 'SUCCESS' && status.operation === 'ADD'
-
+  const hasFailed = () => status && status.status === 'FAILED' && status.operation === 'ADD'
   return (
     <Formik
       initialValues={client || defaultClient}
@@ -53,6 +53,9 @@ const Client = ({ client, status, fetchClient, addClient, match }) => {
           </Button>
           { wasSuccessfull() && <div className={styles.success}>
             Successful operation
+          </div>}
+          { hasFailed() && <div className={styles.error}>
+            Operation failed
           </div>}
         </form>
       )}

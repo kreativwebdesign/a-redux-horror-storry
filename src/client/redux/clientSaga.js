@@ -19,7 +19,6 @@ export function* watchFetchClient() {
 }
 
 export function* addClient({ payload: client }) {
-  console.log(client)
   yield put({ type: types.ADD.PENDING })
   const response = yield call(() => api.postClient(client));
   const payload = setAddOperation(response);
