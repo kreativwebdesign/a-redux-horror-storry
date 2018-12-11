@@ -2,9 +2,9 @@ import { createDataReducer } from 'src/redux/helper/reducerHelper'
 import { createSelectors } from 'src/redux/helper/selectorHelper';
 import createTypes from "src/redux/helper/typeHelper";
 
-const NAMESPACE = 'CLIENT'
+const NAMESPACE = 'BOOKING'
 
-const selectors = createSelectors(({ clients }) => clients)
+const selectors = createSelectors(({ bookings }) => bookings)
 
 const reducer = createDataReducer(NAMESPACE)
 

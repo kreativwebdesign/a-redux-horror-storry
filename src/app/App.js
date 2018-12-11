@@ -1,6 +1,7 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
 import ClientRouter from 'src/client/components/clientRouter'
+import BookingRouter from 'src/booking/components/BookingRouter'
 import Navbar from 'src/routing/Navbar'
 import AppContainer from './AppContainer'
 import styles from './styles/app.scss'
@@ -16,6 +17,7 @@ const App = () => (
         <Switch>
           <Route path="/" exact component={Index} />
           <Route path="/clients" component={ClientRouter} />
+          <Route path="/bookings" component={BookingRouter} />
         </Switch>
       </section>
     </main>
