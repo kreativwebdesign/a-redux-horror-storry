@@ -41,7 +41,6 @@ const Client = ({ client, status, fetchClient, addClient, match }) => {
         setSubmitting,
         /* and other goodies */
       }) => (
-        console.log(values) ||
         <form onSubmit={handleSubmit} className={styles.form}>
           <Input placeholder="Firstname" type="text" name="firstName" onChange={handleChange} onBlur={handleBlur} value={values.firstName} />
           <ErrorMessage name="firstName" component="div" />
