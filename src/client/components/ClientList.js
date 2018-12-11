@@ -33,7 +33,7 @@ const ClientList = ({ fetchClients }) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchClients: () => dispatch({ type: types.FETCH_CLIENT })
+  fetchClients: () => dispatch({ type: types.FETCH.DO })
 })
 
 const Connected = connect(

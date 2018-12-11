@@ -1,22 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux'
 import { Input, Button } from 'semantic-ui-react'
-import { Formik, Field, ErrorMessage } from 'formik'
+import { Formik, ErrorMessage } from 'formik'
 import { selectors, types } from '../redux'
 import styles from './styles/client.scss'
 
 const defaultClient = {
   id: undefined,
-  lastName: undefined,
-  firstName: undefined,
-  emailAddress: undefined,
+  lastName: '',
+  firstName: '',
+  emailAddress: '',
 }
 
 const Client = ({ client, status, fetchClient, addClient, match }) => {
-
   const { clientId } = match.params
+  const [ isFetching, setIsFetching ] = useState(false)
+
   if (clientId && !client) {
-    fetchClient()
+    if (!isFetching) {
+      fetchClient()
+      setIsFetching(true)
+    }
     return 'Fetching client'
   }
   const wasSuccessfull = () => status && status.status === 'SUCCESS' && status.operation === 'ADD'
@@ -31,21 +35,25 @@ const Client = ({ client, status, fetchClient, addClient, match }) => {
       {({
         handleSubmit,
         isSubmitting,
+        handleChange,
+        handleBlur,
+        values,
         setSubmitting,
         /* and other goodies */
       }) => (
+        console.log(values) ||
         <form onSubmit={handleSubmit} className={styles.form}>
-          <Field name="firstName" component={Input} type="text" placeholder="Firstname" />
+          <Input placeholder="Firstname" type="text" name="firstName" onChange={handleChange} onBlur={handleBlur} value={values.firstName} />
           <ErrorMessage name="firstName" component="div" />
-          <Field name="lastName" component={Input} type="text" placeholder="Lastname" />
+          <Input placeholder="Lastname" type="text" name="lastName" onChange={handleChange} onBlur={handleBlur} value={values.lastName} />
           <ErrorMessage name="lastName" component="div" />
-          <Field name="emailAddress" component={Input} type="text" placeholder="E-Mail" />
+          <Input placeholder="Email Address" type="text" name="emailAddress" onChange={handleChange} onBlur={handleBlur} value={values.emailAddress} />
           <ErrorMessage name="emailAddress" component="div" />
           <Button type="submit" primary disabled={isSubmitting}>
             Submit
           </Button>
           { wasSuccessfull() && <div className={styles.success}>
-            Operation Erfolgreich
+            Successful operation
           </div>}
         </form>
       )}
@@ -62,8 +70,8 @@ const mapStateToProps = (state, props) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchClient: () => dispatch({ type: types.FETCH_CLIENT }),
-  addClient: client => dispatch({ type: types.ADD_CLIENT, payload: client })
+  fetchClient: () => dispatch({ type: types.FETCH.DO }),
+  addClient: client => dispatch({ type: types.ADD.DO, payload: client })
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Client)
