@@ -9,7 +9,7 @@ const createWatch = ({ type, saga }) =>
 const createSaga = ({ apiCall, types, setOperation }) =>
   function* saga(data = {}) {
     yield put({ type: types.PENDING })
-    const response = yield call(() => apiCall(data.payload))
+    const response = yield call(apiCall, data.payload)
     const payload = setOperation(response)
     if (response.meta.status.error) {
       yield put({ type: types.FAILED, payload })
