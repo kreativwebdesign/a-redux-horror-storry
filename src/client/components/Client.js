@@ -48,7 +48,7 @@ const Client = ({ client, status, fetchClient, addClient, match }) => {
           <ErrorMessage name="lastName" component="div" />
           <Input placeholder="Email Address" type="text" name="emailAddress" onChange={handleChange} onBlur={handleBlur} value={values.emailAddress} />
           <ErrorMessage name="emailAddress" component="div" />
-          <Button type="submit" primary disabled={isSubmitting}>
+          <Button type="submit" primary>
             Submit
           </Button>
           { wasSuccessfull() && <div className={styles.success}>
