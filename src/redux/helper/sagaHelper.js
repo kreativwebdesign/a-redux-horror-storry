@@ -37,3 +37,14 @@ export const createWatchAdd =  ({ types, addSaga }) => createWatch({
   type: types.ADD.DO,
   saga: addSaga
 })
+
+export const createBasicSagas = ({ api, types }) => {
+  const fetchSaga = createFetchSaga({ apiCall: api.fetch, types })
+  const addSaga = createAddSaga({ apiCall: api.post, types })
+  return {
+    fetchSaga,
+    addSaga,
+    watchFetch: createWatchFetch({ types, fetchSaga }),
+    watchAdd: createWatchAdd({ types, addSaga }),
+  }
+}

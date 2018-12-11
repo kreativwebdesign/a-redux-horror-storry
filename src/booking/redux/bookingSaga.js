@@ -1,14 +1,10 @@
 import { types } from './index'
 import * as api from 'src/api/api'
-import { createFetchSaga, createWatchFetch, createAddSaga, createWatchAdd } from 'src/redux/helper/sagaHelper'
+import { createBasicSagas } from 'src/redux/helper/sagaHelper'
 
+const sagas = createBasicSagas({
+  api: { fetch: api.fetchBooking, post: api.postBooking },
+  types,
+})
 
-const fetchBooking = createFetchSaga({ apiCall: api.fetchBooking, types })
-
-const watchFetchBooking = createWatchFetch({ types, fetchSaga: fetchBooking })
-
-const addBooking = createAddSaga({ apiCall: api.postBooking, types })
-
-const watchAddBooking = createWatchAdd({ types, addSaga: addBooking })
-
-export { fetchBooking, watchFetchBooking, addBooking, watchAddBooking }
+export default sagas
