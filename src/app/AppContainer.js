@@ -1,6 +1,6 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 import { store, persistor } from '../redux/store'
 
