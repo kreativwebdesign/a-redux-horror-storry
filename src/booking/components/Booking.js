@@ -63,7 +63,7 @@ const Booking = ({ booking, status, fetchBooking, addBooking, match }) => {
 const mapStateToProps = (state, props) => {
   const { bookingId } = props.match.params
   return {
-    client: bookingId ? selectors.selectDataById(bookingId)(state) : undefined,
+    booking: bookingId ? selectors.selectDataById(bookingId)(state) : undefined,
     status: selectors.selectStatus(state)
   }
 }
