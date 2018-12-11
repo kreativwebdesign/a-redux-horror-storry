@@ -2,7 +2,7 @@ import React from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { ClientRouter } from 'src/client'
 import { BookingRouter } from 'src/booking'
-import Navbar from 'src/routing/Navbar'
+import NavigationBar from 'src/routing/components/navigation-bar'
 import AppContainer from './AppContainer'
 import styles from './styles/app.scss'
 import './styles/root.scss'
@@ -12,7 +12,7 @@ const Index = () => <h2>Home</h2>
 const App = () => (
   <AppContainer>
     <main className={styles.app}>
-      <Navbar />
+      <NavigationBar />
       <section className={styles.pageBody}>
         <Switch>
           <Route path="/" exact component={Index} />
