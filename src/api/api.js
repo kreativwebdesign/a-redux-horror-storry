@@ -8,17 +8,17 @@ const clientUrl = baseUrl + '/clients'
 
 const bookingUrl = baseUrl + '/bookings'
 
-export const fetchClient = () => {
-  return fetch(clientUrl)
+const createFetch = url => () => {
+  return fetch(url)
     .then(res => res.json())
     .then(normalizeFetch)
     .then(handleStatus)
     .catch(handleError)
 }
 
-export const postClient = (client) => {
-  return fetch(clientUrl, {
-    body: JSON.stringify(client),
+const createPost = url => payload => {
+  return fetch(url, {
+    body: JSON.stringify(payload),
     method: 'POST',
     headers: { 'Content-Type': 'application/json'}
   })
@@ -28,22 +28,10 @@ export const postClient = (client) => {
     .catch(handleError)
 }
 
-export const fetchBooking = () => {
-  return fetch(bookingUrl)
-    .then(res => res.json())
-    .then(normalizeFetch)
-    .then(handleStatus)
-    .catch(handleError)
-}
+export const fetchClient = createFetch(clientUrl)
 
-export const postBooking = (booking) => {
-  return fetch(bookingUrl, {
-    body: JSON.stringify(booking),
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json'}
-  })
-    .then(res => res.json())
-    .then(normalizePost)
-    .then(handleStatus)
-    .catch(handleError)
-}
+export const postClient = createPost(clientUrl)
+
+export const fetchBooking = createFetch(bookingUrl)
+
+export const postBooking = createPost(bookingUrl)
