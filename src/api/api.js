@@ -2,7 +2,7 @@ import { normalizeFetch, normalizePost } from './normalize';
 import handleStatus from './handleStatus';
 import handleError from './handleError';
 
-const baseUrl = 'http://lines-written-in-early-spring.herokuapp.com/'
+const baseUrl = 'https://lines-written-in-early-spring.herokuapp.com/'
 
 const clientUrl = baseUrl + '/clients'
 
