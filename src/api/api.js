@@ -1,6 +1,6 @@
 import { normalizeFetch, normalizePost } from './normalize';
-import handleStatus from './handleStatus';
-import handleError from './handleError';
+import handleStatus from './handle-status';
+import handleError from './handle-error';
 
 const baseUrl = 'https://lines-written-in-early-spring.herokuapp.com/'
 
