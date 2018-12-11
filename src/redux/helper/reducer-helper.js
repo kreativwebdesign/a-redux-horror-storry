@@ -1,5 +1,5 @@
-import { pending, succeeded, failed } from "./statusHelper";
-import { fetch, add } from './operationHelper'
+import { pending, succeeded, failed } from "./status-helper";
+import { fetch, add } from './operation-helper'
 import { PENDING, EMPTY } from 'src/commons/constants/api'
 
 const initState = {

@@ -3,8 +3,8 @@ import createSagaMiddleware from 'redux-saga'
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
-import rootSaga from './rootSaga'
-import reducer from './rootReducer'
+import rootSaga from './root-saga'
+import reducer from './root-reducer'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 

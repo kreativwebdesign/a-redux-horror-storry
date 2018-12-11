@@ -1,6 +1,6 @@
 import { put, call } from 'redux-saga/effects'
 
-import { fetchClient, FETCH_CLIENT_PENDING, FETCH_CLIENT_SUCCESS } from './clientSaga'
+import { fetchClient, FETCH_CLIENT_PENDING, FETCH_CLIENT_SUCCESS } from './client-saga'
 import * as api from '../../api/api'
 
 test('client saga', () => {

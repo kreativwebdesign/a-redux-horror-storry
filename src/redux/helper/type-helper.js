@@ -1,7 +1,7 @@
 import { FETCH, ADD, DELETE, UPDATE } from 'src/commons/constants/api'
 import { PENDING, SUCCESS, FAILED, REJECTED } from 'src/commons/constants/api'
-import * as allOperationHelpers from './operationHelper'
-import * as allStatusHelpers from './statusHelper'
+import * as allOperationHelpers from './operation-helper'
+import * as allStatusHelpers from './status-helper'
 
 const operationHelpers = {
   FETCH: allOperationHelpers.fetch,

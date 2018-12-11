@@ -1,5 +1,5 @@
 import { createSelector, createStructuredSelector } from 'reselect'
-import { isPendingStatus, isSucceededStatus, isFailedStatus, isEmptyStatus } from './statusHelper'
+import { isPendingStatus, isSucceededStatus, isFailedStatus, isEmptyStatus } from './status-helper'
 
 const createSelectors = (baseSelector) => {
   const selectData =  createSelector(baseSelector, (state) => state.data);

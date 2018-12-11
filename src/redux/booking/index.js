@@ -1,6 +1,6 @@
-import { createDataReducer } from 'src/redux/helper/reducerHelper'
-import { createSelectors } from 'src/redux/helper/selectorHelper';
-import createTypes from "src/redux/helper/typeHelper";
+import { createDataReducer } from 'src/redux/helper/reducer-helper'
+import { createSelectors } from 'src/redux/helper/selector-helper';
+import createTypes from "src/redux/helper/type-helper";
 
 const NAMESPACE = 'BOOKING'
 
