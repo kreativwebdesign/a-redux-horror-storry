@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Loading from './Loading'
-import Success from './Success'
-import Empty from './Empty'
-import Error from './Error'
+import Loading from './loading'
+import Success from './success'
+import Empty from './empty'
+import Error from './error'
 
 const WithHandledState = ({ state = {}, whenEmpty, children, onError, whileLoading }) => {
   return (

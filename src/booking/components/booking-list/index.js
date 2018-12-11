@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react';
 import BookingRow from '../booking-row'
-import WithHandledState from 'src/commons/components/state/WithHandledState'
+import WithHandledState from 'src/commons/components/state/with-handled-state'
 import { selectors, types } from 'src/redux/booking'
 
 import styles from './index.scss'
