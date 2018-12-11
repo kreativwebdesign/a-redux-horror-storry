@@ -4,7 +4,7 @@ import createTypes from "src/redux/helper/typeHelper";
 
 const NAMESPACE = 'BOOKING'
 
-const selectors = createSelectors(({ bookings }) => bookings)
+const selectors = createSelectors(state => state.bookings)
 
 const reducer = createDataReducer(NAMESPACE)
 
