@@ -2,11 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react';
-import BookingRow from './BookingRow'
+import BookingRow from '../booking-row'
 import WithHandledState from 'src/commons/components/state/WithHandledState'
-import { selectors, types } from '../redux'
+import { selectors, types } from 'src/redux/booking'
 
-import styles from './styles/bookingList.scss'
+import styles from './index.scss'
 
 const BookingList = ({ fetchBookings }) => {
   return (

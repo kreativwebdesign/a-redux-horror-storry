@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom'
-import ClientList from './ClientList';
-import Client from './Client'
+import ClientList from '../client-list';
+import Client from '../client'
 
 const ClientRouter = () => {
   return (

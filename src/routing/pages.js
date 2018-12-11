@@ -1,4 +1,4 @@
-import ClientList from 'src/client/components/ClientList';
-import BookingList from 'src/booking/components/BookingList';
+import { ClientList } from 'src/client';
+import { BookingList } from 'src/booking';
 
 export default [ ClientList, BookingList ];

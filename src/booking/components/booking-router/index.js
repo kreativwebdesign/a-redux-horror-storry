@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom'
-import BookingList from './BookingList';
-import Booking from './Booking'
+import BookingList from '../booking-list';
+import Booking from '../booking'
 
 const BookingRouter = () => {
   return (

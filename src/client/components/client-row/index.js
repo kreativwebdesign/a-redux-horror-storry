@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { selectors } from '../redux'
+import { selectors } from 'src/redux/client'
 
 const ClientRow = ({ client }) => {
   if (!client) {

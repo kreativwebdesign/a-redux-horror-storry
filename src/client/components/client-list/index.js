@@ -2,11 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react';
-import ClientRow from './ClientRow'
+import ClientRow from '../client-row'
 import WithHandledState from 'src/commons/components/state/WithHandledState'
-import { selectors, types } from '../redux'
+import { selectors, types } from 'src/redux/client'
 
-import styles from './styles/clientList.scss'
+import styles from './index.scss'
 
 const ClientList = ({ fetchClients }) => {
   return (
