@@ -64,6 +64,6 @@ module.exports = {
     }),
   ],
   output: {
-    publicPath: '/'
+    publicPath: ''
   }
 };
