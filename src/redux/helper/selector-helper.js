@@ -71,4 +71,9 @@ const createSelectors = baseSelector => {
   }
 }
 
-export { createSelectors }
+const createDataSelector = NAMESPACE => state => state.data[NAMESPACE]
+
+const createTimetableSelector = NAMESPACE => state =>
+  state.metadata.timetable[NAMESPACE]
+
+export { createSelectors, createTimetableSelector, createDataSelector }
