@@ -9,18 +9,18 @@ import reducer from './root-reducer'
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 const sagaMiddleware = createSagaMiddleware()
-
+/*
 const persistConfig = {
   key: 'root',
   storage
 }
 
-const persistedReducer = persistReducer(persistConfig, reducer)
+const persistedReducer = persistReducer(persistConfig, reducer) */
 
 export const store = createStore(
-  persistedReducer,
+  reducer, // persistedReducer
   composeEnhancers(applyMiddleware(sagaMiddleware))
 )
-export const persistor = persistStore(store)
+/* export const persistor = persistStore(store) */
 
 sagaMiddleware.run(rootSaga)

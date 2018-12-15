@@ -6,9 +6,9 @@ import { store, persistor } from '../redux/store'
 
 const AppContainer = ({ children }) => (
   <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
+    {/* <PersistGate loading={null} persistor={persistor}> */}
       <Router>{children}</Router>
-    </PersistGate>
+    {/* </PersistGate> */}
   </Provider>
 )
 
