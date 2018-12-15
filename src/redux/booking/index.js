@@ -1,13 +1,17 @@
-import { createDataReducer } from 'src/redux/helper/reducer-helper'
+import {
+  createDataReducer,
+  createTimetableReducer
+} from 'src/redux/helper/reducer-helper'
 import { createSelectors } from 'src/redux/helper/selector-helper'
 import createTypes from 'src/redux/helper/type-helper'
 
 const NAMESPACE = 'BOOKING'
 
-const selectors = createSelectors(state => state.bookings)
+const selectors = createSelectors(state => state.data.bookings)
 
-const reducer = createDataReducer(NAMESPACE)
+const dataReducer = createDataReducer(NAMESPACE)
+const timetableReducer = createTimetableReducer(NAMESPACE)
 
 const types = createTypes(NAMESPACE)
 
-export { selectors, reducer, types }
+export { selectors, dataReducer, timetableReducer, types }

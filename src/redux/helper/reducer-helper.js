@@ -59,7 +59,7 @@ export const createTimetableReducer = (
         state[id] = timestamp
         return state
       }, {})
-      return { ...state, ...newState}
+      return { ...state, ...newState }
     }
     default:
       return state
