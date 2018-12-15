@@ -1,0 +1,1 @@
+export default (BASE, DELIMITER, SUFFIX) => `${BASE}${DELIMITER}${SUFFIX}`
