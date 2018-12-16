@@ -25,18 +25,15 @@ const Client = ({ client, status, fetchClient, addClient, postStatus }) => {
   return (
     <Formik
       initialValues={client || defaultClient}
-      values={client}
       onSubmit={values => {
         addClient(values)
       }}
     >
       {({
         handleSubmit,
-        isSubmitting,
         handleChange,
         handleBlur,
         values,
-        setSubmitting
         /* and other goodies */
       }) => (
         <form onSubmit={handleSubmit} className={styles.form}>
