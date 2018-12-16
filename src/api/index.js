@@ -1,4 +1,4 @@
-import { normalizeFetch, normalizePost } from './normalize'
+import { normalizeFetch, normalizePost, normalizeSingleFetch } from './normalize'
 import handleStatus from './handle-status'
 import handleError from './handle-error'
 
@@ -17,17 +17,10 @@ const createFetch = url => () => {
 }
 
 const createSingleFetch = url => id => {
-  return fetch(url)
+  return fetch(url + '/' + id)
     .then(res => res.json())
-    .then(normalizeFetch)
+    .then(normalizeSingleFetch)
     .then(handleStatus)
-    .then(payload => {
-      return {
-        data: { [id]: payload.data[id] },
-        list: [id],
-        meta: payload.meta
-      }
-    })
     .catch(handleError)
 }
 

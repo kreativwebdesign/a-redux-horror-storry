@@ -11,7 +11,7 @@ export const normalizeFetch = response => {
   }
 }
 
-export const normalizePost = response => {
+export const normalizeSingleFetch = response => {
   if (response.error) {
     return response
   }
@@ -21,3 +21,5 @@ export const normalizePost = response => {
     list: [response.id]
   }
 }
+
+export const normalizePost = normalizeSingleFetch
