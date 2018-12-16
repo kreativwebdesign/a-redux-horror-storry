@@ -1,7 +1,6 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connectors } from 'src/datalayer/booking'
 import { Link } from 'react-router-dom'
-import { selectors } from 'src/redux/booking'
 
 const BookingRow = ({ booking }) => {
   if (!booking) {
@@ -21,8 +20,4 @@ const BookingRow = ({ booking }) => {
   )
 }
 
-const mapStateToProps = (state, props) => ({
-  booking: selectors.selectDataById(props.bookingId)(state)
-})
-
-export default connect(mapStateToProps)(BookingRow)
+export default connectors.fetchSingle.connect()(BookingRow)

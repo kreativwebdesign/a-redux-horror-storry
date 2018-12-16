@@ -1,21 +1,18 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import React, { useEffect } from 'react'
+import { connectors, types } from 'src/datalayer/booking'
 import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react'
 import BookingRow from '../booking-row'
-import WithHandledState from 'src/commons/components/state/with-handled-state'
-import { selectors, types } from 'src/redux/booking'
 
 import styles from './index.scss'
 
-const BookingList = ({ fetchBookings }) => {
-  return (
-    <WithHandledState
-      stateSelector={selectors.selectComplete}
-      whenEmpty={fetchBookings}
-    >
-      {state => (
-        <div className={styles.bookingList}>
+const BookingList = ({ fetchBookings, list: bookingList, status  }) => {
+  useEffect(() => {
+    fetchBookings()
+  }, [])
+  if (status === 'SUCCESS') {
+    return (
+      <div className={styles.bookingList}>
           <Link to="/bookings/new">
             <Button
               color="green"
@@ -26,23 +23,23 @@ const BookingList = ({ fetchBookings }) => {
           </Link>
           <Table className={styles.table}>
             <Table.Body>
-              {state.list.map(bookingId => (
+              {bookingList.map(bookingId => (
                 <BookingRow bookingId={bookingId} key={bookingId} />
               ))}
             </Table.Body>
           </Table>
         </div>
-      )}
-    </WithHandledState>
-  )
+    )
+  }
+  return 'Loading'
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchBookings: () => dispatch({ type: types.FETCH.DO })
+  fetchBookings: () => dispatch({ type: types.FETCH.DO, payload: { from: 0, to: 30 } })
 })
 
-const Connected = connect(
-  () => ({}),
+const Connected = connectors.fetchPaginated.connect(
+  undefined,
   mapDispatchToProps
 )(BookingList)
 

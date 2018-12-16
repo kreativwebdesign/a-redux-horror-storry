@@ -138,13 +138,14 @@ export const createAddCtrlReducer = (
 ) => (state = initialState, { type, payload = {} }) => {
   switch (type) {
     case pending(add(NAMESPACE)): {
+      console.log(payload)
       return {
         [payload.id || 'new']: PENDING
       }
     }
     case succeeded(add(NAMESPACE)): {
       return {
-        [payload.id || 'new']: SUCCESS
+        [payload.list[0] || 'new']: SUCCESS
       }
     }
     case failed(add(NAMESPACE)): {

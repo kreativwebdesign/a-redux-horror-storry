@@ -1,7 +1,6 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connectors } from 'src/datalayer/client'
 import { Link } from 'react-router-dom'
-import { selectors } from 'src/redux/client'
 
 const ClientRow = ({ client }) => {
   if (!client) {
@@ -19,8 +18,4 @@ const ClientRow = ({ client }) => {
   )
 }
 
-const mapStateToProps = (state, props) => ({
-  client: selectors.selectDataById(props.clientId)(state)
-})
-
-export default connect(mapStateToProps)(ClientRow)
+export default connectors.fetchSingle.connect()(ClientRow)

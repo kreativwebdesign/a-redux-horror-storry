@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import { connect as reduxConnect } from 'react-redux'
 import { Input, Button } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
-import { selectors, types } from 'src/redux/booking'
+import { types, connectors } from 'src/datalayer/booking'
 import styles from './index.scss'
 
 const defaultBooking = {
@@ -12,8 +12,7 @@ const defaultBooking = {
   client: 5
 }
 
-const Booking = ({ booking, status, fetchBooking, addBooking, match }) => {
-  const { bookingId } = match.params
+const Booking = ({ booking, status, fetchBooking, addBooking, bookingId, postStatus }) => {
   const [isFetching, setIsFetching] = useState(false)
 
   if (bookingId && !booking) {
@@ -23,10 +22,11 @@ const Booking = ({ booking, status, fetchBooking, addBooking, match }) => {
     }
     return 'Fetching booking'
   }
-  const wasSuccessfull = () =>
-    status && status.status === 'SUCCESS' && status.operation === 'ADD'
-  const hasFailed = () =>
-    status && status.status === 'FAILED' && status.operation === 'ADD'
+
+  const wasSuccessfull = postStatus === 'SUCCESS'
+  const hasFailed = postStatus === 'FAILED'
+  const postPending = postStatus === 'PENDING'
+
   return (
     <Formik
       initialValues={booking || defaultBooking}
@@ -63,13 +63,13 @@ const Booking = ({ booking, status, fetchBooking, addBooking, match }) => {
             value={values.price}
           />
           <ErrorMessage name="price" component="div" />
-          <Button type="submit" primary>
-            Submit
+          <Button type="submit" primary disabled={postPending}>
+            { postPending ? 'Speichern...' : 'Submit' }
           </Button>
-          {wasSuccessfull() && (
+          {wasSuccessfull && (
             <div className={styles.success}>Successful operation</div>
           )}
-          {hasFailed() && <div className={styles.error}>Operation failed</div>}
+          {hasFailed && <div className={styles.error}>Operation failed</div>}
         </form>
       )}
     </Formik>
@@ -84,12 +84,27 @@ const mapStateToProps = (state, props) => {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  fetchBooking: () => dispatch({ type: types.FETCH.DO }),
+const mapDispatchToProps = (dispatch, props) => ({
+  fetchBooking: () =>
+    dispatch({
+      type: types.FETCH_SINGLE.DO,
+      payload: { bookingId: props.bookingId }
+    }),
   addBooking: booking => dispatch({ type: types.ADD.DO, payload: booking })
 })
 
-export default connect(
-  mapStateToProps,
+const Connected = connectors.fetchSingle.connect(
+  undefined,
   mapDispatchToProps
-)(Booking)
+)(connectors.add.connect()(Booking))
+
+export const EditBooking = ({ match, ...rest }) => (
+  <Connected bookingId={match.params.bookingId} {...rest} />
+)
+
+const NewBookingDisconnected = props => (
+  <Booking booking={defaultBooking} {...props} />
+)
+export const NewBooking = reduxConnect(undefined, dispatch => ({
+  addBooking: booking => dispatch({ type: types.ADD.DO, payload: booking })
+}))(connectors.add.connect()(NewBookingDisconnected))

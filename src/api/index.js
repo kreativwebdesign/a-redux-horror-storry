@@ -51,4 +51,6 @@ export const postClient = createPost(clientUrl)
 
 export const fetchBookings = createFetch(bookingUrl)
 
+export const fetchSingleBooking = createSingleFetch(bookingUrl)
+
 export const postBooking = createPost(bookingUrl)
