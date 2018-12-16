@@ -5,6 +5,7 @@ import * as allStatusHelpers from './status-helper'
 
 const operationHelpers = {
   FETCH: allOperationHelpers.fetch,
+  FETCH_SINGLE: allOperationHelpers.fetch,
   ADD: allOperationHelpers.add,
   DELETE: allOperationHelpers.del,
   UPDATE: allOperationHelpers.update
@@ -17,19 +18,29 @@ const statusHelpers = {
   REJECTED: allStatusHelpers.rejected
 }
 
-const createTypes = NAMESPACE => {
+const createOperationTypes = OPERATION_NAMESPACE => {
+  return [PENDING, SUCCESS, FAILED, REJECTED].reduce((states, status) => {
+    states[status] = statusHelpers[status](OPERATION_NAMESPACE)
+    return states
+  }, {})
+}
+
+const createTypes = (NAMESPACE, SINGLE_NAMESPACE) => {
+  const fetchSingleOperationNamespace = operationHelpers.FETCH_SINGLE(
+    SINGLE_NAMESPACE
+  )
+  const types = {
+    FETCH_SINGLE: {
+      ...createOperationTypes(fetchSingleOperationNamespace),
+      DO: fetchSingleOperationNamespace
+    }
+  }
   return [FETCH, ADD, DELETE, UPDATE].reduce((types, operation) => {
     const OPERATION_NAMESPACE = operationHelpers[operation](NAMESPACE)
-    types[operation] = [PENDING, SUCCESS, FAILED, REJECTED].reduce(
-      (states, status) => {
-        states[status] = statusHelpers[status](OPERATION_NAMESPACE)
-        return states
-      },
-      {}
-    )
+    types[operation] = createOperationTypes(OPERATION_NAMESPACE)
     types[operation].DO = OPERATION_NAMESPACE
     return types
-  }, {})
+  }, types)
 }
 
 export default createTypes

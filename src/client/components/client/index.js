@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import React, { useEffect } from 'react'
 import { Input, Button } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
-import { selectors, types } from 'src/redux/client'
+import { types, connectors } from 'src/datalayer/client'
 import styles from './index.scss'
 
 const defaultClient = {
@@ -12,17 +11,16 @@ const defaultClient = {
   emailAddress: ''
 }
 
-const Client = ({ client, status, fetchClient, addClient, match }) => {
-  const { clientId } = match.params
-  const [isFetching, setIsFetching] = useState(false)
+const Client = ({
+  client,
+  status,
+  fetchClient,
+  addClient,
+}) => {
+  useEffect(() => {
+    fetchClient()
+  }, [])
 
-  if (clientId && !client) {
-    if (!isFetching) {
-      fetchClient()
-      setIsFetching(true)
-    }
-    return 'Fetching client'
-  }
   const wasSuccessfull = () =>
     status && status.status === 'SUCCESS' && status.operation === 'ADD'
   const hasFailed = () =>
@@ -84,20 +82,20 @@ const Client = ({ client, status, fetchClient, addClient, match }) => {
   )
 }
 
-const mapStateToProps = (state, props) => {
-  const { clientId } = props.match.params
-  return {
-    client: clientId ? selectors.selectDataById(clientId)(state) : undefined,
-    status: selectors.selectStatus(state)
-  }
-}
-
-const mapDispatchToProps = dispatch => ({
-  fetchClient: () => dispatch({ type: types.FETCH.DO }),
+const mapDispatchToProps = (dispatch, props) => ({
+  fetchClient: () =>
+    dispatch({
+      type: types.FETCH_SINGLE.DO,
+      payload: { clientId: props.clientId }
+    }),
   addClient: client => dispatch({ type: types.ADD.DO, payload: client })
 })
 
-export default connect(
-  mapStateToProps,
+const Connected = connectors.fetchSingle.connect(
+  undefined,
   mapDispatchToProps
 )(Client)
+
+export default ({ match, ...rest }) => (
+  <Connected clientId={match.params.clientId} {...rest} />
+)

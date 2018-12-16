@@ -1,8 +1,6 @@
 import { combineReducers } from 'redux'
-import data from './data'
-import app from '../datalayer/app'
+import metadata from './metadataReducer'
 
 export default combineReducers({
-  data,
-  app
+  metadata
 })

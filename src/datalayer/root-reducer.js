@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import data from './data'
-import app from '../datalayer/app'
+import app from './app'
 
 export default combineReducers({
   data,

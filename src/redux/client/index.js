@@ -9,7 +9,7 @@ import {
 } from 'src/redux/helper/selector-helper'
 import createTypes from 'src/redux/helper/type-helper'
 
-const NAMESPACE = 'CLIENT'
+const NAMESPACE = 'CLIENTS'
 
 const selectors = createSelectors(state => state.data.clients)
 const timetableSelector = createTimetableSelector(NAMESPACE)

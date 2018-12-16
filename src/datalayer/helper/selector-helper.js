@@ -6,7 +6,8 @@ import {
   isEmptyStatus
 } from './status-helper'
 
-export const createSelectors = baseSelector => {
+export const createDataSelectors = NAMESPACE => {
+  const baseSelector = state => state.data[NAMESPACE.toLowerCase()]
   const selectData = createSelector(
     baseSelector,
     state => state.data
@@ -15,74 +16,33 @@ export const createSelectors = baseSelector => {
     baseSelector,
     state => state.list
   )
-  const selectStatus = createSelector(
-    baseSelector,
-    state => state.meta.status
-  )
-  const selectError = createSelector(
-    selectStatus,
-    status => status.error
-  )
-  const selectOperation = createSelector(
-    selectStatus,
-    status => status.operation
-  )
   const selectDataById = id => data => (data ? data[id] : undefined)
-
-  const hasSucceeded = createSelector(
-    selectStatus,
-    isSucceededStatus
-  )
-  const hasFailed = createSelector(
-    selectStatus,
-    isFailedStatus
-  )
-  const isPending = createSelector(
-    selectStatus,
-    isPendingStatus
-  )
-  const isEmpty = createSelector(
-    selectStatus,
-    isEmptyStatus
-  )
 
   return {
     selectData,
     selectList,
-    selectStatus,
-    selectError,
-    selectOperation,
     selectDataById: id =>
       createSelector(
         selectData,
         selectDataById(id)
-      ),
-    selectComplete: createStructuredSelector({
-      data: selectData,
-      list: selectList,
-      isPending,
-      hasSucceeded,
-      hasFailed,
-      isEmpty,
-      status: selectStatus,
-      error: selectError,
-      operation: selectOperation
-    })
+      )
   }
 }
 
-export const createDataSelector = NAMESPACE => state => state.data[NAMESPACE]
+export const createDataSelector = NAMESPACE => state =>
+  state.data[NAMESPACE.toLowerCase()]
 
 export const createTimetableSelector = NAMESPACE => state =>
   state.app.metadata.timetable[NAMESPACE]
 
 export const createTimetableSelectors = NAMESPACE => {
-  const baseSelector = state => state.app.metadata.timetable[NAMESPACE]
-  const isResourceValid = (id, state) => {
+  const baseSelector = state =>
+    state.app.metadata.timetable[NAMESPACE.toLowerCase()]
+  const isResourceValid = id => state => {
     const timetable = baseSelector(state)
     const currentTimestamp = new Date().getTime()
     const fiveMinutesAgo = currentTimestamp - 5 * 60 * 1000
-    return timetable[id].time > fiveMinutesAgo
+    return timetable[id] > fiveMinutesAgo
   }
   return {
     isResourceValid,
@@ -92,3 +52,18 @@ export const createTimetableSelectors = NAMESPACE => {
 
 export const createControllerSelector = NAMESPACE => state =>
   state.app.metadata.controllers[NAMESPACE]
+
+export const createControllerSelectors = (NAMESPACE, controllerName) => {
+  const baseSelector = state =>
+    state.app.metadata.controllers[NAMESPACE.toLowerCase()][controllerName]
+  const isResourceAvailable = id => state => {
+    const resourceStatus = baseSelector(state)[id]
+    return resourceStatus && isSucceededStatus({ status: resourceStatus })
+  }
+
+  const selectStatus = id => state => baseSelector(state)[id]
+  return {
+    isResourceAvailable,
+    selectStatus
+  }
+}
