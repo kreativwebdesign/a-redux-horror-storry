@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { connectors, types } from 'src/datalayer/booking'
 import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react'
+import { SUCCESS } from 'src/api/constants'
 import BookingRow from '../booking-row'
 
 import styles from './index.scss'
@@ -10,7 +11,7 @@ const BookingList = ({ fetchBookings, list: bookingList, status  }) => {
   useEffect(() => {
     fetchBookings()
   }, [])
-  if (status === 'SUCCESS') {
+  if (status === SUCCESS) {
     return (
       <div className={styles.bookingList}>
           <Link to="/bookings/new">

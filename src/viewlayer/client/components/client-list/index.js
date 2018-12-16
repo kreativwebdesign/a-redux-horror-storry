@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react'
 import ClientRow from '../client-row'
 import { connectors, types } from 'src/datalayer/client'
+import { SUCCESS } from 'src/api/constants'
 
 import styles from './index.scss'
 
@@ -10,7 +11,7 @@ const ClientList = ({ fetchClients, list: clientList, status }) => {
   useEffect(() => {
     fetchClients()
   }, [])
-  if (status === 'SUCCESS') {
+  if (status === SUCCESS) {
     return (
       <div className={styles.clientList}>
         <Link to="/clients/new">
