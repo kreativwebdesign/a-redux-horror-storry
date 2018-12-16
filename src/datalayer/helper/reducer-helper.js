@@ -55,11 +55,10 @@ export const createTimetableReducer = (
     case succeeded(fetch(NAMESPACE)):
     case succeeded(add(NAMESPACE)): {
       const timestamp = new Date().getTime()
-      const newState = payload.list.reduce((state, id) => {
+      return payload.list.reduce((state, id) => {
         state[id] = timestamp
         return state
-      }, {})
-      return { ...state, ...newState }
+      }, { ...state, ...newState })
     }
     default:
       return state
