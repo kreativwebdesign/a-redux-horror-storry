@@ -1,4 +1,4 @@
-import { ClientList } from 'src/client'
-import { BookingList } from 'src/booking'
+import { ClientList } from 'src/viewlayer/client'
+import { BookingList } from 'src/viewlayer/booking'
 
 export default [ClientList, BookingList]
