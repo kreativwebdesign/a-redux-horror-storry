@@ -21,6 +21,7 @@ const Client = ({ client, status, fetchClient, addClient, postStatus }) => {
 
   const wasSuccessfull = postStatus === 'SUCCESS'
   const hasFailed = postStatus === 'FAILED'
+  const postPending = postStatus === 'PENDING'
   return (
     <Formik
       initialValues={client || defaultClient}
@@ -66,8 +67,8 @@ const Client = ({ client, status, fetchClient, addClient, postStatus }) => {
             value={values.emailAddress}
           />
           <ErrorMessage name="emailAddress" component="div" />
-          <Button type="submit" primary>
-            Submit
+          <Button type="submit" primary disabled={postPending}>
+            { postPending ? 'Speichern...' : 'Submit' }
           </Button>
           {wasSuccessfull && (
             <div className={styles.success}>Successful operation</div>
