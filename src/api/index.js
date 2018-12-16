@@ -1,4 +1,8 @@
-import { normalizeFetch, normalizePost, normalizeSingleFetch } from './normalize'
+import {
+  normalizeFetch,
+  normalizePost,
+  normalizeSingleFetch
+} from './normalize'
 import handleStatus from './handle-status'
 import handleError from './handle-error'
 

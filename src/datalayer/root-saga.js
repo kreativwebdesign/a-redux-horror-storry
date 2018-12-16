@@ -3,5 +3,5 @@ import { sagas as clientSagas } from './client'
 import { sagas as bookingSagas } from './booking'
 
 export default function* rootSaga() {
-  yield all([ clientSagas(), bookingSagas() ])
+  yield all([clientSagas(), bookingSagas()])
 }

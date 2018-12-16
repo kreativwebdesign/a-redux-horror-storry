@@ -61,7 +61,7 @@ const Booking = ({ booking, status, fetchBooking, addBooking, postStatus }) => {
           />
           <ErrorMessage name="price" component="div" />
           <Button type="submit" primary disabled={postPending}>
-            { postPending ? 'Speichern...' : 'Submit' }
+            {postPending ? 'Speichern...' : 'Submit'}
           </Button>
           {wasSuccessfull && (
             <div className={styles.success}>Successful operation</div>

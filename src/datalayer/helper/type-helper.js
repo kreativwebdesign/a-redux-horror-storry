@@ -1,4 +1,13 @@
-import { FETCH, ADD, DELETE, UPDATE, PENDING, SUCCESS, FAILED, REJECTED } from 'src/api/constants'
+import {
+  FETCH,
+  ADD,
+  DELETE,
+  UPDATE,
+  PENDING,
+  SUCCESS,
+  FAILED,
+  REJECTED
+} from 'src/api/constants'
 import * as allOperationHelpers from './operation-helper'
 import * as allStatusHelpers from './status-helper'
 

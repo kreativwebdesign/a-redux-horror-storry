@@ -34,7 +34,7 @@ const Client = ({ client, status, fetchClient, addClient, postStatus }) => {
         handleSubmit,
         handleChange,
         handleBlur,
-        values,
+        values
         /* and other goodies */
       }) => (
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -66,7 +66,7 @@ const Client = ({ client, status, fetchClient, addClient, postStatus }) => {
           />
           <ErrorMessage name="emailAddress" component="div" />
           <Button type="submit" primary disabled={postPending}>
-            { postPending ? 'Speichern...' : 'Submit' }
+            {postPending ? 'Speichern...' : 'Submit'}
           </Button>
           {wasSuccessfull && (
             <div className={styles.success}>Successful operation</div>
