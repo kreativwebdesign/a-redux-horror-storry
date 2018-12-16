@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { connect as reduxConnect } from 'react-redux'
 import { Input, Button } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
+import { FAILED, SUCCESS, PENDING, EMPTY } from 'src/api/constants'
 import { types, connectors } from 'src/datalayer/client'
 import styles from './index.scss'
 
@@ -16,12 +17,12 @@ const Client = ({ client, status, fetchClient, addClient, postStatus }) => {
   useEffect(() => {
     fetchClient && fetchClient()
   }, [])
+  if (status === EMPTY) return 'Loading'
 
-  if (status === 'LOADING') return 'Loading'
+  const wasSuccessfull = postStatus === SUCCESS
+  const hasFailed = postStatus === FAILED
+  const postPending = postStatus === PENDING
 
-  const wasSuccessfull = postStatus === 'SUCCESS'
-  const hasFailed = postStatus === 'FAILED'
-  const postPending = postStatus === 'PENDING'
   return (
     <Formik
       initialValues={client || defaultClient}

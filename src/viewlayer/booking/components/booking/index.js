@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { connect as reduxConnect } from 'react-redux'
 import { Input, Button } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
+import { FAILED, SUCCESS, PENDING, EMPTY } from 'src/api/constants'
 import { types, connectors } from 'src/datalayer/booking'
 import styles from './index.scss'
 
@@ -23,9 +24,11 @@ const Booking = ({ booking, status, fetchBooking, addBooking, bookingId, postSta
     return 'Fetching booking'
   }
 
-  const wasSuccessfull = postStatus === 'SUCCESS'
-  const hasFailed = postStatus === 'FAILED'
-  const postPending = postStatus === 'PENDING'
+  if (status === EMPTY) return 'Loading'
+
+  const wasSuccessfull = postStatus === SUCCESS
+  const hasFailed = postStatus === FAILED
+  const postPending = postStatus === PENDING
 
   return (
     <Formik
