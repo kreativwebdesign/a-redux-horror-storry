@@ -1,6 +1,6 @@
 import { pending, succeeded, failed } from './status-helper'
 import { fetch, add } from './operation-helper'
-import { PENDING, EMPTY, SUCCESS, FAILED } from 'src/commons/constants/api'
+import { PENDING, EMPTY, SUCCESS, FAILED } from 'src/api/constants'
 
 const initialDataState = {
   meta: {

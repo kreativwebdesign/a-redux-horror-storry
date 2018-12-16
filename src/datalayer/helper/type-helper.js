@@ -1,5 +1,4 @@
-import { FETCH, ADD, DELETE, UPDATE } from 'src/commons/constants/api'
-import { PENDING, SUCCESS, FAILED, REJECTED } from 'src/commons/constants/api'
+import { FETCH, ADD, DELETE, UPDATE, PENDING, SUCCESS, FAILED, REJECTED } from 'src/api/constants'
 import * as allOperationHelpers from './operation-helper'
 import * as allStatusHelpers from './status-helper'
 

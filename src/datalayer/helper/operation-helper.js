@@ -1,4 +1,4 @@
-import { FETCH, ADD, DELETE, UPDATE } from 'src/commons/constants/api'
+import { FETCH, ADD, DELETE, UPDATE } from 'src/api/constants'
 import suffix from './suffix'
 
 const DELIMITER = '/'

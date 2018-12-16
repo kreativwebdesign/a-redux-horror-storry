@@ -1,4 +1,4 @@
-import { SUCCESS, FAILED } from 'src/commons/constants/api'
+import { SUCCESS, FAILED } from 'src/api/constants'
 
 const handleStatus = payload => {
   const status = payload.error

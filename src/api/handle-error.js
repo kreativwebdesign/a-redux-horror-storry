@@ -1,4 +1,4 @@
-import { FAILED } from 'src/commons/constants/api'
+import { FAILED } from 'src/api/constants'
 
 const handleError = (err, payload) => {
   return {

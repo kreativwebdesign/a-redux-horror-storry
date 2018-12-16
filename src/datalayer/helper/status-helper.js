@@ -4,7 +4,7 @@ import {
   FAILED,
   REJECTED,
   EMPTY
-} from 'src/commons/constants/api'
+} from 'src/api/constants'
 import suffix from './suffix'
 
 const DELIMITER = ':'
