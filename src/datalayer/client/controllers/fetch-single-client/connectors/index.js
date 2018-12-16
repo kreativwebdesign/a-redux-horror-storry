@@ -1,7 +1,7 @@
 import { connect as reduxConnect } from 'react-redux'
 import { selectors } from 'src/datalayer/client'
 import { EMPTY } from 'src/api/constants'
-// a component connecting the state into the react rendering tree
+import { mergeMapStateToProps } from 'src/datalayer/helper/merge-map-state-to-props'
 
 const mapStateToProps = (state, { clientId }) => {
   const resourceIsAvailableAndValid =
@@ -12,12 +12,6 @@ const mapStateToProps = (state, { clientId }) => {
     status: resourceIsAvailableAndValid
       ? selectors.fetchSingle.selectStatus(clientId)(state)
       : EMPTY
-  }
-}
-const mergeMapStateToProps = (one, two = () => ({})) => (state, props) => {
-  return {
-    ...one(state, props),
-    ...two(state, props)
   }
 }
 
