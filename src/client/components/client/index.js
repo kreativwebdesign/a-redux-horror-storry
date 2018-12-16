@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { connect as reduxConnect } from 'react-redux'
 import { Input, Button } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
 import { types, connectors } from 'src/datalayer/client'
@@ -13,21 +14,19 @@ const defaultClient = {
 
 const Client = ({
   client,
-  clientId,
   status,
   fetchClient,
   addClient,
+  postStatus
 }) => {
   useEffect(() => {
-    fetchClient()
+    fetchClient && fetchClient()
   }, [])
 
-  if (status === 'EMPTY' && clientId) return 'Loading'
+  if (status === 'LOADING') return 'Loading'
 
-  const wasSuccessfull = () =>
-    status === 'SUCCESS' && status.operation === 'ADD'
-  const hasFailed = () =>
-    status === 'FAILED' && status.operation === 'ADD'
+  const wasSuccessfull = postStatus === 'SUCCESS'
+  const hasFailed = postStatus === 'FAILED'
   return (
     <Formik
       initialValues={client || defaultClient}
@@ -76,10 +75,10 @@ const Client = ({
           <Button type="submit" primary>
             Submit
           </Button>
-          {wasSuccessfull() && (
+          {wasSuccessfull && (
             <div className={styles.success}>Successful operation</div>
           )}
-          {hasFailed() && <div className={styles.error}>Operation failed</div>}
+          {hasFailed && <div className={styles.error}>Operation failed</div>}
         </form>
       )}
     </Formik>
@@ -98,8 +97,13 @@ const mapDispatchToProps = (dispatch, props) => ({
 const Connected = connectors.fetchSingle.connect(
   undefined,
   mapDispatchToProps
-)(Client)
+)(connectors.add.connect()(Client))
 
-export default ({ match, ...rest }) => (
+export const EditClient = ({ match, ...rest }) => (
   <Connected clientId={match.params.clientId} {...rest} />
 )
+
+const NewClientDisconnected = props => <Client client={defaultClient} {...props} />
+export const NewClient = reduxConnect(undefined, dispatch => ({
+  addClient: client => dispatch({ type: types.ADD.DO, payload: client })
+}))(connectors.add.connect()(NewClientDisconnected))

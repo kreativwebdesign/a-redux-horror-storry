@@ -128,3 +128,29 @@ export const createFetchPaginatedCtrlReducer = (
     default: return state;
   }
 }
+
+const initialAddCtrlState = {}
+
+export const createAddCtrlReducer = (
+  NAMESPACE,
+  initialState = initialAddCtrlState
+) => (state = initialState, { type, payload = {} }) => {
+  switch(type) {
+    case pending(add(NAMESPACE)): {
+      return {
+        [payload.id || 'new']: PENDING
+      }
+    }
+    case succeeded(add(NAMESPACE)): {
+      return {
+        [payload.id || 'new']: SUCCESS
+      }
+    }
+    case failed(add(NAMESPACE)): {
+      return {
+        [payload.id || 'new']: FAILED
+      }
+    }
+    default: return state;
+  }
+}
