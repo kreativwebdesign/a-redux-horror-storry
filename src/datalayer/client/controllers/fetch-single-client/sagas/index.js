@@ -1,6 +1,7 @@
 import { put, select, call, takeEvery } from 'redux-saga/effects'
-import { selectors } from '../index'
-import { timetableSelectors, types } from 'src/datalayer/client'
+import { selectors } from '../selectors'
+import { timetableSelectors } from '../../../selectors'
+import { types } from '../../../types'
 import * as api from 'src/api'
 
 function* fetchSingleClient({ payload: { clientId } }) {

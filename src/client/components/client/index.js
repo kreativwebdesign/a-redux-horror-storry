@@ -13,6 +13,7 @@ const defaultClient = {
 
 const Client = ({
   client,
+  clientId,
   status,
   fetchClient,
   addClient,
@@ -21,13 +22,16 @@ const Client = ({
     fetchClient()
   }, [])
 
+  if (status === 'EMPTY' && clientId) return 'Loading'
+
   const wasSuccessfull = () =>
-    status && status.status === 'SUCCESS' && status.operation === 'ADD'
+    status === 'SUCCESS' && status.operation === 'ADD'
   const hasFailed = () =>
-    status && status.status === 'FAILED' && status.operation === 'ADD'
+    status === 'FAILED' && status.operation === 'ADD'
   return (
     <Formik
       initialValues={client || defaultClient}
+      values={client}
       onSubmit={values => {
         addClient(values)
       }}

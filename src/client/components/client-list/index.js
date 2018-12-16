@@ -1,47 +1,44 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react'
 import ClientRow from '../client-row'
-import WithHandledState from 'src/commons/components/state/with-handled-state'
-import { selectors, types } from 'src/redux/client'
+import { connectors, types } from 'src/datalayer/client'
 
 import styles from './index.scss'
 
-const ClientList = ({ fetchClients }) => {
-  return (
-    <WithHandledState
-      stateSelector={selectors.selectComplete}
-      whenEmpty={fetchClients}
-    >
-      {state => (
-        <div className={styles.clientList}>
-          <Link to="/clients/new">
-            <Button
-              color="green"
-              content="Add new Client"
-              icon="add"
-              labelPosition="right"
-            />
-          </Link>
-          <Table className={styles.table}>
-            <Table.Body>
-              {state.list.map(clientId => (
-                <ClientRow clientId={clientId} key={clientId} />
-              ))}
-            </Table.Body>
-          </Table>
-        </div>
-      )}
-    </WithHandledState>
-  )
+const ClientList = ({ fetchClients, list: clientList, status }) => {
+  useEffect(() => {
+    fetchClients()
+  }, [])
+  if (status === 'SUCCESS') {
+    return (
+      <div className={styles.clientList}>
+        <Link to="/clients/new">
+          <Button
+            color="green"
+            content="Add new Client"
+            icon="add"
+            labelPosition="right"
+          />
+        </Link>
+        <Table className={styles.table}>
+          <Table.Body>
+            {clientList.map(clientId => (
+              <ClientRow clientId={clientId} key={clientId} />
+            ))}
+          </Table.Body>
+        </Table>
+      </div>
+    )
+  }
+  return 'Loading'
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchClients: () => dispatch({ type: types.FETCH.DO })
+  fetchClients: () => dispatch({ type: types.FETCH.DO, payload: { from: 0, to: 30 } })
 })
 
-const Connected = connect(
+const Connected = connectors.fetchPaginated.connect(
   () => ({}),
   mapDispatchToProps
 )(ClientList)

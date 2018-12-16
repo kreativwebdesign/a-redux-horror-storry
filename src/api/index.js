@@ -43,12 +43,12 @@ const createPost = url => payload => {
     .catch(handleError)
 }
 
-export const fetchClient = createFetch(clientUrl)
+export const fetchClients = createFetch(clientUrl)
 
 export const fetchSingleClient = createSingleFetch(clientUrl)
 
 export const postClient = createPost(clientUrl)
 
-export const fetchBooking = createFetch(bookingUrl)
+export const fetchBookings = createFetch(bookingUrl)
 
 export const postBooking = createPost(bookingUrl)

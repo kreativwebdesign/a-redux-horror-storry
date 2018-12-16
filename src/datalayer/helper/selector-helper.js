@@ -25,7 +25,8 @@ export const createDataSelectors = NAMESPACE => {
       createSelector(
         selectData,
         selectDataById(id)
-      )
+      ),
+    selectPaginatedList: ({ from, to }) => state => selectList(state).slice(from, to)
   }
 }
 
@@ -38,14 +39,27 @@ export const createTimetableSelector = NAMESPACE => state =>
 export const createTimetableSelectors = NAMESPACE => {
   const baseSelector = state =>
     state.app.metadata.timetable[NAMESPACE.toLowerCase()]
-  const isResourceValid = id => state => {
-    const timetable = baseSelector(state)
+
+  const wasResourceUpdatedFiveMinutesAgo = resource => {
+    const fiveMinutes = 5 * 60 * 1000
     const currentTimestamp = new Date().getTime()
-    const fiveMinutesAgo = currentTimestamp - 5 * 60 * 1000
-    return timetable[id] > fiveMinutesAgo
+    const fiveMinutesAgo = currentTimestamp - fiveMinutes
+    return resource > fiveMinutesAgo
   }
+
+  const isResourceValid = resourceId => state => {
+    const timetable = baseSelector(state)
+    return wasResourceUpdatedFiveMinutesAgo(timetable[resourceId])
+  }
+
+  const areResourcesValid = resourceIdList => state => {
+    const timetable = baseSelector(state)
+    return resourceIdList.every(resourceId => wasResourceUpdatedFiveMinutesAgo(timetable[resourceId]))
+  }
+
   return {
     isResourceValid,
+    areResourcesValid,
     baseSelector
   }
 }
@@ -56,12 +70,12 @@ export const createControllerSelector = NAMESPACE => state =>
 export const createControllerSelectors = (NAMESPACE, controllerName) => {
   const baseSelector = state =>
     state.app.metadata.controllers[NAMESPACE.toLowerCase()][controllerName]
-  const isResourceAvailable = id => state => {
-    const resourceStatus = baseSelector(state)[id]
+  const isResourceAvailable = resourceId => state => {
+    const resourceStatus = baseSelector(state)[resourceId]
     return resourceStatus && isSucceededStatus({ status: resourceStatus })
   }
 
-  const selectStatus = id => state => baseSelector(state)[id]
+  const selectStatus = resourceId => state => baseSelector(state)[resourceId]
   return {
     isResourceAvailable,
     selectStatus

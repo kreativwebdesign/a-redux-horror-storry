@@ -108,3 +108,23 @@ export const createFetchSingleCtrlReducer = (
       return state
   }
 }
+
+const initialFetchPaginatedCtrlState = {}
+
+export const createFetchPaginatedCtrlReducer = (
+  NAMESPACE,
+  initialState = initialFetchPaginatedCtrlState
+) => (state = initialState, { type, payload }) => {
+  switch(type) {
+    case pending(fetch(NAMESPACE)): {
+      return setPending([payload.requestName], state)
+    }
+    case succeeded(fetch(NAMESPACE)): {
+      return setSuccess([payload.requestName], state)
+    }
+    case failed(fetch(NAMESPACE)): {
+      return setFailed([payload.id], state)
+    }
+    default: return state;
+  }
+}

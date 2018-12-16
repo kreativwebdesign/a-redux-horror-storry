@@ -1,16 +1,17 @@
 import { connect as reduxConnect } from 'react-redux'
-import { selectors } from 'src/datalayer/client'
+import { timetableSelectors, dataSelectors } from '../../../selectors'
+import { selectors as fetchSingleSelectors } from '../selectors'
 import { EMPTY } from 'src/api/constants'
 import { mergeMapStateToProps } from 'src/datalayer/helper/merge-map-state-to-props'
 
 const mapStateToProps = (state, { clientId }) => {
   const resourceIsAvailableAndValid =
-    selectors.fetchSingle.isResourceAvailable(clientId)(state) &&
-    selectors.isResourceValid(clientId)(state)
+    fetchSingleSelectors.isResourceAvailable(clientId)(state) &&
+    timetableSelectors.isResourceValid(clientId)(state)
   return {
-    client: clientId ? selectors.selectDataById(clientId)(state) : undefined,
+    client: clientId ? dataSelectors.selectDataById(clientId)(state) : undefined,
     status: resourceIsAvailableAndValid
-      ? selectors.fetchSingle.selectStatus(clientId)(state)
+      ? fetchSingleSelectors.selectStatus(clientId)(state)
       : EMPTY
   }
 }
