@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { connect as reduxConnect } from 'react-redux'
 import { Input, Button } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
@@ -13,16 +13,10 @@ const defaultBooking = {
   client: 5
 }
 
-const Booking = ({ booking, status, fetchBooking, addBooking, bookingId, postStatus }) => {
-  const [isFetching, setIsFetching] = useState(false)
-
-  if (bookingId && !booking) {
-    if (!isFetching) {
-      fetchBooking()
-      setIsFetching(true)
-    }
-    return 'Fetching booking'
-  }
+const Booking = ({ booking, status, fetchBooking, addBooking, postStatus }) => {
+  useEffect(() => {
+    fetchBooking && fetchBooking()
+  }, [])
 
   if (status === EMPTY) return 'Loading'
 
