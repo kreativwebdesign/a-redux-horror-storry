@@ -3,7 +3,7 @@ import { types } from '../../../types'
 import * as api from 'src/api'
 
 function* addClient({ payload }) {
-  yield put({ type: types.ADD.PENDING })
+  yield put({ type: types.ADD.PENDING, payload: { id: payload.id } })
   const response = yield call(api.postClient, payload)
   if (response.meta.status.error) {
     yield put({ type: types.ADD.FAILED, payload: response })
