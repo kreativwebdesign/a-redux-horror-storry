@@ -3,7 +3,6 @@ import { selectors as addSelectors } from '../selectors'
 import { mergeMapStateToProps } from 'src/datalayer/helper/merge-map-state-to-props'
 
 const mapStateToProps = (state, { bookingId = 'new' }) => {
-  console.log(bookingId)
   return {
     postStatus: addSelectors.selectStatus(bookingId)(state)
   }
