@@ -7,10 +7,15 @@ import { mergeMapStateToProps } from 'src/datalayer/helper/merge-map-state-to-pr
 
 const mapStateToProps = (state, { from = 0, to = 30, filter }) => {
   const resourceId = buildRequestName({ from, to })
-  const resourceAvailable = fetchPaginatedSelectors.isResourceAvailable(resourceId)(state)
-  const resourceList = resourceAvailable ? dataSelectors.selectPaginatedList({ from, to })(state) : undefined
-  const resourceIsAvailableAndValid =
-    resourceList ? timetableSelectors.areResourcesValid(resourceList)(state) : false
+  const resourceAvailable = fetchPaginatedSelectors.isResourceAvailable(
+    resourceId
+  )(state)
+  const resourceList = resourceAvailable
+    ? dataSelectors.selectPaginatedList({ from, to })(state)
+    : undefined
+  const resourceIsAvailableAndValid = resourceList
+    ? timetableSelectors.areResourcesValid(resourceList)(state)
+    : false
   return {
     list: resourceList,
     status: resourceIsAvailableAndValid
@@ -18,7 +23,6 @@ const mapStateToProps = (state, { from = 0, to = 30, filter }) => {
       : EMPTY
   }
 }
-
 
 export const connect = (mstp, mdtp) =>
   reduxConnect(mergeMapStateToProps(mapStateToProps, mstp), mdtp)

@@ -9,7 +9,9 @@ const mapStateToProps = (state, { clientId }) => {
     fetchSingleSelectors.isResourceAvailable(clientId)(state) &&
     timetableSelectors.isResourceValid(clientId)(state)
   return {
-    client: clientId ? dataSelectors.selectDataById(clientId)(state) : undefined,
+    client: clientId
+      ? dataSelectors.selectDataById(clientId)(state)
+      : undefined,
     status: resourceIsAvailableAndValid
       ? fetchSingleSelectors.selectStatus(clientId)(state)
       : EMPTY

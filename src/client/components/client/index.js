@@ -12,13 +12,7 @@ const defaultClient = {
   emailAddress: ''
 }
 
-const Client = ({
-  client,
-  status,
-  fetchClient,
-  addClient,
-  postStatus
-}) => {
+const Client = ({ client, status, fetchClient, addClient, postStatus }) => {
   useEffect(() => {
     fetchClient && fetchClient()
   }, [])
@@ -103,7 +97,9 @@ export const EditClient = ({ match, ...rest }) => (
   <Connected clientId={match.params.clientId} {...rest} />
 )
 
-const NewClientDisconnected = props => <Client client={defaultClient} {...props} />
+const NewClientDisconnected = props => (
+  <Client client={defaultClient} {...props} />
+)
 export const NewClient = reduxConnect(undefined, dispatch => ({
   addClient: client => dispatch({ type: types.ADD.DO, payload: client })
 }))(connectors.add.connect()(NewClientDisconnected))

@@ -26,7 +26,8 @@ export const createDataSelectors = NAMESPACE => {
         selectData,
         selectDataById(id)
       ),
-    selectPaginatedList: ({ from, to }) => state => selectList(state).slice(from, to)
+    selectPaginatedList: ({ from, to }) => state =>
+      selectList(state).slice(from, to)
   }
 }
 
@@ -54,7 +55,9 @@ export const createTimetableSelectors = NAMESPACE => {
 
   const areResourcesValid = resourceIdList => state => {
     const timetable = baseSelector(state)
-    return resourceIdList.every(resourceId => wasResourceUpdatedFiveMinutesAgo(timetable[resourceId]))
+    return resourceIdList.every(resourceId =>
+      wasResourceUpdatedFiveMinutesAgo(timetable[resourceId])
+    )
   }
 
   return {

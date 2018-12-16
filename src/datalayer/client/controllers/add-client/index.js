@@ -1,6 +1,6 @@
-import { watchAddClient } from './sagas';
+import { watchAddClient } from './sagas'
 import { createAddCtrlReducer } from 'src/datalayer/helper/reducer-helper'
-import { NAMESPACE } from '../../namespace';
+import { NAMESPACE } from '../../namespace'
 import { NAMESPACE as CTRL_NAMESPACE } from './namespace'
 import { selectors } from './selectors'
 import * as connectors from './connectors'

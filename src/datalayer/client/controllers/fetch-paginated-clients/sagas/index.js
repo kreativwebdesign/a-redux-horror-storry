@@ -10,10 +10,12 @@ function* fetchPaginatedClient({ payload: { from, to } }) {
   const resourceAvailable = yield select(
     selectors.isResourceAvailable(requestName)
   )
-  const resourceList = yield resourceAvailable ? select(dataSelectors.selectPaginatedList({ from, to })) : undefined
-  const resourceValid = yield resourceList ? select(
-    timetableSelectors.areResourcesValid(resourceList)
-  ) : false
+  const resourceList = yield resourceAvailable
+    ? select(dataSelectors.selectPaginatedList({ from, to }))
+    : undefined
+  const resourceValid = yield resourceList
+    ? select(timetableSelectors.areResourcesValid(resourceList))
+    : false
   if (resourceValid) {
     return
   } else {

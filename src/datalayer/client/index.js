@@ -29,10 +29,7 @@ import {
   CTRL_NAMESPACE as fetchPaginatedCtrlName
 } from './controllers/fetch-paginated-clients'
 
-import {
-  timetableSelectors,
-  dataSelectors
-} from './selectors'
+import { timetableSelectors, dataSelectors } from './selectors'
 
 import { types } from './types'
 
@@ -46,18 +43,21 @@ export const timetableReducer = createTimetableReducer(
 export const controllersReducer = combineReducers({
   [fetchSingleCtrlName]: fetchSingleReducer,
   [fetchPaginatedCtrlName]: fetchPaginatedReducer,
-  [addCtrlName]: addReducer,
+  [addCtrlName]: addReducer
 })
 
 export const connectors = {
   [fetchSingleCtrlName]: fetchSingleClientConnectors,
   [fetchPaginatedCtrlName]: fetchPaginatedClientsConnectors,
-  [addCtrlName]: addClientConnectors,
+  [addCtrlName]: addClientConnectors
 }
 
-
 export function* sagas() {
-  yield all([fetchSingleClientSaga(), fetchPaginatedClientsSaga(), addClientSaga()])
+  yield all([
+    fetchSingleClientSaga(),
+    fetchPaginatedClientsSaga(),
+    addClientSaga()
+  ])
 }
 
 export const selectors = {
@@ -68,8 +68,4 @@ export const selectors = {
   [addCtrlName]: addClientSelectors
 }
 
-export {
-  timetableSelectors,
-  dataSelectors,
-  types
-}
+export { timetableSelectors, dataSelectors, types }

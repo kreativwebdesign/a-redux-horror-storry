@@ -35,7 +35,8 @@ const ClientList = ({ fetchClients, list: clientList, status }) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchClients: () => dispatch({ type: types.FETCH.DO, payload: { from: 0, to: 30 } })
+  fetchClients: () =>
+    dispatch({ type: types.FETCH.DO, payload: { from: 0, to: 30 } })
 })
 
 const Connected = connectors.fetchPaginated.connect(
