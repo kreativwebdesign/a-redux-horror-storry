@@ -14,7 +14,8 @@ import { NAMESPACE, SINGLE_NAMESPACE } from './namespace'
 import { saga as fetchSingleClientSaga } from './controllers/fetch-single-client'
 import {
   selectors as fetchSingleClientSelectors,
-  connectors as fetchSingleClientConnectors
+  connectors as fetchSingleClientConnectors,
+  CTRL_NAMESPACE as fetchSingleCtrlName
 } from './controllers/fetch-single-client'
 
 export const dataReducer = createDataReducer(NAMESPACE, SINGLE_NAMESPACE)
@@ -27,17 +28,17 @@ export const timetableReducer = createTimetableReducer(
 export const timetableSelectors = createTimetableSelectors(NAMESPACE)
 
 export const controllersReducer = combineReducers({
-  fetchSingle: fetchSingleReducer
+  [fetchSingleCtrlName]: fetchSingleReducer
 })
 
 export const selectors = {
   ...timetableSelectors,
   ...dataSelectors,
-  fetchSingle: fetchSingleClientSelectors
+  [fetchSingleCtrlName]: fetchSingleClientSelectors
 }
 
 export const connectors = {
-  fetchSingle: fetchSingleClientConnectors
+  [fetchSingleCtrlName]: fetchSingleClientConnectors
 }
 
 export const types = createTypes(NAMESPACE, SINGLE_NAMESPACE)
