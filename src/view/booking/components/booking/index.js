@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { connect as reduxConnect } from 'react-redux'
-import { Input, Button } from 'semantic-ui-react'
+import { Input, Button, Segment } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
 import {
   isSucceededStatus,
@@ -66,10 +66,10 @@ const Booking = ({ booking, status, fetchBooking, addBooking, postStatus }) => {
             {isPendingStatus(postStatus) ? 'Speichern...' : 'Submit'}
           </Button>
           {isSucceededStatus(postStatus) && (
-            <div className={styles.success}>Successful operation</div>
+            <Segment color="green">Operation Successful</Segment>
           )}
           {isFailedStatus(postStatus) && (
-            <div className={styles.error}>Operation failed</div>
+            <Segment color="red">Operation failed</Segment>
           )}
         </form>
       )}
