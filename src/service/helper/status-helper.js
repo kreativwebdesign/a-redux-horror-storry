@@ -20,7 +20,7 @@ export const rejected = NAMESPACE => suffix(NAMESPACE, DELIMITER, REJECTED)
 
 export const reset = NAMESPACE => suffix(NAMESPACE, DELIMITER, RESET)
 
-const evaluateStatus = status => statusObject => statusObject.status === status
+const evaluateStatus = EXPECTED_STATUS => status => status === EXPECTED_STATUS
 export const isPendingStatus = evaluateStatus(PENDING)
 export const isFailedStatus = evaluateStatus(FAILED)
 export const isSucceededStatus = evaluateStatus(SUCCESS)

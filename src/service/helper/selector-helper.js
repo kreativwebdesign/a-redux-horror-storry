@@ -1,10 +1,5 @@
-import { createSelector, createStructuredSelector } from 'reselect'
-import {
-  isPendingStatus,
-  isSucceededStatus,
-  isFailedStatus,
-  isEmptyStatus
-} from './status-helper'
+import { createSelector } from 'reselect'
+import { isSucceededStatus } from './status-helper'
 
 export const createDataSelectors = NAMESPACE => {
   const baseSelector = state => state.data[NAMESPACE.toLowerCase()]
@@ -75,7 +70,7 @@ export const createControllerSelectors = (NAMESPACE, controllerName) => {
     state.app.metadata.controllers[NAMESPACE.toLowerCase()][controllerName]
   const isResourceAvailable = resourceId => state => {
     const resourceStatus = baseSelector(state)[resourceId]
-    return resourceStatus && isSucceededStatus({ status: resourceStatus })
+    return resourceStatus && isSucceededStatus(resourceStatus)
   }
 
   const selectStatus = resourceId => state => baseSelector(state)[resourceId]
