@@ -6,7 +6,10 @@ function* addBooking({ payload }) {
   yield put({ type: types.ADD.PENDING, payload: { id: payload.id } })
   const response = yield call(api.postBooking, payload)
   if (response.meta.status.error) {
-    yield put({ type: types.ADD.FAILED, payload: response })
+    yield put({
+      type: types.ADD.FAILED,
+      payload: { ...response, id: payload.id }
+    })
   } else {
     yield put({ type: types.ADD.SUCCESS, payload: response })
   }
