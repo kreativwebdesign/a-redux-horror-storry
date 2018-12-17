@@ -13,8 +13,16 @@ const defaultClient = {
   emailAddress: ''
 }
 
-const Client = ({ client, status, fetchClient, addClient, postStatus }) => {
+const Client = ({
+  client,
+  status,
+  fetchClient,
+  addClient,
+  postStatus,
+  resetPostStatus
+}) => {
   useEffect(() => {
+    resetPostStatus()
     fetchClient && fetchClient()
   }, [])
   if (status === EMPTY) return 'Loading'
@@ -82,6 +90,11 @@ const mapDispatchToProps = (dispatch, props) => ({
   fetchClient: () =>
     dispatch({
       type: types.FETCH_SINGLE.DO,
+      payload: { clientId: props.clientId }
+    }),
+  resetPostStatus: () =>
+    dispatch({
+      type: types.ADD.RESET,
       payload: { clientId: props.clientId }
     }),
   addClient: client => dispatch({ type: types.ADD.DO, payload: client })

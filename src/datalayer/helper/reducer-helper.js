@@ -1,4 +1,4 @@
-import { pending, succeeded, failed } from './status-helper'
+import { pending, succeeded, failed, reset } from './status-helper'
 import { fetch, add } from './operation-helper'
 import { PENDING, EMPTY, SUCCESS, FAILED } from 'src/api/constants'
 
@@ -150,6 +150,11 @@ export const createAddCtrlReducer = (
     case failed(add(NAMESPACE)): {
       return {
         [payload.id || 'new']: FAILED
+      }
+    }
+    case reset(add(NAMESPACE)): {
+      return {
+        [payload.id || 'new']: EMPTY
       }
     }
     default:
