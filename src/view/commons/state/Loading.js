@@ -2,7 +2,7 @@ import React from 'react'
 
 export const DefaultLoader = () => 'Loading...'
 
-const Loading = ({ isPending, children }) => {
+const Loading = ({ isPending = true, children }) => {
   if (isPending) {
     return children ? children : <DefaultLoader />
   }
