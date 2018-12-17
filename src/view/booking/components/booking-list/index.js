@@ -2,7 +2,10 @@ import React, { useEffect } from 'react'
 import { connectors, types } from 'src/service/booking'
 import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react'
-import { SUCCESS } from 'src/api/constants'
+import {
+  isSucceededStatus,
+  isFailedStatus
+} from 'src/service/helper/status-helper'
 import BookingRow from '../booking-row'
 
 import styles from './index.scss'
@@ -11,7 +14,7 @@ const BookingList = ({ fetchBookings, list: bookingList, status }) => {
   useEffect(() => {
     fetchBookings()
   }, [])
-  if (status === SUCCESS) {
+  if (isSucceededStatus(status)) {
     return (
       <div className={styles.bookingList}>
         <Link to="/bookings/new">
@@ -31,6 +34,8 @@ const BookingList = ({ fetchBookings, list: bookingList, status }) => {
         </Table>
       </div>
     )
+  } else if (isFailedStatus(status)) {
+    return 'oh 👃🏻'
   }
   return 'Loading'
 }

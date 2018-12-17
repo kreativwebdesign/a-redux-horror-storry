@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 import { Button, Table } from 'semantic-ui-react'
 import ClientRow from '../client-row'
 import { connectors, types } from 'src/service/client'
-import { SUCCESS } from 'src/api/constants'
+import {
+  isSucceededStatus,
+  isFailedStatus
+} from 'src/service/helper/status-helper'
 
 import styles from './index.scss'
 
@@ -11,7 +14,7 @@ const ClientList = ({ fetchClients, list: clientList, status }) => {
   useEffect(() => {
     fetchClients()
   }, [])
-  if (status === SUCCESS) {
+  if (isSucceededStatus(status)) {
     return (
       <div className={styles.clientList}>
         <Link to="/clients/new">
@@ -31,6 +34,8 @@ const ClientList = ({ fetchClients, list: clientList, status }) => {
         </Table>
       </div>
     )
+  } else if (isFailedStatus(status)) {
+    return 'oh 👃🏻'
   }
   return 'Loading'
 }

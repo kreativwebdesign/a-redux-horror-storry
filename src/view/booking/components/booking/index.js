@@ -2,7 +2,12 @@ import React, { useEffect } from 'react'
 import { connect as reduxConnect } from 'react-redux'
 import { Input, Button } from 'semantic-ui-react'
 import { Formik, ErrorMessage } from 'formik'
-import { FAILED, SUCCESS, PENDING, EMPTY } from 'src/api/constants'
+import {
+  isSucceededStatus,
+  isPendingStatus,
+  isFailedStatus,
+  isEmptyStatus
+} from 'src/service/helper/status-helper'
 import { types, connectors } from 'src/service/booking'
 import styles from './index.scss'
 
@@ -18,11 +23,7 @@ const Booking = ({ booking, status, fetchBooking, addBooking, postStatus }) => {
     fetchBooking && fetchBooking()
   }, [])
 
-  if (status === EMPTY) return 'Loading'
-
-  const wasSuccessfull = postStatus === SUCCESS
-  const hasFailed = postStatus === FAILED
-  const postPending = postStatus === PENDING
+  if (isEmptyStatus(status)) return 'Loading'
 
   return (
     <Formik
@@ -60,13 +61,15 @@ const Booking = ({ booking, status, fetchBooking, addBooking, postStatus }) => {
             value={values.price}
           />
           <ErrorMessage name="price" component="div" />
-          <Button type="submit" primary disabled={postPending}>
-            {postPending ? 'Speichern...' : 'Submit'}
+          <Button type="submit" primary disabled={isPendingStatus(postStatus)}>
+            {isPendingStatus(postStatus) ? 'Speichern...' : 'Submit'}
           </Button>
-          {wasSuccessfull && (
+          {isSucceededStatus(postStatus) && (
             <div className={styles.success}>Successful operation</div>
           )}
-          {hasFailed && <div className={styles.error}>Operation failed</div>}
+          {isFailedStatus(postStatus) && (
+            <div className={styles.error}>Operation failed</div>
+          )}
         </form>
       )}
     </Formik>
