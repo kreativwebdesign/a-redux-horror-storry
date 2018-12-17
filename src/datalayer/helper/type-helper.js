@@ -6,7 +6,8 @@ import {
   PENDING,
   SUCCESS,
   FAILED,
-  REJECTED
+  REJECTED,
+  RESET
 } from 'src/api/constants'
 import * as allOperationHelpers from './operation-helper'
 import * as allStatusHelpers from './status-helper'
@@ -23,20 +24,25 @@ const statusHelpers = {
   PENDING: allStatusHelpers.pending,
   SUCCESS: allStatusHelpers.succeeded,
   FAILED: allStatusHelpers.failed,
-  REJECTED: allStatusHelpers.rejected
+  REJECTED: allStatusHelpers.rejected,
+  RESET: allStatusHelpers.reset
 }
 
 const createOperationTypes = OPERATION_NAMESPACE => {
-  return [PENDING, SUCCESS, FAILED, REJECTED].reduce((states, status) => {
-    states[status] = statusHelpers[status](OPERATION_NAMESPACE)
-    return states
-  }, {})
+  return [PENDING, SUCCESS, FAILED, REJECTED, RESET].reduce(
+    (states, status) => {
+      states[status] = statusHelpers[status](OPERATION_NAMESPACE)
+      return states
+    },
+    {}
+  )
 }
 
 const createTypes = (NAMESPACE, SINGLE_NAMESPACE) => {
   const fetchSingleOperationNamespace = operationHelpers.FETCH_SINGLE(
     SINGLE_NAMESPACE
   )
+
   const types = {
     FETCH_SINGLE: {
       ...createOperationTypes(fetchSingleOperationNamespace),
