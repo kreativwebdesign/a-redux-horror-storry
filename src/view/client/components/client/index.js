@@ -9,6 +9,7 @@ import {
   isEmptyStatus
 } from 'src/service/helper/status-helper'
 import { types, connectors } from 'src/service/client'
+import Loading from 'src/view/commons/state/Loading'
 import styles from './index.scss'
 
 const defaultClient = {
@@ -30,7 +31,7 @@ const Client = ({
     resetPostStatus()
     fetchClient && fetchClient()
   }, [])
-  if (isEmptyStatus(status)) return 'Loading'
+  if (isEmptyStatus(status)) return <Loading />
 
   return (
     <Formik

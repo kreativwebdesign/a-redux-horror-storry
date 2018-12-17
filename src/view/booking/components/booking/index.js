@@ -9,6 +9,7 @@ import {
   isEmptyStatus
 } from 'src/service/helper/status-helper'
 import { types, connectors } from 'src/service/booking'
+import Loading from 'src/view/commons/state/Loading'
 import styles from './index.scss'
 
 const defaultBooking = {
@@ -23,7 +24,7 @@ const Booking = ({ booking, status, fetchBooking, addBooking, postStatus }) => {
     fetchBooking && fetchBooking()
   }, [])
 
-  if (isEmptyStatus(status)) return 'Loading'
+  if (isEmptyStatus(status)) return <Loading />
 
   return (
     <Formik

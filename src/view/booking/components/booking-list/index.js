@@ -6,6 +6,7 @@ import {
   isSucceededStatus,
   isFailedStatus
 } from 'src/service/helper/status-helper'
+import Loading from 'src/view/commons/state/Loading'
 import BookingRow from '../booking-row'
 
 import styles from './index.scss'
@@ -37,7 +38,7 @@ const BookingList = ({ fetchBookings, list: bookingList, status }) => {
   } else if (isFailedStatus(status)) {
     return 'oh 👃🏻'
   }
-  return 'Loading'
+  return <Loading />
 }
 
 const mapDispatchToProps = dispatch => ({
