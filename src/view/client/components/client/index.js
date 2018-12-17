@@ -112,6 +112,11 @@ export const EditClient = ({ match, ...rest }) => (
 const NewClientDisconnected = props => (
   <Client client={defaultClient} {...props} />
 )
-export const NewClient = reduxConnect(undefined, dispatch => ({
-  addClient: client => dispatch({ type: types.ADD.DO, payload: client })
+export const NewClient = reduxConnect(undefined, (dispatch, props) => ({
+  addClient: client => dispatch({ type: types.ADD.DO, payload: client }),
+  resetPostStatus: () =>
+    dispatch({
+      type: types.ADD.RESET,
+      payload: { clientId: props.clientId }
+    })
 }))(connectors.add.connect()(NewClientDisconnected))
