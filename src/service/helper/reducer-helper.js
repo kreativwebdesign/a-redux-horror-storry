@@ -1,6 +1,12 @@
 import { pending, succeeded, failed, reset } from './status-helper'
 import { fetch, add } from './operation-helper'
-import { PENDING, EMPTY, SUCCESS, FAILED } from 'src/api/constants'
+import {
+  PENDING,
+  EMPTY,
+  SUCCESS,
+  FAILED,
+  NEW_RESOURCE
+} from 'src/api/constants'
 
 const initialDataState = {
   meta: {
@@ -139,22 +145,22 @@ export const createAddCtrlReducer = (
   switch (type) {
     case pending(add(NAMESPACE)): {
       return {
-        [payload.id || 'new']: PENDING
+        [payload.id || NEW_RESOURCE]: PENDING
       }
     }
     case succeeded(add(NAMESPACE)): {
       return {
-        [payload.list[0] || 'new']: SUCCESS
+        [payload.list[0] || NEW_RESOURCE]: SUCCESS
       }
     }
     case failed(add(NAMESPACE)): {
       return {
-        [payload.id || 'new']: FAILED
+        [payload.id || NEW_RESOURCE]: FAILED
       }
     }
     case reset(add(NAMESPACE)): {
       return {
-        [payload.id || 'new']: EMPTY
+        [payload.id || NEW_RESOURCE]: EMPTY
       }
     }
     default:
