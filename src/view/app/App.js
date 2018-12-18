@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import { ClientRouter } from 'src/view/client'
 import { BookingRouter } from 'src/view/booking'
 import NavigationBar from 'src/routing/components/navigation-bar'
@@ -7,7 +7,7 @@ import AppContainer from './AppContainer'
 import styles from './styles/app.scss'
 import './styles/root.scss'
 
-const Index = () => <h2>Home</h2>
+const Index = () => <Redirect to="/clients" />
 
 const App = () => (
   <AppContainer>
