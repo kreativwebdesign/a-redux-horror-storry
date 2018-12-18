@@ -1,6 +1,9 @@
 import { createSelector } from 'reselect'
 import { isSucceededStatus } from './status-helper'
 
+// five minutes
+const RESOURCE_TIME_OUT = 5 * 60 * 1000
+
 export const createDataSelectors = NAMESPACE => {
   const baseSelector = state => state.data[NAMESPACE.toLowerCase()]
   const selectData = createSelector(
@@ -36,22 +39,21 @@ export const createTimetableSelectors = NAMESPACE => {
   const baseSelector = state =>
     state.app.metadata.timetable[NAMESPACE.toLowerCase()]
 
-  const wasResourceUpdatedFiveMinutesAgo = resource => {
-    const fiveMinutes = 5 * 60 * 1000
+  const hasResourceTimedOut = resource => {
     const currentTimestamp = new Date().getTime()
-    const fiveMinutesAgo = currentTimestamp - fiveMinutes
-    return resource > fiveMinutesAgo
+    const maxAge = currentTimestamp - RESOURCE_TIME_OUT
+    return resource > maxAge
   }
 
   const isResourceValid = resourceId => state => {
     const timetable = baseSelector(state)
-    return wasResourceUpdatedFiveMinutesAgo(timetable[resourceId])
+    return hasResourceTimedOut(timetable[resourceId])
   }
 
   const areResourcesValid = resourceIdList => state => {
     const timetable = baseSelector(state)
     return resourceIdList.every(resourceId =>
-      wasResourceUpdatedFiveMinutesAgo(timetable[resourceId])
+      hasResourceTimedOut(timetable[resourceId])
     )
   }
 
