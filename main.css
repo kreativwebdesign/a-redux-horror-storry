@@ -3,40 +3,23 @@
  * @param   { String } $id:        'font-type-1'
  * @param   { Boolean } $use-media: true
  */
-.clientList__client-list--3FFDf {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 30px 30px 30px; }
-  .clientList__client-list--3FFDf .clientList__table--1P_l- {
-    width: 100%; }
-  .clientList__client-list--3FFDf a {
-    display: block; }
-  .clientList__client-list--3FFDf a button {
-    margin: 20px auto !important; }
-
-/**
- * Mixin to print any kind of font contained in the $font-types map
- * @param   { String } $id:        'font-type-1'
- * @param   { Boolean } $use-media: true
- */
-.client__form--2lrOx {
+.index__form--3Fw4T {
   display: flex;
   flex-direction: column;
   padding: 20px; }
-  .client__form--2lrOx input {
+  .index__form--3Fw4T input {
     margin-bottom: 15px !important; }
-  .client__form--2lrOx > * {
+  .index__form--3Fw4T > * {
     width: 250px; }
-  .client__form--2lrOx .client__error--1PUUK,
-  .client__form--2lrOx .client__success--1XhUw {
+  .index__form--3Fw4T .index__error--3hsMd,
+  .index__form--3Fw4T .index__success--cqA3W {
     border-radius: 5px;
     padding: 10px 20px;
     margin-top: 20px; }
-  .client__form--2lrOx .client__error--1PUUK {
+  .index__form--3Fw4T .index__error--3hsMd {
     color: indianred;
     border: 1px solid indianred; }
-  .client__form--2lrOx .client__success--1XhUw {
+  .index__form--3Fw4T .index__success--cqA3W {
     color: forestgreen;
     border: 1px solid forestgreen; }
 
@@ -45,7 +28,66 @@
  * @param   { String } $id:        'font-type-1'
  * @param   { Boolean } $use-media: true
  */
-.navbar__navbar--1-rm4 {
+.index__client-list--6LsGY {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 30px 30px 30px; }
+  .index__client-list--6LsGY .index__table--3Ez9q {
+    width: 100%; }
+  .index__client-list--6LsGY a {
+    display: block; }
+  .index__client-list--6LsGY a button {
+    margin: 20px auto !important; }
+
+/**
+ * Mixin to print any kind of font contained in the $font-types map
+ * @param   { String } $id:        'font-type-1'
+ * @param   { Boolean } $use-media: true
+ */
+.index__form--1w-xg {
+  display: flex;
+  flex-direction: column;
+  padding: 20px; }
+  .index__form--1w-xg input {
+    margin-bottom: 15px !important; }
+  .index__form--1w-xg > * {
+    width: 250px; }
+  .index__form--1w-xg .index__error--2aBbK,
+  .index__form--1w-xg .index__success--iwOC4 {
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 20px; }
+  .index__form--1w-xg .index__error--2aBbK {
+    color: indianred;
+    border: 1px solid indianred; }
+  .index__form--1w-xg .index__success--iwOC4 {
+    color: forestgreen;
+    border: 1px solid forestgreen; }
+
+/**
+ * Mixin to print any kind of font contained in the $font-types map
+ * @param   { String } $id:        'font-type-1'
+ * @param   { Boolean } $use-media: true
+ */
+.index__booking-list--KL4u3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 30px 30px 30px; }
+  .index__booking-list--KL4u3 .index__table--1yKDf {
+    width: 100%; }
+  .index__booking-list--KL4u3 a {
+    display: block; }
+  .index__booking-list--KL4u3 a button {
+    margin: 20px auto !important; }
+
+/**
+ * Mixin to print any kind of font contained in the $font-types map
+ * @param   { String } $id:        'font-type-1'
+ * @param   { Boolean } $use-media: true
+ */
+.index__navbar--lH5sl {
   height: 100%;
   width: 295px;
   background: linear-gradient(135deg, #39F 0%, #3781CA 100%);
@@ -53,19 +95,19 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between; }
-  .navbar__navbar--1-rm4 .navbar__nav-container--3YLmW {
+  .index__navbar--lH5sl .index__nav-container--KI5-x {
     margin-bottom: 50px; }
-  .navbar__navbar--1-rm4 .navbar__title--1Sxb1 a {
+  .index__navbar--lH5sl .index__title--3Hu8k a {
     color: #F8FAFF;
     font-family: Quicksand;
     font-size: 50px;
     font-weight: 700;
     line-height: 63px;
     text-decoration: none; }
-  .navbar__navbar--1-rm4 ul {
+  .index__navbar--lH5sl ul {
     list-style: none;
     padding-left: 0; }
-  .navbar__navbar--1-rm4 .navbar__nav-entry--2GPnm {
+  .index__navbar--lH5sl .index__nav-entry--3NWAK {
     color: #F8FAFF;
     font-size: 40px;
     line-height: 50px;
@@ -75,22 +117,22 @@
     display: block;
     text-decoration: none; }
     @media only screen and (max-width: 680px) {
-      .navbar__navbar--1-rm4 .navbar__nav-entry--2GPnm {
+      .index__navbar--lH5sl .index__nav-entry--3NWAK {
         font-size: 44px;
         line-height: 62px; } }
-    .navbar__navbar--1-rm4 .navbar__nav-entry--2GPnm:not(.navbar__-current--1Ri4p) {
+    .index__navbar--lH5sl .index__nav-entry--3NWAK:not(.index__-current--lGN7K) {
       opacity: 0.55; }
-    .navbar__navbar--1-rm4 .navbar__nav-entry--2GPnm:last-child() {
+    .index__navbar--lH5sl .index__nav-entry--3NWAK:last-child() {
       margin-bottom: 0; }
-  .navbar__navbar--1-rm4 .navbar__delimitter--2NglK {
+  .index__navbar--lH5sl .index__delimitter--CjhYy {
     box-sizing: border-box;
     width: 100%;
     opacity: 0.55;
     border-top: 3px solid #E0E0E0;
     transform: translateX(-35px); }
-  .navbar__navbar--1-rm4 .navbar__sub--28mkv {
+  .index__navbar--lH5sl .index__sub--3JUtB {
     margin-top: 40px; }
-  .navbar__navbar--1-rm4 .navbar__sub-nav-entry--36woP {
+  .index__navbar--lH5sl .index__sub-nav-entry--7Mpl9 {
     opacity: 0.6;
     color: #F8FAFF;
     font-family: Quicksand;
@@ -102,12 +144,12 @@
  * @param   { String } $id:        'font-type-1'
  * @param   { Boolean } $use-media: true
  */
-.app__app--ElxS3 {
+.app__app--D6Inl {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: row; }
-  .app__app--ElxS3 .app__page-body--32GoR {
+  .app__app--D6Inl .app__page-body--3DULv {
     flex-grow: 1;
     height: 100%;
     overflow: auto; }
@@ -124,7 +166,7 @@ html {
   padding: 0;
   margin: 0; }
 
-#root__root--3QNmd {
+#root__root--I6HmN {
   width: 100%;
   height: 100%;
   background-color: #F8FAFF; }

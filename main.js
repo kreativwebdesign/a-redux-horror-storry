@@ -64,7 +64,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "835bc15e9865990a5ec3";
+/******/ 	var hotCurrentHash = "6809f808e5a151d3a3ed";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -6783,6 +6783,66 @@ eval("/**\n * Copyright (c) 2013-present, Facebook, Inc.\n *\n * This source cod
 
 /***/ }),
 
+/***/ "./node_modules/qs/lib/formats.js":
+/*!****************************************!*\
+  !*** ./node_modules/qs/lib/formats.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nvar replace = String.prototype.replace;\nvar percentTwenties = /%20/g;\n\nmodule.exports = {\n    'default': 'RFC3986',\n    formatters: {\n        RFC1738: function (value) {\n            return replace.call(value, percentTwenties, '+');\n        },\n        RFC3986: function (value) {\n            return value;\n        }\n    },\n    RFC1738: 'RFC1738',\n    RFC3986: 'RFC3986'\n};\n\n\n//# sourceURL=webpack:///./node_modules/qs/lib/formats.js?");
+
+/***/ }),
+
+/***/ "./node_modules/qs/lib/index.js":
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nvar stringify = __webpack_require__(/*! ./stringify */ \"./node_modules/qs/lib/stringify.js\");\nvar parse = __webpack_require__(/*! ./parse */ \"./node_modules/qs/lib/parse.js\");\nvar formats = __webpack_require__(/*! ./formats */ \"./node_modules/qs/lib/formats.js\");\n\nmodule.exports = {\n    formats: formats,\n    parse: parse,\n    stringify: stringify\n};\n\n\n//# sourceURL=webpack:///./node_modules/qs/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/qs/lib/parse.js":
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/parse.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nvar utils = __webpack_require__(/*! ./utils */ \"./node_modules/qs/lib/utils.js\");\n\nvar has = Object.prototype.hasOwnProperty;\n\nvar defaults = {\n    allowDots: false,\n    allowPrototypes: false,\n    arrayLimit: 20,\n    charset: 'utf-8',\n    charsetSentinel: false,\n    decoder: utils.decode,\n    delimiter: '&',\n    depth: 5,\n    ignoreQueryPrefix: false,\n    interpretNumericEntities: false,\n    parameterLimit: 1000,\n    parseArrays: true,\n    plainObjects: false,\n    strictNullHandling: false\n};\n\nvar interpretNumericEntities = function (str) {\n    return str.replace(/&#(\\d+);/g, function ($0, numberStr) {\n        return String.fromCharCode(parseInt(numberStr, 10));\n    });\n};\n\n// This is what browsers will submit when the ✓ character occurs in an\n// application/x-www-form-urlencoded body and the encoding of the page containing\n// the form is iso-8859-1, or when the submitted form has an accept-charset\n// attribute of iso-8859-1. Presumably also with other charsets that do not contain\n// the ✓ character, such as us-ascii.\nvar isoSentinel = 'utf8=%26%2310003%3B'; // encodeURIComponent('&#10003;')\n\n// These are the percent-encoded utf-8 octets representing a checkmark, indicating that the request actually is utf-8 encoded.\nvar charsetSentinel = 'utf8=%E2%9C%93'; // encodeURIComponent('✓')\n\nvar parseValues = function parseQueryStringValues(str, options) {\n    var obj = {};\n    var cleanStr = options.ignoreQueryPrefix ? str.replace(/^\\?/, '') : str;\n    var limit = options.parameterLimit === Infinity ? undefined : options.parameterLimit;\n    var parts = cleanStr.split(options.delimiter, limit);\n    var skipIndex = -1; // Keep track of where the utf8 sentinel was found\n    var i;\n\n    var charset = options.charset;\n    if (options.charsetSentinel) {\n        for (i = 0; i < parts.length; ++i) {\n            if (parts[i].indexOf('utf8=') === 0) {\n                if (parts[i] === charsetSentinel) {\n                    charset = 'utf-8';\n                } else if (parts[i] === isoSentinel) {\n                    charset = 'iso-8859-1';\n                }\n                skipIndex = i;\n                i = parts.length; // The eslint settings do not allow break;\n            }\n        }\n    }\n\n    for (i = 0; i < parts.length; ++i) {\n        if (i === skipIndex) {\n            continue;\n        }\n        var part = parts[i];\n\n        var bracketEqualsPos = part.indexOf(']=');\n        var pos = bracketEqualsPos === -1 ? part.indexOf('=') : bracketEqualsPos + 1;\n\n        var key, val;\n        if (pos === -1) {\n            key = options.decoder(part, defaults.decoder, charset);\n            val = options.strictNullHandling ? null : '';\n        } else {\n            key = options.decoder(part.slice(0, pos), defaults.decoder, charset);\n            val = options.decoder(part.slice(pos + 1), defaults.decoder, charset);\n        }\n\n        if (val && options.interpretNumericEntities && charset === 'iso-8859-1') {\n            val = interpretNumericEntities(val);\n        }\n        if (has.call(obj, key)) {\n            obj[key] = utils.combine(obj[key], val);\n        } else {\n            obj[key] = val;\n        }\n    }\n\n    return obj;\n};\n\nvar parseObject = function (chain, val, options) {\n    var leaf = val;\n\n    for (var i = chain.length - 1; i >= 0; --i) {\n        var obj;\n        var root = chain[i];\n\n        if (root === '[]' && options.parseArrays) {\n            obj = [].concat(leaf);\n        } else {\n            obj = options.plainObjects ? Object.create(null) : {};\n            var cleanRoot = root.charAt(0) === '[' && root.charAt(root.length - 1) === ']' ? root.slice(1, -1) : root;\n            var index = parseInt(cleanRoot, 10);\n            if (!options.parseArrays && cleanRoot === '') {\n                obj = { 0: leaf };\n            } else if (\n                !isNaN(index)\n                && root !== cleanRoot\n                && String(index) === cleanRoot\n                && index >= 0\n                && (options.parseArrays && index <= options.arrayLimit)\n            ) {\n                obj = [];\n                obj[index] = leaf;\n            } else {\n                obj[cleanRoot] = leaf;\n            }\n        }\n\n        leaf = obj;\n    }\n\n    return leaf;\n};\n\nvar parseKeys = function parseQueryStringKeys(givenKey, val, options) {\n    if (!givenKey) {\n        return;\n    }\n\n    // Transform dot notation to bracket notation\n    var key = options.allowDots ? givenKey.replace(/\\.([^.[]+)/g, '[$1]') : givenKey;\n\n    // The regex chunks\n\n    var brackets = /(\\[[^[\\]]*])/;\n    var child = /(\\[[^[\\]]*])/g;\n\n    // Get the parent\n\n    var segment = brackets.exec(key);\n    var parent = segment ? key.slice(0, segment.index) : key;\n\n    // Stash the parent if it exists\n\n    var keys = [];\n    if (parent) {\n        // If we aren't using plain objects, optionally prefix keys that would overwrite object prototype properties\n        if (!options.plainObjects && has.call(Object.prototype, parent)) {\n            if (!options.allowPrototypes) {\n                return;\n            }\n        }\n\n        keys.push(parent);\n    }\n\n    // Loop through children appending to the array until we hit depth\n\n    var i = 0;\n    while ((segment = child.exec(key)) !== null && i < options.depth) {\n        i += 1;\n        if (!options.plainObjects && has.call(Object.prototype, segment[1].slice(1, -1))) {\n            if (!options.allowPrototypes) {\n                return;\n            }\n        }\n        keys.push(segment[1]);\n    }\n\n    // If there's a remainder, just add whatever is left\n\n    if (segment) {\n        keys.push('[' + key.slice(segment.index) + ']');\n    }\n\n    return parseObject(keys, val, options);\n};\n\nmodule.exports = function (str, opts) {\n    var options = opts ? utils.assign({}, opts) : {};\n\n    if (options.decoder !== null && options.decoder !== undefined && typeof options.decoder !== 'function') {\n        throw new TypeError('Decoder has to be a function.');\n    }\n\n    options.ignoreQueryPrefix = options.ignoreQueryPrefix === true;\n    options.delimiter = typeof options.delimiter === 'string' || utils.isRegExp(options.delimiter) ? options.delimiter : defaults.delimiter;\n    options.depth = typeof options.depth === 'number' ? options.depth : defaults.depth;\n    options.arrayLimit = typeof options.arrayLimit === 'number' ? options.arrayLimit : defaults.arrayLimit;\n    options.parseArrays = options.parseArrays !== false;\n    options.decoder = typeof options.decoder === 'function' ? options.decoder : defaults.decoder;\n    options.allowDots = typeof options.allowDots === 'undefined' ? defaults.allowDots : !!options.allowDots;\n    options.plainObjects = typeof options.plainObjects === 'boolean' ? options.plainObjects : defaults.plainObjects;\n    options.allowPrototypes = typeof options.allowPrototypes === 'boolean' ? options.allowPrototypes : defaults.allowPrototypes;\n    options.parameterLimit = typeof options.parameterLimit === 'number' ? options.parameterLimit : defaults.parameterLimit;\n    options.strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;\n\n    if (typeof options.charset !== 'undefined' && options.charset !== 'utf-8' && options.charset !== 'iso-8859-1') {\n        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');\n    }\n    if (typeof options.charset === 'undefined') {\n        options.charset = defaults.charset;\n    }\n\n    if (str === '' || str === null || typeof str === 'undefined') {\n        return options.plainObjects ? Object.create(null) : {};\n    }\n\n    var tempObj = typeof str === 'string' ? parseValues(str, options) : str;\n    var obj = options.plainObjects ? Object.create(null) : {};\n\n    // Iterate over the keys and setup the new object\n\n    var keys = Object.keys(tempObj);\n    for (var i = 0; i < keys.length; ++i) {\n        var key = keys[i];\n        var newObj = parseKeys(key, tempObj[key], options);\n        obj = utils.merge(obj, newObj, options);\n    }\n\n    return utils.compact(obj);\n};\n\n\n//# sourceURL=webpack:///./node_modules/qs/lib/parse.js?");
+
+/***/ }),
+
+/***/ "./node_modules/qs/lib/stringify.js":
+/*!******************************************!*\
+  !*** ./node_modules/qs/lib/stringify.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nvar utils = __webpack_require__(/*! ./utils */ \"./node_modules/qs/lib/utils.js\");\nvar formats = __webpack_require__(/*! ./formats */ \"./node_modules/qs/lib/formats.js\");\n\nvar arrayPrefixGenerators = {\n    brackets: function brackets(prefix) { // eslint-disable-line func-name-matching\n        return prefix + '[]';\n    },\n    indices: function indices(prefix, key) { // eslint-disable-line func-name-matching\n        return prefix + '[' + key + ']';\n    },\n    repeat: function repeat(prefix) { // eslint-disable-line func-name-matching\n        return prefix;\n    }\n};\n\nvar isArray = Array.isArray;\nvar push = Array.prototype.push;\nvar pushToArray = function (arr, valueOrArray) {\n    push.apply(arr, isArray(valueOrArray) ? valueOrArray : [valueOrArray]);\n};\n\nvar toISO = Date.prototype.toISOString;\n\nvar defaults = {\n    addQueryPrefix: false,\n    allowDots: false,\n    charset: 'utf-8',\n    charsetSentinel: false,\n    delimiter: '&',\n    encode: true,\n    encoder: utils.encode,\n    encodeValuesOnly: false,\n    // deprecated\n    indices: false,\n    serializeDate: function serializeDate(date) { // eslint-disable-line func-name-matching\n        return toISO.call(date);\n    },\n    skipNulls: false,\n    strictNullHandling: false\n};\n\nvar stringify = function stringify( // eslint-disable-line func-name-matching\n    object,\n    prefix,\n    generateArrayPrefix,\n    strictNullHandling,\n    skipNulls,\n    encoder,\n    filter,\n    sort,\n    allowDots,\n    serializeDate,\n    formatter,\n    encodeValuesOnly,\n    charset\n) {\n    var obj = object;\n    if (typeof filter === 'function') {\n        obj = filter(prefix, obj);\n    } else if (obj instanceof Date) {\n        obj = serializeDate(obj);\n    }\n\n    if (obj === null) {\n        if (strictNullHandling) {\n            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset) : prefix;\n        }\n\n        obj = '';\n    }\n\n    if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean' || utils.isBuffer(obj)) {\n        if (encoder) {\n            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset);\n            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset))];\n        }\n        return [formatter(prefix) + '=' + formatter(String(obj))];\n    }\n\n    var values = [];\n\n    if (typeof obj === 'undefined') {\n        return values;\n    }\n\n    var objKeys;\n    if (Array.isArray(filter)) {\n        objKeys = filter;\n    } else {\n        var keys = Object.keys(obj);\n        objKeys = sort ? keys.sort(sort) : keys;\n    }\n\n    for (var i = 0; i < objKeys.length; ++i) {\n        var key = objKeys[i];\n\n        if (skipNulls && obj[key] === null) {\n            continue;\n        }\n\n        if (Array.isArray(obj)) {\n            pushToArray(values, stringify(\n                obj[key],\n                generateArrayPrefix(prefix, key),\n                generateArrayPrefix,\n                strictNullHandling,\n                skipNulls,\n                encoder,\n                filter,\n                sort,\n                allowDots,\n                serializeDate,\n                formatter,\n                encodeValuesOnly,\n                charset\n            ));\n        } else {\n            pushToArray(values, stringify(\n                obj[key],\n                prefix + (allowDots ? '.' + key : '[' + key + ']'),\n                generateArrayPrefix,\n                strictNullHandling,\n                skipNulls,\n                encoder,\n                filter,\n                sort,\n                allowDots,\n                serializeDate,\n                formatter,\n                encodeValuesOnly,\n                charset\n            ));\n        }\n    }\n\n    return values;\n};\n\nmodule.exports = function (object, opts) {\n    var obj = object;\n    var options = opts ? utils.assign({}, opts) : {};\n\n    if (options.encoder !== null && options.encoder !== undefined && typeof options.encoder !== 'function') {\n        throw new TypeError('Encoder has to be a function.');\n    }\n\n    var delimiter = typeof options.delimiter === 'undefined' ? defaults.delimiter : options.delimiter;\n    var strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;\n    var skipNulls = typeof options.skipNulls === 'boolean' ? options.skipNulls : defaults.skipNulls;\n    var encode = typeof options.encode === 'boolean' ? options.encode : defaults.encode;\n    var encoder = typeof options.encoder === 'function' ? options.encoder : defaults.encoder;\n    var sort = typeof options.sort === 'function' ? options.sort : null;\n    var allowDots = typeof options.allowDots === 'undefined' ? defaults.allowDots : !!options.allowDots;\n    var serializeDate = typeof options.serializeDate === 'function' ? options.serializeDate : defaults.serializeDate;\n    var encodeValuesOnly = typeof options.encodeValuesOnly === 'boolean' ? options.encodeValuesOnly : defaults.encodeValuesOnly;\n    var charset = options.charset || defaults.charset;\n    if (typeof options.charset !== 'undefined' && options.charset !== 'utf-8' && options.charset !== 'iso-8859-1') {\n        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');\n    }\n\n    if (typeof options.format === 'undefined') {\n        options.format = formats['default'];\n    } else if (!Object.prototype.hasOwnProperty.call(formats.formatters, options.format)) {\n        throw new TypeError('Unknown format option provided.');\n    }\n    var formatter = formats.formatters[options.format];\n    var objKeys;\n    var filter;\n\n    if (typeof options.filter === 'function') {\n        filter = options.filter;\n        obj = filter('', obj);\n    } else if (Array.isArray(options.filter)) {\n        filter = options.filter;\n        objKeys = filter;\n    }\n\n    var keys = [];\n\n    if (typeof obj !== 'object' || obj === null) {\n        return '';\n    }\n\n    var arrayFormat;\n    if (options.arrayFormat in arrayPrefixGenerators) {\n        arrayFormat = options.arrayFormat;\n    } else if ('indices' in options) {\n        arrayFormat = options.indices ? 'indices' : 'repeat';\n    } else {\n        arrayFormat = 'indices';\n    }\n\n    var generateArrayPrefix = arrayPrefixGenerators[arrayFormat];\n\n    if (!objKeys) {\n        objKeys = Object.keys(obj);\n    }\n\n    if (sort) {\n        objKeys.sort(sort);\n    }\n\n    for (var i = 0; i < objKeys.length; ++i) {\n        var key = objKeys[i];\n\n        if (skipNulls && obj[key] === null) {\n            continue;\n        }\n        pushToArray(keys, stringify(\n            obj[key],\n            key,\n            generateArrayPrefix,\n            strictNullHandling,\n            skipNulls,\n            encode ? encoder : null,\n            filter,\n            sort,\n            allowDots,\n            serializeDate,\n            formatter,\n            encodeValuesOnly,\n            charset\n        ));\n    }\n\n    var joined = keys.join(delimiter);\n    var prefix = options.addQueryPrefix === true ? '?' : '';\n\n    if (options.charsetSentinel) {\n        if (charset === 'iso-8859-1') {\n            // encodeURIComponent('&#10003;'), the \"numeric entity\" representation of a checkmark\n            prefix += 'utf8=%26%2310003%3B&';\n        } else {\n            // encodeURIComponent('✓')\n            prefix += 'utf8=%E2%9C%93&';\n        }\n    }\n\n    return joined.length > 0 ? prefix + joined : '';\n};\n\n\n//# sourceURL=webpack:///./node_modules/qs/lib/stringify.js?");
+
+/***/ }),
+
+/***/ "./node_modules/qs/lib/utils.js":
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/utils.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nvar has = Object.prototype.hasOwnProperty;\n\nvar hexTable = (function () {\n    var array = [];\n    for (var i = 0; i < 256; ++i) {\n        array.push('%' + ((i < 16 ? '0' : '') + i.toString(16)).toUpperCase());\n    }\n\n    return array;\n}());\n\nvar compactQueue = function compactQueue(queue) {\n    while (queue.length > 1) {\n        var item = queue.pop();\n        var obj = item.obj[item.prop];\n\n        if (Array.isArray(obj)) {\n            var compacted = [];\n\n            for (var j = 0; j < obj.length; ++j) {\n                if (typeof obj[j] !== 'undefined') {\n                    compacted.push(obj[j]);\n                }\n            }\n\n            item.obj[item.prop] = compacted;\n        }\n    }\n};\n\nvar arrayToObject = function arrayToObject(source, options) {\n    var obj = options && options.plainObjects ? Object.create(null) : {};\n    for (var i = 0; i < source.length; ++i) {\n        if (typeof source[i] !== 'undefined') {\n            obj[i] = source[i];\n        }\n    }\n\n    return obj;\n};\n\nvar merge = function merge(target, source, options) {\n    if (!source) {\n        return target;\n    }\n\n    if (typeof source !== 'object') {\n        if (Array.isArray(target)) {\n            target.push(source);\n        } else if (typeof target === 'object') {\n            if ((options && (options.plainObjects || options.allowPrototypes)) || !has.call(Object.prototype, source)) {\n                target[source] = true;\n            }\n        } else {\n            return [target, source];\n        }\n\n        return target;\n    }\n\n    if (typeof target !== 'object') {\n        return [target].concat(source);\n    }\n\n    var mergeTarget = target;\n    if (Array.isArray(target) && !Array.isArray(source)) {\n        mergeTarget = arrayToObject(target, options);\n    }\n\n    if (Array.isArray(target) && Array.isArray(source)) {\n        source.forEach(function (item, i) {\n            if (has.call(target, i)) {\n                if (target[i] && typeof target[i] === 'object') {\n                    target[i] = merge(target[i], item, options);\n                } else {\n                    target.push(item);\n                }\n            } else {\n                target[i] = item;\n            }\n        });\n        return target;\n    }\n\n    return Object.keys(source).reduce(function (acc, key) {\n        var value = source[key];\n\n        if (has.call(acc, key)) {\n            acc[key] = merge(acc[key], value, options);\n        } else {\n            acc[key] = value;\n        }\n        return acc;\n    }, mergeTarget);\n};\n\nvar assign = function assignSingleSource(target, source) {\n    return Object.keys(source).reduce(function (acc, key) {\n        acc[key] = source[key];\n        return acc;\n    }, target);\n};\n\nvar decode = function (str, decoder, charset) {\n    var strWithoutPlus = str.replace(/\\+/g, ' ');\n    if (charset === 'iso-8859-1') {\n        // unescape never throws, no try...catch needed:\n        return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);\n    }\n    // utf-8\n    try {\n        return decodeURIComponent(strWithoutPlus);\n    } catch (e) {\n        return strWithoutPlus;\n    }\n};\n\nvar encode = function encode(str, defaultEncoder, charset) {\n    // This code was originally written by Brian White (mscdex) for the io.js core querystring library.\n    // It has been adapted here for stricter adherence to RFC 3986\n    if (str.length === 0) {\n        return str;\n    }\n\n    var string = typeof str === 'string' ? str : String(str);\n\n    if (charset === 'iso-8859-1') {\n        return escape(string).replace(/%u[0-9a-f]{4}/gi, function ($0) {\n            return '%26%23' + parseInt($0.slice(2), 16) + '%3B';\n        });\n    }\n\n    var out = '';\n    for (var i = 0; i < string.length; ++i) {\n        var c = string.charCodeAt(i);\n\n        if (\n            c === 0x2D // -\n            || c === 0x2E // .\n            || c === 0x5F // _\n            || c === 0x7E // ~\n            || (c >= 0x30 && c <= 0x39) // 0-9\n            || (c >= 0x41 && c <= 0x5A) // a-z\n            || (c >= 0x61 && c <= 0x7A) // A-Z\n        ) {\n            out += string.charAt(i);\n            continue;\n        }\n\n        if (c < 0x80) {\n            out = out + hexTable[c];\n            continue;\n        }\n\n        if (c < 0x800) {\n            out = out + (hexTable[0xC0 | (c >> 6)] + hexTable[0x80 | (c & 0x3F)]);\n            continue;\n        }\n\n        if (c < 0xD800 || c >= 0xE000) {\n            out = out + (hexTable[0xE0 | (c >> 12)] + hexTable[0x80 | ((c >> 6) & 0x3F)] + hexTable[0x80 | (c & 0x3F)]);\n            continue;\n        }\n\n        i += 1;\n        c = 0x10000 + (((c & 0x3FF) << 10) | (string.charCodeAt(i) & 0x3FF));\n        out += hexTable[0xF0 | (c >> 18)]\n            + hexTable[0x80 | ((c >> 12) & 0x3F)]\n            + hexTable[0x80 | ((c >> 6) & 0x3F)]\n            + hexTable[0x80 | (c & 0x3F)];\n    }\n\n    return out;\n};\n\nvar compact = function compact(value) {\n    var queue = [{ obj: { o: value }, prop: 'o' }];\n    var refs = [];\n\n    for (var i = 0; i < queue.length; ++i) {\n        var item = queue[i];\n        var obj = item.obj[item.prop];\n\n        var keys = Object.keys(obj);\n        for (var j = 0; j < keys.length; ++j) {\n            var key = keys[j];\n            var val = obj[key];\n            if (typeof val === 'object' && val !== null && refs.indexOf(val) === -1) {\n                queue.push({ obj: obj, prop: key });\n                refs.push(val);\n            }\n        }\n    }\n\n    compactQueue(queue);\n\n    return value;\n};\n\nvar isRegExp = function isRegExp(obj) {\n    return Object.prototype.toString.call(obj) === '[object RegExp]';\n};\n\nvar isBuffer = function isBuffer(obj) {\n    if (obj === null || typeof obj === 'undefined') {\n        return false;\n    }\n\n    return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));\n};\n\nvar combine = function combine(a, b) {\n    return [].concat(a, b);\n};\n\nmodule.exports = {\n    arrayToObject: arrayToObject,\n    assign: assign,\n    combine: combine,\n    compact: compact,\n    decode: decode,\n    encode: encode,\n    isBuffer: isBuffer,\n    isRegExp: isRegExp,\n    merge: merge\n};\n\n\n//# sourceURL=webpack:///./node_modules/qs/lib/utils.js?");
+
+/***/ }),
+
 /***/ "./node_modules/react-dom/cjs/react-dom.development.js":
 /*!*************************************************************!*\
   !*** ./node_modules/react-dom/cjs/react-dom.development.js ***!
@@ -10965,39 +11025,51 @@ eval("module.exports = function(module) {\n\tif (!module.webpackPolyfill) {\n\t\
 
 /***/ }),
 
-/***/ "./src/api/api.js":
-/*!************************!*\
-  !*** ./src/api/api.js ***!
-  \************************/
-/*! exports provided: fetchClient, postClient */
+/***/ "./src/api/constants.js":
+/*!******************************!*\
+  !*** ./src/api/constants.js ***!
+  \******************************/
+/*! exports provided: PENDING, SUCCESS, FAILED, REJECTED, EMPTY, FETCH, ADD, DELETE, UPDATE, RESET */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetchClient\", function() { return fetchClient; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"postClient\", function() { return postClient; });\n/* harmony import */ var _normalize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./normalize */ \"./src/api/normalize.js\");\n/* harmony import */ var _handleStatus__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./handleStatus */ \"./src/api/handleStatus.js\");\n/* harmony import */ var _handleError__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./handleError */ \"./src/api/handleError.js\");\n\n\n\nconst baseUrl = 'https://lines-written-in-early-spring.herokuapp.com/';\nconst clientUrl = baseUrl + '/clients';\nconst fetchClient = () => {\n  return fetch(clientUrl).then(res => res.json()).then(_normalize__WEBPACK_IMPORTED_MODULE_0__[\"normalizeFetch\"]).then(_handleStatus__WEBPACK_IMPORTED_MODULE_1__[\"default\"]).catch(_handleError__WEBPACK_IMPORTED_MODULE_2__[\"default\"]);\n};\nconst postClient = client => {\n  return fetch(clientUrl, {\n    body: JSON.stringify(client),\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json'\n    }\n  }).then(res => res.json()).then(_normalize__WEBPACK_IMPORTED_MODULE_0__[\"normalizePost\"]).then(_handleStatus__WEBPACK_IMPORTED_MODULE_1__[\"default\"]).catch(_handleError__WEBPACK_IMPORTED_MODULE_2__[\"default\"]);\n};\n\n//# sourceURL=webpack:///./src/api/api.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PENDING\", function() { return PENDING; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"SUCCESS\", function() { return SUCCESS; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"FAILED\", function() { return FAILED; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"REJECTED\", function() { return REJECTED; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"EMPTY\", function() { return EMPTY; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"FETCH\", function() { return FETCH; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ADD\", function() { return ADD; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"DELETE\", function() { return DELETE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"UPDATE\", function() { return UPDATE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"RESET\", function() { return RESET; });\nconst PENDING = 'PENDING';\nconst SUCCESS = 'SUCCESS';\nconst FAILED = 'FAILED';\nconst REJECTED = 'REJECTED';\nconst EMPTY = 'EMPTY';\nconst FETCH = 'FETCH';\nconst ADD = 'ADD';\nconst DELETE = 'DELETE';\nconst UPDATE = 'UPDATE';\nconst RESET = 'RESET';\n\n//# sourceURL=webpack:///./src/api/constants.js?");
 
 /***/ }),
 
-/***/ "./src/api/handleError.js":
-/*!********************************!*\
-  !*** ./src/api/handleError.js ***!
-  \********************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/commons/constants/api */ \"./src/commons/constants/api.js\");\n\n\nconst handleError = (err, payload) => {\n  return { ...payload,\n    meta: { ...(payload ? payload.meta : undefined),\n      status: {\n        status: src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"],\n        error: err\n      }\n    }\n  };\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (handleError);\n\n//# sourceURL=webpack:///./src/api/handleError.js?");
-
-/***/ }),
-
-/***/ "./src/api/handleStatus.js":
+/***/ "./src/api/handle-error.js":
 /*!*********************************!*\
-  !*** ./src/api/handleStatus.js ***!
+  !*** ./src/api/handle-error.js ***!
   \*********************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/commons/constants/api */ \"./src/commons/constants/api.js\");\n\n\nconst handleStatus = payload => {\n  const status = payload.error ? {\n    status: src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"],\n    error: payload.error\n  } : {\n    status: src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"SUCCESS\"]\n  };\n  return { ...payload,\n    meta: { ...payload.meta,\n      status\n    }\n  };\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (handleStatus);\n\n//# sourceURL=webpack:///./src/api/handleStatus.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n\n\nconst handleError = (err, payload) => {\n  return { ...payload,\n    meta: { ...(payload ? payload.meta : undefined),\n      status: {\n        status: src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"],\n        error: err\n      }\n    }\n  };\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (handleError);\n\n//# sourceURL=webpack:///./src/api/handle-error.js?");
+
+/***/ }),
+
+/***/ "./src/api/handle-status.js":
+/*!**********************************!*\
+  !*** ./src/api/handle-status.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n\n\nconst handleStatus = payload => {\n  const status = payload.error ? {\n    status: src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"],\n    error: payload.error\n  } : {\n    status: src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"SUCCESS\"]\n  };\n  return { ...(payload.error ? {} : payload),\n    meta: { ...payload.meta,\n      status\n    }\n  };\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (handleStatus);\n\n//# sourceURL=webpack:///./src/api/handle-status.js?");
+
+/***/ }),
+
+/***/ "./src/api/index.js":
+/*!**************************!*\
+  !*** ./src/api/index.js ***!
+  \**************************/
+/*! exports provided: fetchClients, fetchSingleClient, postClient, fetchBookings, fetchSingleBooking, postBooking */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetchClients\", function() { return fetchClients; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetchSingleClient\", function() { return fetchSingleClient; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"postClient\", function() { return postClient; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetchBookings\", function() { return fetchBookings; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetchSingleBooking\", function() { return fetchSingleBooking; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"postBooking\", function() { return postBooking; });\n/* harmony import */ var _normalize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./normalize */ \"./src/api/normalize.js\");\n/* harmony import */ var _handle_status__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./handle-status */ \"./src/api/handle-status.js\");\n/* harmony import */ var _handle_error__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./handle-error */ \"./src/api/handle-error.js\");\n\n\n\nconst baseUrl = 'https://lines-written-in-early-spring.herokuapp.com';\nconst clientUrl = baseUrl + '/clients';\nconst bookingUrl = baseUrl + '/bookings';\n\nconst createFetch = url => () => {\n  return fetch(url).then(res => res.json()).then(_normalize__WEBPACK_IMPORTED_MODULE_0__[\"normalizeFetch\"]).then(_handle_status__WEBPACK_IMPORTED_MODULE_1__[\"default\"]).catch(_handle_error__WEBPACK_IMPORTED_MODULE_2__[\"default\"]);\n};\n\nconst createSingleFetch = url => id => {\n  return fetch(url + '/' + id).then(res => res.json()).then(_normalize__WEBPACK_IMPORTED_MODULE_0__[\"normalizeSingleFetch\"]).then(_handle_status__WEBPACK_IMPORTED_MODULE_1__[\"default\"]).catch(_handle_error__WEBPACK_IMPORTED_MODULE_2__[\"default\"]);\n};\n\nconst createPost = url => payload => {\n  return fetch(url, {\n    body: JSON.stringify(payload),\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json'\n    }\n  }).then(res => res.json()).then(_normalize__WEBPACK_IMPORTED_MODULE_0__[\"normalizePost\"]).then(_handle_status__WEBPACK_IMPORTED_MODULE_1__[\"default\"]).catch(_handle_error__WEBPACK_IMPORTED_MODULE_2__[\"default\"]);\n};\n\nconst fetchClients = createFetch(clientUrl);\nconst fetchSingleClient = createSingleFetch(clientUrl);\nconst postClient = createPost(clientUrl);\nconst fetchBookings = createFetch(bookingUrl);\nconst fetchSingleBooking = createSingleFetch(bookingUrl);\nconst postBooking = createPost(bookingUrl);\n\n//# sourceURL=webpack:///./src/api/index.js?");
 
 /***/ }),
 
@@ -11005,235 +11077,11 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_
 /*!******************************!*\
   !*** ./src/api/normalize.js ***!
   \******************************/
-/*! exports provided: normalizeFetch, normalizePost */
+/*! exports provided: normalizeFetch, normalizeSingleFetch, normalizePost */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"normalizeFetch\", function() { return normalizeFetch; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"normalizePost\", function() { return normalizePost; });\nconst normalizeFetch = response => {\n  const list = [];\n  const data = {};\n  return {\n    data: response.reduce((data, obj) => {\n      data[obj.id] = obj;\n      list.push(obj.id);\n      return data;\n    }, data),\n    list\n  };\n};\nconst normalizePost = response => {\n  if (response.error) {\n    return response;\n  }\n\n  return {\n    data: {\n      [response.id]: response\n    },\n    meta: undefined,\n    list: [response.id]\n  };\n};\n\n//# sourceURL=webpack:///./src/api/normalize.js?");
-
-/***/ }),
-
-/***/ "./src/app/App.js":
-/*!************************!*\
-  !*** ./src/app/App.js ***!
-  \************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var src_client_components_clientRouter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/client/components/clientRouter */ \"./src/client/components/clientRouter.js\");\n/* harmony import */ var src_routing_Navbar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/routing/Navbar */ \"./src/routing/Navbar.js\");\n/* harmony import */ var _AppContainer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./AppContainer */ \"./src/app/AppContainer.js\");\n/* harmony import */ var _styles_app_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./styles/app.scss */ \"./src/app/styles/app.scss\");\n/* harmony import */ var _styles_app_scss__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_styles_app_scss__WEBPACK_IMPORTED_MODULE_5__);\n/* harmony import */ var _styles_root_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./styles/root.scss */ \"./src/app/styles/root.scss\");\n/* harmony import */ var _styles_root_scss__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_styles_root_scss__WEBPACK_IMPORTED_MODULE_6__);\n\n\n\n\n\n\n\n\nconst Index = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"h2\", null, \"Home\");\n\nconst App = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AppContainer__WEBPACK_IMPORTED_MODULE_4__[\"default\"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"main\", {\n  className: _styles_app_scss__WEBPACK_IMPORTED_MODULE_5___default.a.app\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(src_routing_Navbar__WEBPACK_IMPORTED_MODULE_3__[\"default\"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"section\", {\n  className: _styles_app_scss__WEBPACK_IMPORTED_MODULE_5___default.a.pageBody\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Switch\"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n  path: \"/\",\n  exact: true,\n  component: Index\n}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n  path: \"/clients\",\n  component: src_client_components_clientRouter__WEBPACK_IMPORTED_MODULE_2__[\"default\"]\n})))));\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (App);\n\n//# sourceURL=webpack:///./src/app/App.js?");
-
-/***/ }),
-
-/***/ "./src/app/AppContainer.js":
-/*!*********************************!*\
-  !*** ./src/app/AppContainer.js ***!
-  \*********************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var redux_persist_integration_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux-persist/integration/react */ \"./node_modules/redux-persist/es/integration/react.js\");\n/* harmony import */ var _redux_store__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../redux/store */ \"./src/redux/store.js\");\n\n\n\n\n\n\nconst AppContainer = ({\n  children\n}) => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_1__[\"Provider\"], {\n  store: _redux_store__WEBPACK_IMPORTED_MODULE_4__[\"store\"]\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(redux_persist_integration_react__WEBPACK_IMPORTED_MODULE_3__[\"PersistGate\"], {\n  loading: null,\n  persistor: _redux_store__WEBPACK_IMPORTED_MODULE_4__[\"persistor\"]\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__[\"HashRouter\"], null, children)));\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (AppContainer);\n\n//# sourceURL=webpack:///./src/app/AppContainer.js?");
-
-/***/ }),
-
-/***/ "./src/app/styles/app.scss":
-/*!*********************************!*\
-  !*** ./src/app/styles/app.scss ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"app\":\"app__app--ElxS3\",\"page-body\":\"app__page-body--32GoR\",\"pageBody\":\"app__page-body--32GoR\"};\n\n//# sourceURL=webpack:///./src/app/styles/app.scss?");
-
-/***/ }),
-
-/***/ "./src/app/styles/root.scss":
-/*!**********************************!*\
-  !*** ./src/app/styles/root.scss ***!
-  \**********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"root\":\"root__root--3QNmd\"};\n\n//# sourceURL=webpack:///./src/app/styles/root.scss?");
-
-/***/ }),
-
-/***/ "./src/client/components/Client.js":
-/*!*****************************************!*\
-  !*** ./src/client/components/Client.js ***!
-  \*****************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! semantic-ui-react */ \"./node_modules/semantic-ui-react/dist/es/index.js\");\n/* harmony import */ var formik__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! formik */ \"./node_modules/formik/dist/formik.esm.js\");\n/* harmony import */ var _redux__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../redux */ \"./src/client/redux/index.js\");\n/* harmony import */ var _styles_client_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./styles/client.scss */ \"./src/client/components/styles/client.scss\");\n/* harmony import */ var _styles_client_scss__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_styles_client_scss__WEBPACK_IMPORTED_MODULE_5__);\n\n\n\n\n\n\nconst defaultClient = {\n  id: undefined,\n  lastName: '',\n  firstName: '',\n  emailAddress: ''\n};\n\nconst Client = ({\n  client,\n  status,\n  fetchClient,\n  addClient,\n  match\n}) => {\n  const {\n    clientId\n  } = match.params;\n  const [isFetching, setIsFetching] = Object(react__WEBPACK_IMPORTED_MODULE_0__[\"useState\"])(false);\n\n  if (clientId && !client) {\n    if (!isFetching) {\n      fetchClient();\n      setIsFetching(true);\n    }\n\n    return 'Fetching client';\n  }\n\n  const wasSuccessfull = () => status && status.status === 'SUCCESS' && status.operation === 'ADD';\n\n  const hasFailed = () => status && status.status === 'FAILED' && status.operation === 'ADD';\n\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"Formik\"], {\n    initialValues: client || defaultClient,\n    onSubmit: values => {\n      addClient(values);\n    }\n  }, ({\n    handleSubmit,\n    isSubmitting,\n    handleChange,\n    handleBlur,\n    values,\n    setSubmitting\n    /* and other goodies */\n\n  }) => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"form\", {\n    onSubmit: handleSubmit,\n    className: _styles_client_scss__WEBPACK_IMPORTED_MODULE_5___default.a.form\n  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Firstname\",\n    type: \"text\",\n    name: \"firstName\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.firstName\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"firstName\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Lastname\",\n    type: \"text\",\n    name: \"lastName\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.lastName\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"lastName\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Email Address\",\n    type: \"text\",\n    name: \"emailAddress\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.emailAddress\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"emailAddress\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Button\"], {\n    type: \"submit\",\n    primary: true\n  }, \"Submit\"), wasSuccessfull() && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n    className: _styles_client_scss__WEBPACK_IMPORTED_MODULE_5___default.a.success\n  }, \"Successful operation\"), hasFailed() && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n    className: _styles_client_scss__WEBPACK_IMPORTED_MODULE_5___default.a.error\n  }, \"Operation failed\")));\n};\n\nconst mapStateToProps = (state, props) => {\n  const {\n    clientId\n  } = props.match.params;\n  return {\n    client: clientId ? _redux__WEBPACK_IMPORTED_MODULE_4__[\"selectors\"].selectDataById(clientId)(state) : undefined,\n    status: _redux__WEBPACK_IMPORTED_MODULE_4__[\"selectors\"].selectStatus(state)\n  };\n};\n\nconst mapDispatchToProps = dispatch => ({\n  fetchClient: () => dispatch({\n    type: _redux__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.DO\n  }),\n  addClient: client => dispatch({\n    type: _redux__WEBPACK_IMPORTED_MODULE_4__[\"types\"].ADD.DO,\n    payload: client\n  })\n});\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_1__[\"connect\"])(mapStateToProps, mapDispatchToProps)(Client));\n\n//# sourceURL=webpack:///./src/client/components/Client.js?");
-
-/***/ }),
-
-/***/ "./src/client/components/ClientList.js":
-/*!*********************************************!*\
-  !*** ./src/client/components/ClientList.js ***!
-  \*********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! semantic-ui-react */ \"./node_modules/semantic-ui-react/dist/es/index.js\");\n/* harmony import */ var _ClientRow__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ClientRow */ \"./src/client/components/ClientRow.js\");\n/* harmony import */ var src_commons_components_state_WithHandledState__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/commons/components/state/WithHandledState */ \"./src/commons/components/state/WithHandledState.js\");\n/* harmony import */ var _redux__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../redux */ \"./src/client/redux/index.js\");\n/* harmony import */ var _styles_clientList_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./styles/clientList.scss */ \"./src/client/components/styles/clientList.scss\");\n/* harmony import */ var _styles_clientList_scss__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_styles_clientList_scss__WEBPACK_IMPORTED_MODULE_7__);\n\n\n\n\n\n\n\n\n\nconst ClientList = ({\n  fetchClients\n}) => {\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(src_commons_components_state_WithHandledState__WEBPACK_IMPORTED_MODULE_5__[\"default\"], {\n    stateSelector: _redux__WEBPACK_IMPORTED_MODULE_6__[\"selectors\"].selectComplete,\n    whenEmpty: fetchClients\n  }, state => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n    className: _styles_clientList_scss__WEBPACK_IMPORTED_MODULE_7___default.a.clientList\n  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__[\"Link\"], {\n    to: \"/clients/new\"\n  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_3__[\"Button\"], {\n    color: \"green\",\n    content: \"Add new Client\",\n    icon: \"add\",\n    labelPosition: \"right\"\n  })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_3__[\"Table\"], {\n    className: _styles_clientList_scss__WEBPACK_IMPORTED_MODULE_7___default.a.table\n  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_3__[\"Table\"].Body, null, state.list.map(clientId => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ClientRow__WEBPACK_IMPORTED_MODULE_4__[\"default\"], {\n    clientId: clientId,\n    key: clientId\n  }))))));\n};\n\nconst mapDispatchToProps = dispatch => ({\n  fetchClients: () => dispatch({\n    type: _redux__WEBPACK_IMPORTED_MODULE_6__[\"types\"].FETCH.DO\n  })\n});\n\nconst Connected = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__[\"connect\"])(() => ({}), mapDispatchToProps)(ClientList);\nConnected.displayName = 'Clients';\nConnected.url = '/clients';\n/* harmony default export */ __webpack_exports__[\"default\"] = (Connected);\n\n//# sourceURL=webpack:///./src/client/components/ClientList.js?");
-
-/***/ }),
-
-/***/ "./src/client/components/ClientRow.js":
-/*!********************************************!*\
-  !*** ./src/client/components/ClientRow.js ***!
-  \********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var _redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../redux */ \"./src/client/redux/index.js\");\n\n\n\n\n\nconst ClientRow = ({\n  client\n}) => {\n  if (!client) {\n    return 'sorry client could not be found';\n  }\n\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"tr\", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, client.firstName), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, client.lastName), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, client.emailAddress), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__[\"Link\"], {\n    to: `/clients/${client.id}`\n  }, \"Detail\")));\n};\n\nconst mapStateToProps = (state, props) => ({\n  client: _redux__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"].selectDataById(props.clientId)(state)\n});\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_1__[\"connect\"])(mapStateToProps)(ClientRow));\n\n//# sourceURL=webpack:///./src/client/components/ClientRow.js?");
-
-/***/ }),
-
-/***/ "./src/client/components/clientRouter.js":
-/*!***********************************************!*\
-  !*** ./src/client/components/clientRouter.js ***!
-  \***********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var _ClientList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ClientList */ \"./src/client/components/ClientList.js\");\n/* harmony import */ var _Client__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Client */ \"./src/client/components/Client.js\");\n\n\n\n\n\nconst ClientRouter = () => {\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Switch\"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/clients\",\n    exact: true,\n    component: _ClientList__WEBPACK_IMPORTED_MODULE_2__[\"default\"]\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/clients/new\",\n    component: _Client__WEBPACK_IMPORTED_MODULE_3__[\"default\"]\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/clients/:clientId\",\n    component: _Client__WEBPACK_IMPORTED_MODULE_3__[\"default\"]\n  })));\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (ClientRouter);\n\n//# sourceURL=webpack:///./src/client/components/clientRouter.js?");
-
-/***/ }),
-
-/***/ "./src/client/components/styles/client.scss":
-/*!**************************************************!*\
-  !*** ./src/client/components/styles/client.scss ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"form\":\"client__form--2lrOx\",\"error\":\"client__error--1PUUK\",\"success\":\"client__success--1XhUw\"};\n\n//# sourceURL=webpack:///./src/client/components/styles/client.scss?");
-
-/***/ }),
-
-/***/ "./src/client/components/styles/clientList.scss":
-/*!******************************************************!*\
-  !*** ./src/client/components/styles/clientList.scss ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"client-list\":\"clientList__client-list--3FFDf\",\"clientList\":\"clientList__client-list--3FFDf\",\"table\":\"clientList__table--1P_l-\"};\n\n//# sourceURL=webpack:///./src/client/components/styles/clientList.scss?");
-
-/***/ }),
-
-/***/ "./src/client/redux/clientSaga.js":
-/*!****************************************!*\
-  !*** ./src/client/redux/clientSaga.js ***!
-  \****************************************/
-/*! exports provided: fetchClient, watchFetchClient, addClient, watchAddClient */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetchClient\", function() { return fetchClient; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"watchFetchClient\", function() { return watchFetchClient; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"addClient\", function() { return addClient; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"watchAddClient\", function() { return watchAddClient; });\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./types */ \"./src/client/redux/types.js\");\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var src_api_api__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/api/api */ \"./src/api/api.js\");\n/* harmony import */ var src_redux_helper_addOperationHelper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/redux/helper/addOperationHelper */ \"./src/redux/helper/addOperationHelper.js\");\n\n\n\n\nfunction* fetchClient() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"put\"])({\n    type: _types__WEBPACK_IMPORTED_MODULE_0__[\"default\"].FETCH.PENDING\n  });\n  const response = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"call\"])(src_api_api__WEBPACK_IMPORTED_MODULE_2__[\"fetchClient\"]);\n  const payload = Object(src_redux_helper_addOperationHelper__WEBPACK_IMPORTED_MODULE_3__[\"setFetchOperation\"])(response);\n\n  if (response.meta.status.error) {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_0__[\"default\"].FETCH.FAILED,\n      payload\n    });\n  } else {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_0__[\"default\"].FETCH.SUCCESS,\n      payload\n    });\n  }\n}\nfunction* watchFetchClient() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"takeEvery\"])(_types__WEBPACK_IMPORTED_MODULE_0__[\"default\"].FETCH.DO, fetchClient);\n}\nfunction* addClient({\n  payload: client\n}) {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"put\"])({\n    type: _types__WEBPACK_IMPORTED_MODULE_0__[\"default\"].ADD.PENDING\n  });\n  const response = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"call\"])(() => src_api_api__WEBPACK_IMPORTED_MODULE_2__[\"postClient\"](client));\n  const payload = Object(src_redux_helper_addOperationHelper__WEBPACK_IMPORTED_MODULE_3__[\"setAddOperation\"])(response);\n\n  if (response.meta.status.error) {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_0__[\"default\"].ADD.FAILED,\n      payload\n    });\n  } else {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_0__[\"default\"].ADD.SUCCESS,\n      payload\n    });\n  }\n}\nfunction* watchAddClient() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"takeEvery\"])(_types__WEBPACK_IMPORTED_MODULE_0__[\"default\"].ADD.DO, addClient);\n}\n\n//# sourceURL=webpack:///./src/client/redux/clientSaga.js?");
-
-/***/ }),
-
-/***/ "./src/client/redux/index.js":
-/*!***********************************!*\
-  !*** ./src/client/redux/index.js ***!
-  \***********************************/
-/*! exports provided: selectors, reducer, types */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"reducer\", function() { return reducer; });\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./types */ \"./src/client/redux/types.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"types\", function() { return _types__WEBPACK_IMPORTED_MODULE_0__[\"default\"]; });\n\n/* harmony import */ var src_redux_helper_reducerHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/redux/helper/reducerHelper */ \"./src/redux/helper/reducerHelper.js\");\n/* harmony import */ var src_redux_helper_selectorHelper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/redux/helper/selectorHelper */ \"./src/redux/helper/selectorHelper.js\");\n\n\n\nconst selectors = Object(src_redux_helper_selectorHelper__WEBPACK_IMPORTED_MODULE_2__[\"createSelectors\"])(({\n  clients\n}) => clients);\nconst reducer = Object(src_redux_helper_reducerHelper__WEBPACK_IMPORTED_MODULE_1__[\"createDataReducer\"])('CLIENT');\n\n\n//# sourceURL=webpack:///./src/client/redux/index.js?");
-
-/***/ }),
-
-/***/ "./src/client/redux/types.js":
-/*!***********************************!*\
-  !*** ./src/client/redux/types.js ***!
-  \***********************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_redux_helper_typeHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/redux/helper/typeHelper */ \"./src/redux/helper/typeHelper.js\");\n\nconst NAMESPACE = 'CLIENT';\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(src_redux_helper_typeHelper__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(NAMESPACE));\n\n//# sourceURL=webpack:///./src/client/redux/types.js?");
-
-/***/ }),
-
-/***/ "./src/commons/components/state/Empty.js":
-/*!***********************************************!*\
-  !*** ./src/commons/components/state/Empty.js ***!
-  \***********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\n\nconst Loading = ({\n  isEmpty,\n  children\n}) => {\n  if (isEmpty) {\n    children();\n  }\n\n  return null;\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Loading);\n\n//# sourceURL=webpack:///./src/commons/components/state/Empty.js?");
-
-/***/ }),
-
-/***/ "./src/commons/components/state/Error.js":
-/*!***********************************************!*\
-  !*** ./src/commons/components/state/Error.js ***!
-  \***********************************************/
-/*! exports provided: DefaultError, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"DefaultError\", function() { return DefaultError; });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\nconst DefaultError = () => 'An error occurred, please try again later. Sorry about that!';\n\nconst Error = ({\n  hasFailed,\n  children\n}) => {\n  if (hasFailed) {\n    return children ? children : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DefaultError, null);\n  }\n\n  return null;\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Error);\n\n//# sourceURL=webpack:///./src/commons/components/state/Error.js?");
-
-/***/ }),
-
-/***/ "./src/commons/components/state/Loading.js":
-/*!*************************************************!*\
-  !*** ./src/commons/components/state/Loading.js ***!
-  \*************************************************/
-/*! exports provided: DefaultLoader, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"DefaultLoader\", function() { return DefaultLoader; });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\nconst DefaultLoader = () => 'Loading...';\n\nconst Loading = ({\n  isPending,\n  children\n}) => {\n  if (isPending) {\n    return children ? children : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(DefaultLoader, null);\n  }\n\n  return null;\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Loading);\n\n//# sourceURL=webpack:///./src/commons/components/state/Loading.js?");
-
-/***/ }),
-
-/***/ "./src/commons/components/state/Success.js":
-/*!*************************************************!*\
-  !*** ./src/commons/components/state/Success.js ***!
-  \*************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\n\nconst Success = ({\n  succeeded,\n  children\n}) => {\n  if (succeeded) {\n    return children();\n  }\n\n  return null;\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Success);\n\n//# sourceURL=webpack:///./src/commons/components/state/Success.js?");
-
-/***/ }),
-
-/***/ "./src/commons/components/state/WithHandledState.js":
-/*!**********************************************************!*\
-  !*** ./src/commons/components/state/WithHandledState.js ***!
-  \**********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var _Loading__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Loading */ \"./src/commons/components/state/Loading.js\");\n/* harmony import */ var _Success__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Success */ \"./src/commons/components/state/Success.js\");\n/* harmony import */ var _Empty__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Empty */ \"./src/commons/components/state/Empty.js\");\n/* harmony import */ var _Error__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Error */ \"./src/commons/components/state/Error.js\");\n\n\n\n\n\n\n\nconst WithHandledState = ({\n  state = {},\n  whenEmpty,\n  children,\n  onError,\n  whileLoading\n}) => {\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Success__WEBPACK_IMPORTED_MODULE_3__[\"default\"], {\n    succeeded: state.hasSucceeded\n  }, () => children(state)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Loading__WEBPACK_IMPORTED_MODULE_2__[\"default\"], {\n    isPending: state.isPending\n  }, whileLoading), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Error__WEBPACK_IMPORTED_MODULE_5__[\"default\"], {\n    hasFailed: state.hasFailed\n  }, onError), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Empty__WEBPACK_IMPORTED_MODULE_4__[\"default\"], {\n    isEmpty: state.isEmpty\n  }, whenEmpty));\n};\n\nconst mapStateToProps = (state, props) => ({\n  state: props.stateSelector(state)\n});\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_1__[\"connect\"])(mapStateToProps, WithHandledState)(WithHandledState));\n\n//# sourceURL=webpack:///./src/commons/components/state/WithHandledState.js?");
-
-/***/ }),
-
-/***/ "./src/commons/constants/api.js":
-/*!**************************************!*\
-  !*** ./src/commons/constants/api.js ***!
-  \**************************************/
-/*! exports provided: PENDING, SUCCESS, FAILED, REJECTED, EMPTY, FETCH, ADD, DELETE, UPDATE */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PENDING\", function() { return PENDING; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"SUCCESS\", function() { return SUCCESS; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"FAILED\", function() { return FAILED; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"REJECTED\", function() { return REJECTED; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"EMPTY\", function() { return EMPTY; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"FETCH\", function() { return FETCH; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ADD\", function() { return ADD; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"DELETE\", function() { return DELETE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"UPDATE\", function() { return UPDATE; });\nconst PENDING = 'PENDING';\nconst SUCCESS = 'SUCCESS';\nconst FAILED = 'FAILED';\nconst REJECTED = 'REJECTED';\nconst EMPTY = 'EMPTY';\nconst FETCH = 'FETCH';\nconst ADD = 'ADD';\nconst DELETE = 'DELETE';\nconst UPDATE = 'UPDATE';\n\n//# sourceURL=webpack:///./src/commons/constants/api.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"normalizeFetch\", function() { return normalizeFetch; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"normalizeSingleFetch\", function() { return normalizeSingleFetch; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"normalizePost\", function() { return normalizePost; });\nconst normalizeFetch = response => {\n  const list = [];\n  const data = {};\n  return {\n    data: response.reduce((data, obj) => {\n      data[obj.id] = obj;\n      list.push(obj.id);\n      return data;\n    }, data),\n    list\n  };\n};\nconst normalizeSingleFetch = response => {\n  if (response.error) {\n    return response;\n  }\n\n  return {\n    data: {\n      [response.id]: response\n    },\n    meta: undefined,\n    list: [response.id]\n  };\n};\nconst normalizePost = normalizeSingleFetch;\n\n//# sourceURL=webpack:///./src/api/normalize.js?");
 
 /***/ }),
 
@@ -11245,127 +11093,30 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _app_App__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app/App */ \"./src/app/App.js\");\n\n\n\nreact_dom__WEBPACK_IMPORTED_MODULE_0___default.a.render(react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_app_App__WEBPACK_IMPORTED_MODULE_2__[\"default\"], null), document.getElementById('app'));\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _view_app_App__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./view/app/App */ \"./src/view/app/App.js\");\n\n\n\nreact_dom__WEBPACK_IMPORTED_MODULE_0___default.a.render(react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_view_app_App__WEBPACK_IMPORTED_MODULE_2__[\"default\"], null), document.getElementById('app'));\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ }),
 
-/***/ "./src/redux/helper/addOperationHelper.js":
-/*!************************************************!*\
-  !*** ./src/redux/helper/addOperationHelper.js ***!
-  \************************************************/
-/*! exports provided: setFetchOperation, setAddOperation, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"setFetchOperation\", function() { return setFetchOperation; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"setAddOperation\", function() { return setAddOperation; });\n/* harmony import */ var src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/commons/constants/api */ \"./src/commons/constants/api.js\");\n\n\nconst addOperationHelper = operation => payload => ({ ...payload,\n  meta: { ...payload.meta,\n    status: { ...payload.meta.status,\n      operation: operation\n    }\n  }\n});\n\nconst setFetchOperation = addOperationHelper(src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"FETCH\"]);\nconst setAddOperation = addOperationHelper(src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"ADD\"]);\n/* harmony default export */ __webpack_exports__[\"default\"] = (addOperationHelper);\n\n//# sourceURL=webpack:///./src/redux/helper/addOperationHelper.js?");
-
-/***/ }),
-
-/***/ "./src/redux/helper/operationHelper.js":
-/*!*********************************************!*\
-  !*** ./src/redux/helper/operationHelper.js ***!
-  \*********************************************/
-/*! exports provided: fetch, add, del, update */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetch\", function() { return fetch; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"add\", function() { return add; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"del\", function() { return del; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"update\", function() { return update; });\n/* harmony import */ var src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/commons/constants/api */ \"./src/commons/constants/api.js\");\n/* harmony import */ var _suffix__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./suffix */ \"./src/redux/helper/suffix.js\");\n\n\nconst DELIMITER = '/';\nconst fetch = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"FETCH\"]);\nconst add = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"ADD\"]);\nconst del = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"DELETE\"]);\nconst update = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"UPDATE\"]);\n\n//# sourceURL=webpack:///./src/redux/helper/operationHelper.js?");
-
-/***/ }),
-
-/***/ "./src/redux/helper/reducerHelper.js":
-/*!*******************************************!*\
-  !*** ./src/redux/helper/reducerHelper.js ***!
-  \*******************************************/
-/*! exports provided: createDataReducer */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createDataReducer\", function() { return createDataReducer; });\n/* harmony import */ var _statusHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./statusHelper */ \"./src/redux/helper/statusHelper.js\");\n/* harmony import */ var _operationHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationHelper */ \"./src/redux/helper/operationHelper.js\");\n/* harmony import */ var src_commons_constants_api__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/commons/constants/api */ \"./src/commons/constants/api.js\");\n\n\n\nconst initState = {\n  meta: {\n    status: {\n      status: src_commons_constants_api__WEBPACK_IMPORTED_MODULE_2__[\"EMPTY\"]\n    }\n  }\n};\nconst createDataReducer = (NAMESPACE, initialState = initState) => {\n  return (state = initialState, {\n    type,\n    payload,\n    error\n  }) => {\n    // TO-DO\n    switch (type) {\n      case Object(_statusHelper__WEBPACK_IMPORTED_MODULE_0__[\"pending\"])(Object(_operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n      case Object(_statusHelper__WEBPACK_IMPORTED_MODULE_0__[\"pending\"])(Object(_operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n        return { ...state,\n          meta: { ...state.meta,\n            status: {\n              status: src_commons_constants_api__WEBPACK_IMPORTED_MODULE_2__[\"PENDING\"]\n            }\n          }\n        };\n\n      case Object(_statusHelper__WEBPACK_IMPORTED_MODULE_0__[\"failed\"])(Object(_operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n      case Object(_statusHelper__WEBPACK_IMPORTED_MODULE_0__[\"failed\"])(Object(_operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n        return { ...state,\n          ...payload\n        };\n\n      case Object(_statusHelper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n      case Object(_statusHelper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n        return {\n          meta: { ...state.meta,\n            ...payload.meta\n          },\n          data: { ...state.data,\n            ...payload.data\n          },\n          list: [...new Set([...(state.list || []), ...payload.list])]\n        };\n\n      default:\n        return state;\n    }\n  };\n};\n\n//# sourceURL=webpack:///./src/redux/helper/reducerHelper.js?");
-
-/***/ }),
-
-/***/ "./src/redux/helper/selectorHelper.js":
-/*!********************************************!*\
-  !*** ./src/redux/helper/selectorHelper.js ***!
-  \********************************************/
-/*! exports provided: createSelectors */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createSelectors\", function() { return createSelectors; });\n/* harmony import */ var reselect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! reselect */ \"./node_modules/reselect/es/index.js\");\n/* harmony import */ var _statusHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./statusHelper */ \"./src/redux/helper/statusHelper.js\");\n\n\n\nconst createSelectors = baseSelector => {\n  const selectData = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(baseSelector, state => state.data);\n  const selectList = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(baseSelector, state => state.list);\n  const selectStatus = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(baseSelector, state => state.meta.status);\n  const selectError = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(selectStatus, status => status.error);\n  const selectOperation = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(selectStatus, status => status.operation);\n\n  const selectDataById = id => data => data ? data[id] : undefined;\n\n  const hasSucceeded = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(selectStatus, _statusHelper__WEBPACK_IMPORTED_MODULE_1__[\"isSucceededStatus\"]);\n  const hasFailed = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(selectStatus, _statusHelper__WEBPACK_IMPORTED_MODULE_1__[\"isFailedStatus\"]);\n  const isPending = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(selectStatus, _statusHelper__WEBPACK_IMPORTED_MODULE_1__[\"isPendingStatus\"]);\n  const isEmpty = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(selectStatus, _statusHelper__WEBPACK_IMPORTED_MODULE_1__[\"isEmptyStatus\"]);\n  return {\n    selectData,\n    selectList,\n    selectStatus,\n    selectError,\n    selectOperation,\n    selectDataById: id => Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(selectData, selectDataById(id)),\n    selectComplete: Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createStructuredSelector\"])({\n      data: selectData,\n      list: selectList,\n      isPending,\n      hasSucceeded,\n      hasFailed,\n      isEmpty,\n      status: selectStatus,\n      error: selectError,\n      operation: selectOperation\n    })\n  };\n};\n\n\n\n//# sourceURL=webpack:///./src/redux/helper/selectorHelper.js?");
-
-/***/ }),
-
-/***/ "./src/redux/helper/statusHelper.js":
-/*!******************************************!*\
-  !*** ./src/redux/helper/statusHelper.js ***!
-  \******************************************/
-/*! exports provided: pending, succeeded, failed, rejected, isPendingStatus, isFailedStatus, isSucceededStatus, isEmptyStatus */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"pending\", function() { return pending; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"succeeded\", function() { return succeeded; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"failed\", function() { return failed; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"rejected\", function() { return rejected; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isPendingStatus\", function() { return isPendingStatus; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isFailedStatus\", function() { return isFailedStatus; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isSucceededStatus\", function() { return isSucceededStatus; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isEmptyStatus\", function() { return isEmptyStatus; });\n/* harmony import */ var src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/commons/constants/api */ \"./src/commons/constants/api.js\");\n/* harmony import */ var _suffix__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./suffix */ \"./src/redux/helper/suffix.js\");\n\n\nconst DELIMITER = ':';\nconst pending = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"PENDING\"]);\nconst succeeded = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"SUCCESS\"]);\nconst failed = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"]);\nconst rejected = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"REJECTED\"]);\n\nconst evaluateStatus = status => statusObject => statusObject.status === status;\n\nconst isPendingStatus = evaluateStatus(src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"PENDING\"]);\nconst isFailedStatus = evaluateStatus(src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"]);\nconst isSucceededStatus = evaluateStatus(src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"SUCCESS\"]);\nconst isEmptyStatus = evaluateStatus(src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"EMPTY\"]);\n\n//# sourceURL=webpack:///./src/redux/helper/statusHelper.js?");
-
-/***/ }),
-
-/***/ "./src/redux/helper/suffix.js":
-/*!************************************!*\
-  !*** ./src/redux/helper/suffix.js ***!
-  \************************************/
+/***/ "./src/routing/components/navigation-bar/index.js":
+/*!********************************************************!*\
+  !*** ./src/routing/components/navigation-bar/index.js ***!
+  \********************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony default export */ __webpack_exports__[\"default\"] = ((BASE, DELIMITER, SUFFIX) => `${BASE}${DELIMITER}${SUFFIX}`);\n\n//# sourceURL=webpack:///./src/redux/helper/suffix.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var _pages__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../pages */ \"./src/routing/pages.js\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./index.scss */ \"./src/routing/components/navigation-bar/index.scss\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_index_scss__WEBPACK_IMPORTED_MODULE_3__);\n\n\n\n\n\nconst NavigationBar = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"nav\", {\n  className: _index_scss__WEBPACK_IMPORTED_MODULE_3___default.a.navbar\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n  className: _index_scss__WEBPACK_IMPORTED_MODULE_3___default.a.navContainer\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"h1\", {\n  className: _index_scss__WEBPACK_IMPORTED_MODULE_3___default.a.title\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Link\"], {\n  to: \"/\"\n}, \"Managu\")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"ul\", null, _pages__WEBPACK_IMPORTED_MODULE_2__[\"default\"].map(page => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"li\", {\n  key: page.url\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"NavLink\"], {\n  className: _index_scss__WEBPACK_IMPORTED_MODULE_3___default.a.navEntry,\n  activeClassName: _index_scss__WEBPACK_IMPORTED_MODULE_3___default.a.current,\n  to: page.url\n}, page.displayName)))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n  className: _index_scss__WEBPACK_IMPORTED_MODULE_3___default.a.delimitter\n})));\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (NavigationBar);\n\n//# sourceURL=webpack:///./src/routing/components/navigation-bar/index.js?");
 
 /***/ }),
 
-/***/ "./src/redux/helper/typeHelper.js":
-/*!****************************************!*\
-  !*** ./src/redux/helper/typeHelper.js ***!
-  \****************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "./src/routing/components/navigation-bar/index.scss":
+/*!**********************************************************!*\
+  !*** ./src/routing/components/navigation-bar/index.scss ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/commons/constants/api */ \"./src/commons/constants/api.js\");\n/* harmony import */ var _operationHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operationHelper */ \"./src/redux/helper/operationHelper.js\");\n/* harmony import */ var _statusHelper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./statusHelper */ \"./src/redux/helper/statusHelper.js\");\n\n\n\n\nconst operationHelpers = {\n  FETCH: _operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"],\n  ADD: _operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"add\"],\n  DELETE: _operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"del\"],\n  UPDATE: _operationHelper__WEBPACK_IMPORTED_MODULE_1__[\"update\"]\n};\nconst statusHelpers = {\n  PENDING: _statusHelper__WEBPACK_IMPORTED_MODULE_2__[\"pending\"],\n  SUCCESS: _statusHelper__WEBPACK_IMPORTED_MODULE_2__[\"succeeded\"],\n  FAILED: _statusHelper__WEBPACK_IMPORTED_MODULE_2__[\"failed\"],\n  REJECTED: _statusHelper__WEBPACK_IMPORTED_MODULE_2__[\"rejected\"]\n};\n\nconst createTypes = NAMESPACE => {\n  return [src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"FETCH\"], src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"ADD\"], src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"DELETE\"], src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"UPDATE\"]].reduce((types, operation) => {\n    const OPERATION_NAMESPACE = operationHelpers[operation](NAMESPACE);\n    types[operation] = [src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"PENDING\"], src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"SUCCESS\"], src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"], src_commons_constants_api__WEBPACK_IMPORTED_MODULE_0__[\"REJECTED\"]].reduce((states, status) => {\n      states[status] = statusHelpers[status](OPERATION_NAMESPACE);\n      return states;\n    }, {});\n    types[operation].DO = OPERATION_NAMESPACE;\n    return types;\n  }, {});\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (createTypes);\n\n//# sourceURL=webpack:///./src/redux/helper/typeHelper.js?");
-
-/***/ }),
-
-/***/ "./src/redux/rootReducer.js":
-/*!**********************************!*\
-  !*** ./src/redux/rootReducer.js ***!
-  \**********************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var src_client_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/client/redux */ \"./src/client/redux/index.js\");\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  clients: src_client_redux__WEBPACK_IMPORTED_MODULE_1__[\"reducer\"]\n}));\n\n//# sourceURL=webpack:///./src/redux/rootReducer.js?");
-
-/***/ }),
-
-/***/ "./src/redux/store.js":
-/*!****************************!*\
-  !*** ./src/redux/store.js ***!
-  \****************************/
-/*! exports provided: store, persistor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"store\", function() { return store; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"persistor\", function() { return persistor; });\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var redux_saga__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux-saga */ \"./node_modules/redux-saga/es/index.js\");\n/* harmony import */ var redux_persist__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux-persist */ \"./node_modules/redux-persist/es/index.js\");\n/* harmony import */ var redux_persist_lib_storage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux-persist/lib/storage */ \"./node_modules/redux-persist/lib/storage/index.js\");\n/* harmony import */ var redux_persist_lib_storage__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(redux_persist_lib_storage__WEBPACK_IMPORTED_MODULE_3__);\n/* harmony import */ var _saga_rootSaga__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../saga/rootSaga */ \"./src/saga/rootSaga.js\");\n/* harmony import */ var _rootReducer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./rootReducer */ \"./src/redux/rootReducer.js\");\n\n\n\n\n\n\nconst composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || redux__WEBPACK_IMPORTED_MODULE_0__[\"compose\"];\nconst sagaMiddleware = Object(redux_saga__WEBPACK_IMPORTED_MODULE_1__[\"default\"])();\nconst persistConfig = {\n  key: 'root',\n  storage: (redux_persist_lib_storage__WEBPACK_IMPORTED_MODULE_3___default())\n};\nconst persistedReducer = Object(redux_persist__WEBPACK_IMPORTED_MODULE_2__[\"persistReducer\"])(persistConfig, _rootReducer__WEBPACK_IMPORTED_MODULE_5__[\"default\"]);\nconst store = Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"createStore\"])(persistedReducer, composeEnhancers(Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"applyMiddleware\"])(sagaMiddleware)));\nconst persistor = Object(redux_persist__WEBPACK_IMPORTED_MODULE_2__[\"persistStore\"])(store);\nsagaMiddleware.run(_saga_rootSaga__WEBPACK_IMPORTED_MODULE_4__[\"default\"]);\n\n//# sourceURL=webpack:///./src/redux/store.js?");
-
-/***/ }),
-
-/***/ "./src/routing/Navbar.js":
-/*!*******************************!*\
-  !*** ./src/routing/Navbar.js ***!
-  \*******************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var _pages__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pages */ \"./src/routing/pages.js\");\n/* harmony import */ var _styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./styles/navbar.scss */ \"./src/routing/styles/navbar.scss\");\n/* harmony import */ var _styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3__);\n\n\n\n\n\nconst Navbar = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"nav\", {\n  className: _styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3___default.a.navbar\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n  className: _styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3___default.a.navContainer\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"h1\", {\n  className: _styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3___default.a.title\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Link\"], {\n  to: \"/\"\n}, \"Managu\")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"ul\", null, _pages__WEBPACK_IMPORTED_MODULE_2__[\"default\"].map(page => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"li\", {\n  key: page.url\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"NavLink\"], {\n  className: _styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3___default.a.navEntry,\n  activeClassName: _styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3___default.a.current,\n  to: page.url\n}, page.displayName)))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n  className: _styles_navbar_scss__WEBPACK_IMPORTED_MODULE_3___default.a.delimitter\n})));\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Navbar);\n\n//# sourceURL=webpack:///./src/routing/Navbar.js?");
+eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"navbar\":\"index__navbar--lH5sl\",\"nav-container\":\"index__nav-container--KI5-x\",\"navContainer\":\"index__nav-container--KI5-x\",\"title\":\"index__title--3Hu8k\",\"nav-entry\":\"index__nav-entry--3NWAK\",\"navEntry\":\"index__nav-entry--3NWAK\",\"-current\":\"index__-current--lGN7K\",\"current\":\"index__-current--lGN7K\",\"delimitter\":\"index__delimitter--CjhYy\",\"sub\":\"index__sub--3JUtB\",\"sub-nav-entry\":\"index__sub-nav-entry--7Mpl9\",\"subNavEntry\":\"index__sub-nav-entry--7Mpl9\"};\n\n//# sourceURL=webpack:///./src/routing/components/navigation-bar/index.scss?");
 
 /***/ }),
 
@@ -11377,30 +11128,865 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var reac
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_client_components_ClientList__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/client/components/ClientList */ \"./src/client/components/ClientList.js\");\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ([src_client_components_ClientList__WEBPACK_IMPORTED_MODULE_0__[\"default\"]]);\n\n//# sourceURL=webpack:///./src/routing/pages.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_view_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/view/client */ \"./src/view/client/index.js\");\n/* harmony import */ var src_view_booking__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/view/booking */ \"./src/view/booking/index.js\");\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ([src_view_client__WEBPACK_IMPORTED_MODULE_0__[\"ClientList\"], src_view_booking__WEBPACK_IMPORTED_MODULE_1__[\"BookingList\"]]);\n\n//# sourceURL=webpack:///./src/routing/pages.js?");
 
 /***/ }),
 
-/***/ "./src/routing/styles/navbar.scss":
-/*!****************************************!*\
-  !*** ./src/routing/styles/navbar.scss ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"navbar\":\"navbar__navbar--1-rm4\",\"nav-container\":\"navbar__nav-container--3YLmW\",\"navContainer\":\"navbar__nav-container--3YLmW\",\"title\":\"navbar__title--1Sxb1\",\"nav-entry\":\"navbar__nav-entry--2GPnm\",\"navEntry\":\"navbar__nav-entry--2GPnm\",\"-current\":\"navbar__-current--1Ri4p\",\"current\":\"navbar__-current--1Ri4p\",\"delimitter\":\"navbar__delimitter--2NglK\",\"sub\":\"navbar__sub--28mkv\",\"sub-nav-entry\":\"navbar__sub-nav-entry--36woP\",\"subNavEntry\":\"navbar__sub-nav-entry--36woP\"};\n\n//# sourceURL=webpack:///./src/routing/styles/navbar.scss?");
-
-/***/ }),
-
-/***/ "./src/saga/rootSaga.js":
-/*!******************************!*\
-  !*** ./src/saga/rootSaga.js ***!
-  \******************************/
+/***/ "./src/service/app/controllersReducer.js":
+/*!***********************************************!*\
+  !*** ./src/service/app/controllersReducer.js ***!
+  \***********************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return rootSaga; });\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var _client_redux_clientSaga__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../client/redux/clientSaga */ \"./src/client/redux/clientSaga.js\");\n\n\nfunction* rootSaga() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"all\"])([Object(_client_redux_clientSaga__WEBPACK_IMPORTED_MODULE_1__[\"watchFetchClient\"])(), Object(_client_redux_clientSaga__WEBPACK_IMPORTED_MODULE_1__[\"watchAddClient\"])()]);\n}\n\n//# sourceURL=webpack:///./src/saga/rootSaga.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../client */ \"./src/service/client/index.js\");\n/* harmony import */ var _booking__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../booking */ \"./src/service/booking/index.js\");\n\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  clients: _client__WEBPACK_IMPORTED_MODULE_1__[\"controllersReducer\"],\n  bookings: _booking__WEBPACK_IMPORTED_MODULE_2__[\"controllersReducer\"]\n}));\n\n//# sourceURL=webpack:///./src/service/app/controllersReducer.js?");
+
+/***/ }),
+
+/***/ "./src/service/app/index.js":
+/*!**********************************!*\
+  !*** ./src/service/app/index.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var _metadataReducer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./metadataReducer */ \"./src/service/app/metadataReducer.js\");\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  metadata: _metadataReducer__WEBPACK_IMPORTED_MODULE_1__[\"default\"]\n}));\n\n//# sourceURL=webpack:///./src/service/app/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/app/metadataReducer.js":
+/*!********************************************!*\
+  !*** ./src/service/app/metadataReducer.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var _timetableReducer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./timetableReducer */ \"./src/service/app/timetableReducer.js\");\n/* harmony import */ var _controllersReducer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./controllersReducer */ \"./src/service/app/controllersReducer.js\");\n\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  timetable: _timetableReducer__WEBPACK_IMPORTED_MODULE_1__[\"default\"],\n  controllers: _controllersReducer__WEBPACK_IMPORTED_MODULE_2__[\"default\"]\n}));\n\n//# sourceURL=webpack:///./src/service/app/metadataReducer.js?");
+
+/***/ }),
+
+/***/ "./src/service/app/timetableReducer.js":
+/*!*********************************************!*\
+  !*** ./src/service/app/timetableReducer.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../client */ \"./src/service/client/index.js\");\n/* harmony import */ var _booking__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../booking */ \"./src/service/booking/index.js\");\n\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  clients: _client__WEBPACK_IMPORTED_MODULE_1__[\"timetableReducer\"],\n  bookings: _booking__WEBPACK_IMPORTED_MODULE_2__[\"timetableReducer\"]\n}));\n\n//# sourceURL=webpack:///./src/service/app/timetableReducer.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/add-booking/connectors/index.js":
+/*!*************************************************************************!*\
+  !*** ./src/service/booking/controllers/add-booking/connectors/index.js ***!
+  \*************************************************************************/
+/*! exports provided: connect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"connect\", function() { return connect; });\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../selectors */ \"./src/service/booking/controllers/add-booking/selectors/index.js\");\n/* harmony import */ var src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/service/helper/merge-map-state-to-props */ \"./src/service/helper/merge-map-state-to-props.js\");\n\n\n\n\nconst mapStateToProps = (state, {\n  bookingId = 'new'\n}) => {\n  return {\n    postStatus: _selectors__WEBPACK_IMPORTED_MODULE_1__[\"selectors\"].selectStatus(bookingId)(state)\n  };\n};\n\nconst connect = (mstp, mdtp) => Object(react_redux__WEBPACK_IMPORTED_MODULE_0__[\"connect\"])(Object(src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_2__[\"mergeMapStateToProps\"])(mapStateToProps, mstp), mdtp);\n\n//# sourceURL=webpack:///./src/service/booking/controllers/add-booking/connectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/add-booking/index.js":
+/*!**************************************************************!*\
+  !*** ./src/service/booking/controllers/add-booking/index.js ***!
+  \**************************************************************/
+/*! exports provided: reducer, saga, CTRL_NAMESPACE, connectors, selectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"reducer\", function() { return reducer; });\n/* harmony import */ var _sagas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sagas */ \"./src/service/booking/controllers/add-booking/sagas/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"saga\", function() { return _sagas__WEBPACK_IMPORTED_MODULE_0__[\"watchAddBooking\"]; });\n\n/* harmony import */ var src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/helper/reducer-helper */ \"./src/service/helper/reducer-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../namespace */ \"./src/service/booking/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./namespace */ \"./src/service/booking/controllers/add-booking/namespace.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"CTRL_NAMESPACE\", function() { return _namespace__WEBPACK_IMPORTED_MODULE_3__[\"NAMESPACE\"]; });\n\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./selectors */ \"./src/service/booking/controllers/add-booking/selectors/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_4__[\"selectors\"]; });\n\n/* harmony import */ var _connectors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./connectors */ \"./src/service/booking/controllers/add-booking/connectors/index.js\");\n/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, \"connectors\", function() { return _connectors__WEBPACK_IMPORTED_MODULE_5__; });\n\n\n\n\n\n\nconst reducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_1__[\"createAddCtrlReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]);\n\n\n//# sourceURL=webpack:///./src/service/booking/controllers/add-booking/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/add-booking/namespace.js":
+/*!******************************************************************!*\
+  !*** ./src/service/booking/controllers/add-booking/namespace.js ***!
+  \******************************************************************/
+/*! exports provided: NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NAMESPACE\", function() { return NAMESPACE; });\nconst NAMESPACE = 'add';\n\n//# sourceURL=webpack:///./src/service/booking/controllers/add-booking/namespace.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/add-booking/sagas/index.js":
+/*!********************************************************************!*\
+  !*** ./src/service/booking/controllers/add-booking/sagas/index.js ***!
+  \********************************************************************/
+/*! exports provided: watchAddBooking */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"watchAddBooking\", function() { return watchAddBooking; });\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../types */ \"./src/service/booking/types.js\");\n/* harmony import */ var src_api__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/api */ \"./src/api/index.js\");\n\n\n\n\nfunction* addBooking({\n  payload\n}) {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n    type: _types__WEBPACK_IMPORTED_MODULE_1__[\"types\"].ADD.PENDING,\n    payload: {\n      id: payload.id\n    }\n  });\n  const response = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"call\"])(src_api__WEBPACK_IMPORTED_MODULE_2__[\"postBooking\"], payload);\n\n  if (response.meta.status.error) {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_1__[\"types\"].ADD.FAILED,\n      payload: { ...response,\n        id: payload.id\n      }\n    });\n  } else {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_1__[\"types\"].ADD.SUCCESS,\n      payload: response\n    });\n  }\n}\n\nfunction* watchAddBooking() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"takeEvery\"])(_types__WEBPACK_IMPORTED_MODULE_1__[\"types\"].ADD.DO, addBooking);\n}\n\n//# sourceURL=webpack:///./src/service/booking/controllers/add-booking/sagas/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/add-booking/selectors/index.js":
+/*!************************************************************************!*\
+  !*** ./src/service/booking/controllers/add-booking/selectors/index.js ***!
+  \************************************************************************/
+/*! exports provided: selectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony import */ var src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/selector-helper */ \"./src/service/helper/selector-helper.js\");\n/* harmony import */ var src_service_booking_namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/booking/namespace */ \"./src/service/booking/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../namespace */ \"./src/service/booking/controllers/add-booking/namespace.js\");\n\n\n\nconst selectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createControllerSelectors\"])(src_service_booking_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/booking/controllers/add-booking/selectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-paginated-bookings/connectors/index.js":
+/*!**************************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-paginated-bookings/connectors/index.js ***!
+  \**************************************************************************************/
+/*! exports provided: connect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"connect\", function() { return connect; });\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! qs */ \"./node_modules/qs/lib/index.js\");\n/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(qs__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../selectors */ \"./src/service/booking/selectors.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../selectors */ \"./src/service/booking/controllers/fetch-paginated-bookings/selectors/index.js\");\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n/* harmony import */ var src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/service/helper/merge-map-state-to-props */ \"./src/service/helper/merge-map-state-to-props.js\");\n\n\n\n\n\n\n\nconst mapStateToProps = (state, {\n  from = 0,\n  to = 30,\n  filter\n}) => {\n  const resourceId = Object(qs__WEBPACK_IMPORTED_MODULE_1__[\"stringify\"])({\n    from,\n    to\n  });\n  const resourceAvailable = _selectors__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"].isResourceAvailable(resourceId)(state);\n  const resourceList = resourceAvailable ? _selectors__WEBPACK_IMPORTED_MODULE_2__[\"dataSelectors\"].selectPaginatedList({\n    from,\n    to\n  })(state) : undefined;\n  const resourceIsAvailableAndValid = resourceList ? _selectors__WEBPACK_IMPORTED_MODULE_2__[\"timetableSelectors\"].areResourcesValid(resourceList)(state) : false;\n  return {\n    list: resourceList,\n    status: resourceIsAvailableAndValid ? _selectors__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"].selectStatus(resourceId)(state) : src_api_constants__WEBPACK_IMPORTED_MODULE_4__[\"EMPTY\"]\n  };\n};\n\nconst connect = (mstp, mdtp) => Object(react_redux__WEBPACK_IMPORTED_MODULE_0__[\"connect\"])(Object(src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_5__[\"mergeMapStateToProps\"])(mapStateToProps, mstp), mdtp);\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-paginated-bookings/connectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-paginated-bookings/index.js":
+/*!***************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-paginated-bookings/index.js ***!
+  \***************************************************************************/
+/*! exports provided: reducer, selectors, saga, connectors, CTRL_NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"reducer\", function() { return reducer; });\n/* harmony import */ var src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/reducer-helper */ \"./src/service/helper/reducer-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../namespace */ \"./src/service/booking/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./namespace */ \"./src/service/booking/controllers/fetch-paginated-bookings/namespace.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"CTRL_NAMESPACE\", function() { return _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]; });\n\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./selectors */ \"./src/service/booking/controllers/fetch-paginated-bookings/selectors/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"]; });\n\n/* harmony import */ var _sagas__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sagas */ \"./src/service/booking/controllers/fetch-paginated-bookings/sagas/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"saga\", function() { return _sagas__WEBPACK_IMPORTED_MODULE_4__[\"watchFetchPaginatedBooking\"]; });\n\n/* harmony import */ var _connectors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./connectors */ \"./src/service/booking/controllers/fetch-paginated-bookings/connectors/index.js\");\n/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, \"connectors\", function() { return _connectors__WEBPACK_IMPORTED_MODULE_5__; });\n\n\n\n\n\n\nconst reducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_0__[\"createFetchPaginatedCtrlReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"]);\n\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-paginated-bookings/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-paginated-bookings/namespace.js":
+/*!*******************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-paginated-bookings/namespace.js ***!
+  \*******************************************************************************/
+/*! exports provided: NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NAMESPACE\", function() { return NAMESPACE; });\nconst NAMESPACE = 'fetchPaginated';\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-paginated-bookings/namespace.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-paginated-bookings/sagas/index.js":
+/*!*********************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-paginated-bookings/sagas/index.js ***!
+  \*********************************************************************************/
+/*! exports provided: watchFetchPaginatedBooking */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"watchFetchPaginatedBooking\", function() { return watchFetchPaginatedBooking; });\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! qs */ \"./node_modules/qs/lib/index.js\");\n/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(qs__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../selectors */ \"./src/service/booking/controllers/fetch-paginated-bookings/selectors/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../selectors */ \"./src/service/booking/selectors.js\");\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../types */ \"./src/service/booking/types.js\");\n/* harmony import */ var src_api__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/api */ \"./src/api/index.js\");\n\n\n\n\n\n\n\nfunction* fetchPaginatedBooking({\n  payload: {\n    from,\n    to\n  }\n}) {\n  const requestName = Object(qs__WEBPACK_IMPORTED_MODULE_1__[\"stringify\"])({\n    from,\n    to\n  });\n  const resourceAvailable = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_2__[\"selectors\"].isResourceAvailable(requestName));\n  const resourceList = yield resourceAvailable ? Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_3__[\"dataSelectors\"].selectPaginatedList({\n    from,\n    to\n  })) : undefined;\n  const resourceValid = yield resourceList ? Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_3__[\"timetableSelectors\"].areResourcesValid(resourceList)) : false;\n\n  if (resourceValid) {\n    return;\n  } else {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.PENDING,\n      payload: {\n        requestName\n      }\n    });\n    const response = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"call\"])(src_api__WEBPACK_IMPORTED_MODULE_5__[\"fetchBookings\"], {\n      from,\n      to\n    });\n    const payload = { ...response,\n      requestName\n    };\n\n    if (response.meta.status.error) {\n      yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n        type: _types__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.FAILED,\n        payload\n      });\n    } else {\n      yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n        type: _types__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.SUCCESS,\n        payload\n      });\n    }\n  }\n}\n\nfunction* watchFetchPaginatedBooking() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"takeEvery\"])(_types__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.DO, fetchPaginatedBooking);\n}\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-paginated-bookings/sagas/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-paginated-bookings/selectors/index.js":
+/*!*************************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-paginated-bookings/selectors/index.js ***!
+  \*************************************************************************************/
+/*! exports provided: selectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony import */ var src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/selector-helper */ \"./src/service/helper/selector-helper.js\");\n/* harmony import */ var src_service_booking_namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/booking/namespace */ \"./src/service/booking/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../namespace */ \"./src/service/booking/controllers/fetch-paginated-bookings/namespace.js\");\n// selector selecting the status of the controllers operation from state\n\n\n\nconst selectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createControllerSelectors\"])(src_service_booking_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-paginated-bookings/selectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-single-booking/connectors/index.js":
+/*!**********************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-single-booking/connectors/index.js ***!
+  \**********************************************************************************/
+/*! exports provided: connect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"connect\", function() { return connect; });\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../selectors */ \"./src/service/booking/selectors.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../selectors */ \"./src/service/booking/controllers/fetch-single-booking/selectors/index.js\");\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n/* harmony import */ var src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/service/helper/merge-map-state-to-props */ \"./src/service/helper/merge-map-state-to-props.js\");\n\n\n\n\n\n\nconst mapStateToProps = (state, {\n  bookingId\n}) => {\n  const resourceIsAvailableAndValid = _selectors__WEBPACK_IMPORTED_MODULE_2__[\"selectors\"].isResourceAvailable(bookingId)(state) && _selectors__WEBPACK_IMPORTED_MODULE_1__[\"timetableSelectors\"].isResourceValid(bookingId)(state);\n  return {\n    booking: bookingId ? _selectors__WEBPACK_IMPORTED_MODULE_1__[\"dataSelectors\"].selectDataById(bookingId)(state) : undefined,\n    status: resourceIsAvailableAndValid ? _selectors__WEBPACK_IMPORTED_MODULE_2__[\"selectors\"].selectStatus(bookingId)(state) : src_api_constants__WEBPACK_IMPORTED_MODULE_3__[\"EMPTY\"]\n  };\n};\n\nconst connect = (mstp, mdtp) => Object(react_redux__WEBPACK_IMPORTED_MODULE_0__[\"connect\"])(Object(src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_4__[\"mergeMapStateToProps\"])(mapStateToProps, mstp), mdtp);\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-single-booking/connectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-single-booking/index.js":
+/*!***********************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-single-booking/index.js ***!
+  \***********************************************************************/
+/*! exports provided: reducer, selectors, saga, connectors, CTRL_NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"reducer\", function() { return reducer; });\n/* harmony import */ var src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/reducer-helper */ \"./src/service/helper/reducer-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../namespace */ \"./src/service/booking/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./namespace */ \"./src/service/booking/controllers/fetch-single-booking/namespace.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"CTRL_NAMESPACE\", function() { return _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]; });\n\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./selectors */ \"./src/service/booking/controllers/fetch-single-booking/selectors/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"]; });\n\n/* harmony import */ var _sagas__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sagas */ \"./src/service/booking/controllers/fetch-single-booking/sagas/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"saga\", function() { return _sagas__WEBPACK_IMPORTED_MODULE_4__[\"watchFetchSingleBooking\"]; });\n\n/* harmony import */ var _connectors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./connectors */ \"./src/service/booking/controllers/fetch-single-booking/connectors/index.js\");\n/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, \"connectors\", function() { return _connectors__WEBPACK_IMPORTED_MODULE_5__; });\n\n\n\n\n\n\nconst reducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_0__[\"createFetchSingleCtrlReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_1__[\"SINGLE_NAMESPACE\"]);\n\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-single-booking/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-single-booking/namespace.js":
+/*!***************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-single-booking/namespace.js ***!
+  \***************************************************************************/
+/*! exports provided: NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NAMESPACE\", function() { return NAMESPACE; });\nconst NAMESPACE = 'fetchSingle';\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-single-booking/namespace.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-single-booking/sagas/index.js":
+/*!*****************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-single-booking/sagas/index.js ***!
+  \*****************************************************************************/
+/*! exports provided: watchFetchSingleBooking */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"watchFetchSingleBooking\", function() { return watchFetchSingleBooking; });\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../selectors */ \"./src/service/booking/controllers/fetch-single-booking/selectors/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../selectors */ \"./src/service/booking/selectors.js\");\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../types */ \"./src/service/booking/types.js\");\n/* harmony import */ var src_api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/api */ \"./src/api/index.js\");\n\n\n\n\n\n\nfunction* fetchSingleBooking({\n  payload: {\n    bookingId\n  }\n}) {\n  const resourceAvailable = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_1__[\"selectors\"].isResourceAvailable(bookingId));\n  const resourceValid = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_2__[\"timetableSelectors\"].isResourceValid(bookingId));\n\n  if (resourceAvailable && resourceValid) {\n    return;\n  } else {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_3__[\"types\"].FETCH_SINGLE.PENDING,\n      payload: {\n        id: bookingId\n      }\n    });\n    const payload = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"call\"])(src_api__WEBPACK_IMPORTED_MODULE_4__[\"fetchSingleBooking\"], bookingId);\n\n    if (payload.meta.status.error) {\n      yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n        type: _types__WEBPACK_IMPORTED_MODULE_3__[\"types\"].FETCH_SINGLE.FAILED,\n        payload\n      });\n    } else {\n      yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n        type: _types__WEBPACK_IMPORTED_MODULE_3__[\"types\"].FETCH_SINGLE.SUCCESS,\n        payload\n      });\n    }\n  }\n}\n\nfunction* watchFetchSingleBooking() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"takeEvery\"])(_types__WEBPACK_IMPORTED_MODULE_3__[\"types\"].FETCH_SINGLE.DO, fetchSingleBooking);\n}\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-single-booking/sagas/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/controllers/fetch-single-booking/selectors/index.js":
+/*!*********************************************************************************!*\
+  !*** ./src/service/booking/controllers/fetch-single-booking/selectors/index.js ***!
+  \*********************************************************************************/
+/*! exports provided: selectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony import */ var src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/selector-helper */ \"./src/service/helper/selector-helper.js\");\n/* harmony import */ var src_service_booking_namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/booking/namespace */ \"./src/service/booking/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../namespace */ \"./src/service/booking/controllers/fetch-single-booking/namespace.js\");\n\n\n\nconst selectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createControllerSelectors\"])(src_service_booking_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/booking/controllers/fetch-single-booking/selectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/index.js":
+/*!**************************************!*\
+  !*** ./src/service/booking/index.js ***!
+  \**************************************/
+/*! exports provided: dataReducer, timetableReducer, controllersReducer, connectors, sagas, selectors, timetableSelectors, dataSelectors, types */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"dataReducer\", function() { return dataReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"timetableReducer\", function() { return timetableReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"controllersReducer\", function() { return controllersReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"connectors\", function() { return connectors; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"sagas\", function() { return sagas; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/service/helper/reducer-helper */ \"./src/service/helper/reducer-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./namespace */ \"./src/service/booking/namespace.js\");\n/* harmony import */ var _controllers_add_booking__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controllers/add-booking */ \"./src/service/booking/controllers/add-booking/index.js\");\n/* harmony import */ var _controllers_fetch_single_booking__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./controllers/fetch-single-booking */ \"./src/service/booking/controllers/fetch-single-booking/index.js\");\n/* harmony import */ var _controllers_fetch_paginated_bookings__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./controllers/fetch-paginated-bookings */ \"./src/service/booking/controllers/fetch-paginated-bookings/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./selectors */ \"./src/service/booking/selectors.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"timetableSelectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_7__[\"timetableSelectors\"]; });\n\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"dataSelectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_7__[\"dataSelectors\"]; });\n\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./types */ \"./src/service/booking/types.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"types\", function() { return _types__WEBPACK_IMPORTED_MODULE_8__[\"types\"]; });\n\n\n\n\n\n\n\n\n\n\nconst dataReducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_2__[\"createDataReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_3__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_3__[\"SINGLE_NAMESPACE\"]);\nconst timetableReducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_2__[\"createTimetableReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_3__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_3__[\"SINGLE_NAMESPACE\"]);\nconst controllersReducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  [_controllers_fetch_single_booking__WEBPACK_IMPORTED_MODULE_5__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_single_booking__WEBPACK_IMPORTED_MODULE_5__[\"reducer\"],\n  [_controllers_fetch_paginated_bookings__WEBPACK_IMPORTED_MODULE_6__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_paginated_bookings__WEBPACK_IMPORTED_MODULE_6__[\"reducer\"],\n  [_controllers_add_booking__WEBPACK_IMPORTED_MODULE_4__[\"CTRL_NAMESPACE\"]]: _controllers_add_booking__WEBPACK_IMPORTED_MODULE_4__[\"reducer\"]\n});\nconst connectors = {\n  [_controllers_fetch_single_booking__WEBPACK_IMPORTED_MODULE_5__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_single_booking__WEBPACK_IMPORTED_MODULE_5__[\"connectors\"],\n  [_controllers_fetch_paginated_bookings__WEBPACK_IMPORTED_MODULE_6__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_paginated_bookings__WEBPACK_IMPORTED_MODULE_6__[\"connectors\"],\n  [_controllers_add_booking__WEBPACK_IMPORTED_MODULE_4__[\"CTRL_NAMESPACE\"]]: _controllers_add_booking__WEBPACK_IMPORTED_MODULE_4__[\"connectors\"]\n};\nfunction* sagas() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"all\"])([Object(_controllers_fetch_single_booking__WEBPACK_IMPORTED_MODULE_5__[\"saga\"])(), Object(_controllers_fetch_paginated_bookings__WEBPACK_IMPORTED_MODULE_6__[\"saga\"])(), Object(_controllers_add_booking__WEBPACK_IMPORTED_MODULE_4__[\"saga\"])()]);\n}\nconst selectors = { ..._selectors__WEBPACK_IMPORTED_MODULE_7__[\"timetableSelectors\"],\n  ..._selectors__WEBPACK_IMPORTED_MODULE_7__[\"dataSelectors\"],\n  [_controllers_fetch_single_booking__WEBPACK_IMPORTED_MODULE_5__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_single_booking__WEBPACK_IMPORTED_MODULE_5__[\"selectors\"],\n  [_controllers_fetch_paginated_bookings__WEBPACK_IMPORTED_MODULE_6__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_paginated_bookings__WEBPACK_IMPORTED_MODULE_6__[\"selectors\"],\n  [_controllers_add_booking__WEBPACK_IMPORTED_MODULE_4__[\"CTRL_NAMESPACE\"]]: _controllers_add_booking__WEBPACK_IMPORTED_MODULE_4__[\"selectors\"]\n};\n\n\n//# sourceURL=webpack:///./src/service/booking/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/namespace.js":
+/*!******************************************!*\
+  !*** ./src/service/booking/namespace.js ***!
+  \******************************************/
+/*! exports provided: NAMESPACE, SINGLE_NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NAMESPACE\", function() { return NAMESPACE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"SINGLE_NAMESPACE\", function() { return SINGLE_NAMESPACE; });\nconst NAMESPACE = 'BOOKINGS';\nconst SINGLE_NAMESPACE = 'BOOKING';\n\n//# sourceURL=webpack:///./src/service/booking/namespace.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/selectors.js":
+/*!******************************************!*\
+  !*** ./src/service/booking/selectors.js ***!
+  \******************************************/
+/*! exports provided: timetableSelectors, dataSelectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"timetableSelectors\", function() { return timetableSelectors; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"dataSelectors\", function() { return dataSelectors; });\n/* harmony import */ var src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/selector-helper */ \"./src/service/helper/selector-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./namespace */ \"./src/service/booking/namespace.js\");\n\n\nconst timetableSelectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createTimetableSelectors\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"]);\nconst dataSelectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createDataSelectors\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/booking/selectors.js?");
+
+/***/ }),
+
+/***/ "./src/service/booking/types.js":
+/*!**************************************!*\
+  !*** ./src/service/booking/types.js ***!
+  \**************************************/
+/*! exports provided: types */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"types\", function() { return types; });\n/* harmony import */ var src_service_helper_type_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/type-helper */ \"./src/service/helper/type-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./namespace */ \"./src/service/booking/namespace.js\");\n\n\nconst types = Object(src_service_helper_type_helper__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_1__[\"SINGLE_NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/booking/types.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/add-client/connectors/index.js":
+/*!***********************************************************************!*\
+  !*** ./src/service/client/controllers/add-client/connectors/index.js ***!
+  \***********************************************************************/
+/*! exports provided: connect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"connect\", function() { return connect; });\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../selectors */ \"./src/service/client/controllers/add-client/selectors/index.js\");\n/* harmony import */ var src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/service/helper/merge-map-state-to-props */ \"./src/service/helper/merge-map-state-to-props.js\");\n\n\n\n\nconst mapStateToProps = (state, {\n  clientId = 'new'\n}) => {\n  return {\n    postStatus: _selectors__WEBPACK_IMPORTED_MODULE_1__[\"selectors\"].selectStatus(clientId)(state)\n  };\n};\n\nconst connect = (mstp, mdtp) => Object(react_redux__WEBPACK_IMPORTED_MODULE_0__[\"connect\"])(Object(src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_2__[\"mergeMapStateToProps\"])(mapStateToProps, mstp), mdtp);\n\n//# sourceURL=webpack:///./src/service/client/controllers/add-client/connectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/add-client/index.js":
+/*!************************************************************!*\
+  !*** ./src/service/client/controllers/add-client/index.js ***!
+  \************************************************************/
+/*! exports provided: reducer, saga, CTRL_NAMESPACE, connectors, selectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"reducer\", function() { return reducer; });\n/* harmony import */ var _sagas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sagas */ \"./src/service/client/controllers/add-client/sagas/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"saga\", function() { return _sagas__WEBPACK_IMPORTED_MODULE_0__[\"watchAddClient\"]; });\n\n/* harmony import */ var src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/helper/reducer-helper */ \"./src/service/helper/reducer-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../namespace */ \"./src/service/client/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./namespace */ \"./src/service/client/controllers/add-client/namespace.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"CTRL_NAMESPACE\", function() { return _namespace__WEBPACK_IMPORTED_MODULE_3__[\"NAMESPACE\"]; });\n\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./selectors */ \"./src/service/client/controllers/add-client/selectors/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_4__[\"selectors\"]; });\n\n/* harmony import */ var _connectors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./connectors */ \"./src/service/client/controllers/add-client/connectors/index.js\");\n/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, \"connectors\", function() { return _connectors__WEBPACK_IMPORTED_MODULE_5__; });\n\n\n\n\n\n\nconst reducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_1__[\"createAddCtrlReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]);\n\n\n//# sourceURL=webpack:///./src/service/client/controllers/add-client/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/add-client/namespace.js":
+/*!****************************************************************!*\
+  !*** ./src/service/client/controllers/add-client/namespace.js ***!
+  \****************************************************************/
+/*! exports provided: NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NAMESPACE\", function() { return NAMESPACE; });\nconst NAMESPACE = 'add';\n\n//# sourceURL=webpack:///./src/service/client/controllers/add-client/namespace.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/add-client/sagas/index.js":
+/*!******************************************************************!*\
+  !*** ./src/service/client/controllers/add-client/sagas/index.js ***!
+  \******************************************************************/
+/*! exports provided: watchAddClient */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"watchAddClient\", function() { return watchAddClient; });\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../types */ \"./src/service/client/types.js\");\n/* harmony import */ var src_api__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/api */ \"./src/api/index.js\");\n\n\n\n\nfunction* addClient({\n  payload\n}) {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n    type: _types__WEBPACK_IMPORTED_MODULE_1__[\"types\"].ADD.PENDING,\n    payload: {\n      id: payload.id\n    }\n  });\n  const response = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"call\"])(src_api__WEBPACK_IMPORTED_MODULE_2__[\"postClient\"], payload);\n\n  if (response.meta.status.error) {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_1__[\"types\"].ADD.FAILED,\n      payload: { ...response,\n        id: payload.id\n      }\n    });\n  } else {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_1__[\"types\"].ADD.SUCCESS,\n      payload: response\n    });\n  }\n}\n\nfunction* watchAddClient() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"takeEvery\"])(_types__WEBPACK_IMPORTED_MODULE_1__[\"types\"].ADD.DO, addClient);\n}\n\n//# sourceURL=webpack:///./src/service/client/controllers/add-client/sagas/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/add-client/selectors/index.js":
+/*!**********************************************************************!*\
+  !*** ./src/service/client/controllers/add-client/selectors/index.js ***!
+  \**********************************************************************/
+/*! exports provided: selectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony import */ var src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/selector-helper */ \"./src/service/helper/selector-helper.js\");\n/* harmony import */ var src_service_client_namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/client/namespace */ \"./src/service/client/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../namespace */ \"./src/service/client/controllers/add-client/namespace.js\");\n\n\n\nconst selectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createControllerSelectors\"])(src_service_client_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/client/controllers/add-client/selectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-paginated-clients/connectors/index.js":
+/*!************************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-paginated-clients/connectors/index.js ***!
+  \************************************************************************************/
+/*! exports provided: connect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"connect\", function() { return connect; });\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! qs */ \"./node_modules/qs/lib/index.js\");\n/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(qs__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../selectors */ \"./src/service/client/selectors.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../selectors */ \"./src/service/client/controllers/fetch-paginated-clients/selectors/index.js\");\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n/* harmony import */ var src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/service/helper/merge-map-state-to-props */ \"./src/service/helper/merge-map-state-to-props.js\");\n\n\n\n\n\n\n\nconst mapStateToProps = (state, {\n  from = 0,\n  to = 30,\n  filter\n}) => {\n  const resourceId = Object(qs__WEBPACK_IMPORTED_MODULE_1__[\"stringify\"])({\n    from,\n    to\n  });\n  const resourceAvailable = _selectors__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"].isResourceAvailable(resourceId)(state);\n  const resourceList = resourceAvailable ? _selectors__WEBPACK_IMPORTED_MODULE_2__[\"dataSelectors\"].selectPaginatedList({\n    from,\n    to\n  })(state) : undefined;\n  const resourceIsAvailableAndValid = resourceList ? _selectors__WEBPACK_IMPORTED_MODULE_2__[\"timetableSelectors\"].areResourcesValid(resourceList)(state) : false;\n  return {\n    list: resourceList,\n    status: resourceIsAvailableAndValid ? _selectors__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"].selectStatus(resourceId)(state) : src_api_constants__WEBPACK_IMPORTED_MODULE_4__[\"EMPTY\"]\n  };\n};\n\nconst connect = (mstp, mdtp) => Object(react_redux__WEBPACK_IMPORTED_MODULE_0__[\"connect\"])(Object(src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_5__[\"mergeMapStateToProps\"])(mapStateToProps, mstp), mdtp);\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-paginated-clients/connectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-paginated-clients/index.js":
+/*!*************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-paginated-clients/index.js ***!
+  \*************************************************************************/
+/*! exports provided: reducer, selectors, saga, connectors, CTRL_NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"reducer\", function() { return reducer; });\n/* harmony import */ var src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/reducer-helper */ \"./src/service/helper/reducer-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../namespace */ \"./src/service/client/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./namespace */ \"./src/service/client/controllers/fetch-paginated-clients/namespace.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"CTRL_NAMESPACE\", function() { return _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]; });\n\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./selectors */ \"./src/service/client/controllers/fetch-paginated-clients/selectors/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"]; });\n\n/* harmony import */ var _sagas__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sagas */ \"./src/service/client/controllers/fetch-paginated-clients/sagas/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"saga\", function() { return _sagas__WEBPACK_IMPORTED_MODULE_4__[\"watchFetchPaginatedClient\"]; });\n\n/* harmony import */ var _connectors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./connectors */ \"./src/service/client/controllers/fetch-paginated-clients/connectors/index.js\");\n/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, \"connectors\", function() { return _connectors__WEBPACK_IMPORTED_MODULE_5__; });\n\n\n\n\n\n\nconst reducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_0__[\"createFetchPaginatedCtrlReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"]);\n\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-paginated-clients/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-paginated-clients/namespace.js":
+/*!*****************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-paginated-clients/namespace.js ***!
+  \*****************************************************************************/
+/*! exports provided: NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NAMESPACE\", function() { return NAMESPACE; });\nconst NAMESPACE = 'fetchPaginated';\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-paginated-clients/namespace.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-paginated-clients/sagas/index.js":
+/*!*******************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-paginated-clients/sagas/index.js ***!
+  \*******************************************************************************/
+/*! exports provided: watchFetchPaginatedClient */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"watchFetchPaginatedClient\", function() { return watchFetchPaginatedClient; });\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! qs */ \"./node_modules/qs/lib/index.js\");\n/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(qs__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../selectors */ \"./src/service/client/controllers/fetch-paginated-clients/selectors/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../selectors */ \"./src/service/client/selectors.js\");\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../types */ \"./src/service/client/types.js\");\n/* harmony import */ var src_api__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/api */ \"./src/api/index.js\");\n\n\n\n\n\n\n\nfunction* fetchPaginatedClient({\n  payload: {\n    from,\n    to\n  }\n}) {\n  const requestName = Object(qs__WEBPACK_IMPORTED_MODULE_1__[\"stringify\"])({\n    from,\n    to\n  });\n  const resourceAvailable = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_2__[\"selectors\"].isResourceAvailable(requestName));\n  const resourceList = yield resourceAvailable ? Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_3__[\"dataSelectors\"].selectPaginatedList({\n    from,\n    to\n  })) : undefined;\n  const resourceValid = yield resourceList ? Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_3__[\"timetableSelectors\"].areResourcesValid(resourceList)) : false;\n\n  if (resourceValid) {\n    return;\n  } else {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.PENDING,\n      payload: {\n        requestName\n      }\n    });\n    const response = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"call\"])(src_api__WEBPACK_IMPORTED_MODULE_5__[\"fetchClients\"], {\n      from,\n      to\n    });\n    const payload = { ...response,\n      requestName\n    };\n\n    if (response.meta.status.error) {\n      yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n        type: _types__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.FAILED,\n        payload\n      });\n    } else {\n      yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n        type: _types__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.SUCCESS,\n        payload\n      });\n    }\n  }\n}\n\nfunction* watchFetchPaginatedClient() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"takeEvery\"])(_types__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.DO, fetchPaginatedClient);\n}\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-paginated-clients/sagas/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-paginated-clients/selectors/index.js":
+/*!***********************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-paginated-clients/selectors/index.js ***!
+  \***********************************************************************************/
+/*! exports provided: selectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony import */ var src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/selector-helper */ \"./src/service/helper/selector-helper.js\");\n/* harmony import */ var src_service_client_namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/client/namespace */ \"./src/service/client/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../namespace */ \"./src/service/client/controllers/fetch-paginated-clients/namespace.js\");\n// selector selecting the status of the controllers operation from state\n\n\n\nconst selectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createControllerSelectors\"])(src_service_client_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-paginated-clients/selectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-single-client/connectors/index.js":
+/*!********************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-single-client/connectors/index.js ***!
+  \********************************************************************************/
+/*! exports provided: connect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"connect\", function() { return connect; });\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../selectors */ \"./src/service/client/selectors.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../selectors */ \"./src/service/client/controllers/fetch-single-client/selectors/index.js\");\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n/* harmony import */ var src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/service/helper/merge-map-state-to-props */ \"./src/service/helper/merge-map-state-to-props.js\");\n\n\n\n\n\n\nconst mapStateToProps = (state, {\n  clientId\n}) => {\n  const resourceIsAvailableAndValid = _selectors__WEBPACK_IMPORTED_MODULE_2__[\"selectors\"].isResourceAvailable(clientId)(state) && _selectors__WEBPACK_IMPORTED_MODULE_1__[\"timetableSelectors\"].isResourceValid(clientId)(state);\n  return {\n    client: clientId ? _selectors__WEBPACK_IMPORTED_MODULE_1__[\"dataSelectors\"].selectDataById(clientId)(state) : undefined,\n    status: resourceIsAvailableAndValid ? _selectors__WEBPACK_IMPORTED_MODULE_2__[\"selectors\"].selectStatus(clientId)(state) : src_api_constants__WEBPACK_IMPORTED_MODULE_3__[\"EMPTY\"]\n  };\n};\n\nconst connect = (mstp, mdtp) => Object(react_redux__WEBPACK_IMPORTED_MODULE_0__[\"connect\"])(Object(src_service_helper_merge_map_state_to_props__WEBPACK_IMPORTED_MODULE_4__[\"mergeMapStateToProps\"])(mapStateToProps, mstp), mdtp);\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-single-client/connectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-single-client/index.js":
+/*!*********************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-single-client/index.js ***!
+  \*********************************************************************/
+/*! exports provided: reducer, selectors, saga, connectors, CTRL_NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"reducer\", function() { return reducer; });\n/* harmony import */ var src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/reducer-helper */ \"./src/service/helper/reducer-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../namespace */ \"./src/service/client/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./namespace */ \"./src/service/client/controllers/fetch-single-client/namespace.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"CTRL_NAMESPACE\", function() { return _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]; });\n\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./selectors */ \"./src/service/client/controllers/fetch-single-client/selectors/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_3__[\"selectors\"]; });\n\n/* harmony import */ var _sagas__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sagas */ \"./src/service/client/controllers/fetch-single-client/sagas/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"saga\", function() { return _sagas__WEBPACK_IMPORTED_MODULE_4__[\"watchFetchSingleClient\"]; });\n\n/* harmony import */ var _connectors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./connectors */ \"./src/service/client/controllers/fetch-single-client/connectors/index.js\");\n/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, \"connectors\", function() { return _connectors__WEBPACK_IMPORTED_MODULE_5__; });\n\n\n\n\n\n\nconst reducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_0__[\"createFetchSingleCtrlReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_1__[\"SINGLE_NAMESPACE\"]);\n\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-single-client/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-single-client/namespace.js":
+/*!*************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-single-client/namespace.js ***!
+  \*************************************************************************/
+/*! exports provided: NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NAMESPACE\", function() { return NAMESPACE; });\nconst NAMESPACE = 'fetchSingle';\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-single-client/namespace.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-single-client/sagas/index.js":
+/*!***************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-single-client/sagas/index.js ***!
+  \***************************************************************************/
+/*! exports provided: watchFetchSingleClient */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"watchFetchSingleClient\", function() { return watchFetchSingleClient; });\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../selectors */ \"./src/service/client/controllers/fetch-single-client/selectors/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../selectors */ \"./src/service/client/selectors.js\");\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../types */ \"./src/service/client/types.js\");\n/* harmony import */ var src_api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/api */ \"./src/api/index.js\");\n\n\n\n\n\n\nfunction* fetchSingleClient({\n  payload: {\n    clientId\n  }\n}) {\n  const resourceAvailable = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_1__[\"selectors\"].isResourceAvailable(clientId));\n  const resourceValid = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"select\"])(_selectors__WEBPACK_IMPORTED_MODULE_2__[\"timetableSelectors\"].isResourceValid(clientId));\n\n  if (resourceAvailable && resourceValid) {\n    return;\n  } else {\n    yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n      type: _types__WEBPACK_IMPORTED_MODULE_3__[\"types\"].FETCH_SINGLE.PENDING,\n      payload: {\n        id: clientId\n      }\n    });\n    const payload = yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"call\"])(src_api__WEBPACK_IMPORTED_MODULE_4__[\"fetchSingleClient\"], clientId);\n\n    if (payload.meta.status.error) {\n      yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n        type: _types__WEBPACK_IMPORTED_MODULE_3__[\"types\"].FETCH_SINGLE.FAILED,\n        payload\n      });\n    } else {\n      yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"put\"])({\n        type: _types__WEBPACK_IMPORTED_MODULE_3__[\"types\"].FETCH_SINGLE.SUCCESS,\n        payload\n      });\n    }\n  }\n}\n\nfunction* watchFetchSingleClient() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"takeEvery\"])(_types__WEBPACK_IMPORTED_MODULE_3__[\"types\"].FETCH_SINGLE.DO, fetchSingleClient);\n}\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-single-client/sagas/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/controllers/fetch-single-client/selectors/index.js":
+/*!*******************************************************************************!*\
+  !*** ./src/service/client/controllers/fetch-single-client/selectors/index.js ***!
+  \*******************************************************************************/
+/*! exports provided: selectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony import */ var src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/selector-helper */ \"./src/service/helper/selector-helper.js\");\n/* harmony import */ var src_service_client_namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/client/namespace */ \"./src/service/client/namespace.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../namespace */ \"./src/service/client/controllers/fetch-single-client/namespace.js\");\n\n\n\nconst selectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createControllerSelectors\"])(src_service_client_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_2__[\"NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/client/controllers/fetch-single-client/selectors/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/index.js":
+/*!*************************************!*\
+  !*** ./src/service/client/index.js ***!
+  \*************************************/
+/*! exports provided: dataReducer, timetableReducer, controllersReducer, connectors, sagas, selectors, timetableSelectors, dataSelectors, types */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"dataReducer\", function() { return dataReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"timetableReducer\", function() { return timetableReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"controllersReducer\", function() { return controllersReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"connectors\", function() { return connectors; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"sagas\", function() { return sagas; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"selectors\", function() { return selectors; });\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/service/helper/reducer-helper */ \"./src/service/helper/reducer-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./namespace */ \"./src/service/client/namespace.js\");\n/* harmony import */ var _controllers_add_client__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controllers/add-client */ \"./src/service/client/controllers/add-client/index.js\");\n/* harmony import */ var _controllers_fetch_single_client__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./controllers/fetch-single-client */ \"./src/service/client/controllers/fetch-single-client/index.js\");\n/* harmony import */ var _controllers_fetch_paginated_clients__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./controllers/fetch-paginated-clients */ \"./src/service/client/controllers/fetch-paginated-clients/index.js\");\n/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./selectors */ \"./src/service/client/selectors.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"timetableSelectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_7__[\"timetableSelectors\"]; });\n\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"dataSelectors\", function() { return _selectors__WEBPACK_IMPORTED_MODULE_7__[\"dataSelectors\"]; });\n\n/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./types */ \"./src/service/client/types.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"types\", function() { return _types__WEBPACK_IMPORTED_MODULE_8__[\"types\"]; });\n\n\n\n\n\n\n\n\n\n\nconst dataReducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_2__[\"createDataReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_3__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_3__[\"SINGLE_NAMESPACE\"]);\nconst timetableReducer = Object(src_service_helper_reducer_helper__WEBPACK_IMPORTED_MODULE_2__[\"createTimetableReducer\"])(_namespace__WEBPACK_IMPORTED_MODULE_3__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_3__[\"SINGLE_NAMESPACE\"]);\nconst controllersReducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  [_controllers_fetch_single_client__WEBPACK_IMPORTED_MODULE_5__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_single_client__WEBPACK_IMPORTED_MODULE_5__[\"reducer\"],\n  [_controllers_fetch_paginated_clients__WEBPACK_IMPORTED_MODULE_6__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_paginated_clients__WEBPACK_IMPORTED_MODULE_6__[\"reducer\"],\n  [_controllers_add_client__WEBPACK_IMPORTED_MODULE_4__[\"CTRL_NAMESPACE\"]]: _controllers_add_client__WEBPACK_IMPORTED_MODULE_4__[\"reducer\"]\n});\nconst connectors = {\n  [_controllers_fetch_single_client__WEBPACK_IMPORTED_MODULE_5__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_single_client__WEBPACK_IMPORTED_MODULE_5__[\"connectors\"],\n  [_controllers_fetch_paginated_clients__WEBPACK_IMPORTED_MODULE_6__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_paginated_clients__WEBPACK_IMPORTED_MODULE_6__[\"connectors\"],\n  [_controllers_add_client__WEBPACK_IMPORTED_MODULE_4__[\"CTRL_NAMESPACE\"]]: _controllers_add_client__WEBPACK_IMPORTED_MODULE_4__[\"connectors\"]\n};\nfunction* sagas() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_1__[\"all\"])([Object(_controllers_fetch_single_client__WEBPACK_IMPORTED_MODULE_5__[\"saga\"])(), Object(_controllers_fetch_paginated_clients__WEBPACK_IMPORTED_MODULE_6__[\"saga\"])(), Object(_controllers_add_client__WEBPACK_IMPORTED_MODULE_4__[\"saga\"])()]);\n}\nconst selectors = { ..._selectors__WEBPACK_IMPORTED_MODULE_7__[\"timetableSelectors\"],\n  ..._selectors__WEBPACK_IMPORTED_MODULE_7__[\"dataSelectors\"],\n  [_controllers_fetch_single_client__WEBPACK_IMPORTED_MODULE_5__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_single_client__WEBPACK_IMPORTED_MODULE_5__[\"selectors\"],\n  [_controllers_fetch_paginated_clients__WEBPACK_IMPORTED_MODULE_6__[\"CTRL_NAMESPACE\"]]: _controllers_fetch_paginated_clients__WEBPACK_IMPORTED_MODULE_6__[\"selectors\"],\n  [_controllers_add_client__WEBPACK_IMPORTED_MODULE_4__[\"CTRL_NAMESPACE\"]]: _controllers_add_client__WEBPACK_IMPORTED_MODULE_4__[\"selectors\"]\n};\n\n\n//# sourceURL=webpack:///./src/service/client/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/namespace.js":
+/*!*****************************************!*\
+  !*** ./src/service/client/namespace.js ***!
+  \*****************************************/
+/*! exports provided: NAMESPACE, SINGLE_NAMESPACE */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NAMESPACE\", function() { return NAMESPACE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"SINGLE_NAMESPACE\", function() { return SINGLE_NAMESPACE; });\nconst NAMESPACE = 'CLIENTS';\nconst SINGLE_NAMESPACE = 'CLIENT';\n\n//# sourceURL=webpack:///./src/service/client/namespace.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/selectors.js":
+/*!*****************************************!*\
+  !*** ./src/service/client/selectors.js ***!
+  \*****************************************/
+/*! exports provided: timetableSelectors, dataSelectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"timetableSelectors\", function() { return timetableSelectors; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"dataSelectors\", function() { return dataSelectors; });\n/* harmony import */ var src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/selector-helper */ \"./src/service/helper/selector-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./namespace */ \"./src/service/client/namespace.js\");\n\n\nconst timetableSelectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createTimetableSelectors\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"]);\nconst dataSelectors = Object(src_service_helper_selector_helper__WEBPACK_IMPORTED_MODULE_0__[\"createDataSelectors\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/client/selectors.js?");
+
+/***/ }),
+
+/***/ "./src/service/client/types.js":
+/*!*************************************!*\
+  !*** ./src/service/client/types.js ***!
+  \*************************************/
+/*! exports provided: types */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"types\", function() { return types; });\n/* harmony import */ var src_service_helper_type_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/service/helper/type-helper */ \"./src/service/helper/type-helper.js\");\n/* harmony import */ var _namespace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./namespace */ \"./src/service/client/namespace.js\");\n\n\nconst types = Object(src_service_helper_type_helper__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_namespace__WEBPACK_IMPORTED_MODULE_1__[\"NAMESPACE\"], _namespace__WEBPACK_IMPORTED_MODULE_1__[\"SINGLE_NAMESPACE\"]);\n\n//# sourceURL=webpack:///./src/service/client/types.js?");
+
+/***/ }),
+
+/***/ "./src/service/data/index.js":
+/*!***********************************!*\
+  !*** ./src/service/data/index.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../client */ \"./src/service/client/index.js\");\n/* harmony import */ var _booking__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../booking */ \"./src/service/booking/index.js\");\n\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  clients: _client__WEBPACK_IMPORTED_MODULE_1__[\"dataReducer\"],\n  bookings: _booking__WEBPACK_IMPORTED_MODULE_2__[\"dataReducer\"]\n}));\n\n//# sourceURL=webpack:///./src/service/data/index.js?");
+
+/***/ }),
+
+/***/ "./src/service/helper/merge-map-state-to-props.js":
+/*!********************************************************!*\
+  !*** ./src/service/helper/merge-map-state-to-props.js ***!
+  \********************************************************/
+/*! exports provided: mergeMapStateToProps */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"mergeMapStateToProps\", function() { return mergeMapStateToProps; });\nconst mergeMapStateToProps = (one, two = () => ({})) => (state, props) => {\n  return { ...one(state, props),\n    ...two(state, props)\n  };\n};\n\n//# sourceURL=webpack:///./src/service/helper/merge-map-state-to-props.js?");
+
+/***/ }),
+
+/***/ "./src/service/helper/operation-helper.js":
+/*!************************************************!*\
+  !*** ./src/service/helper/operation-helper.js ***!
+  \************************************************/
+/*! exports provided: fetch, fetchSingle, add, del, update */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetch\", function() { return fetch; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"fetchSingle\", function() { return fetchSingle; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"add\", function() { return add; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"del\", function() { return del; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"update\", function() { return update; });\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n/* harmony import */ var _suffix__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./suffix */ \"./src/service/helper/suffix.js\");\n\n\nconst DELIMITER = '/';\nconst fetch = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"FETCH\"]);\nconst fetchSingle = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"FETCH\"]);\nconst add = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"ADD\"]);\nconst del = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"DELETE\"]);\nconst update = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"UPDATE\"]);\n\n//# sourceURL=webpack:///./src/service/helper/operation-helper.js?");
+
+/***/ }),
+
+/***/ "./src/service/helper/reducer-helper.js":
+/*!**********************************************!*\
+  !*** ./src/service/helper/reducer-helper.js ***!
+  \**********************************************/
+/*! exports provided: createDataReducer, createTimetableReducer, createFetchSingleCtrlReducer, createFetchPaginatedCtrlReducer, createAddCtrlReducer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createDataReducer\", function() { return createDataReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createTimetableReducer\", function() { return createTimetableReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createFetchSingleCtrlReducer\", function() { return createFetchSingleCtrlReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createFetchPaginatedCtrlReducer\", function() { return createFetchPaginatedCtrlReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createAddCtrlReducer\", function() { return createAddCtrlReducer; });\n/* harmony import */ var _status_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./status-helper */ \"./src/service/helper/status-helper.js\");\n/* harmony import */ var _operation_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operation-helper */ \"./src/service/helper/operation-helper.js\");\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n\n\n\nconst initialDataState = {\n  meta: {\n    status: {\n      status: src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"EMPTY\"]\n    }\n  }\n};\nconst createDataReducer = (NAMESPACE, SINGLE_NAMESPACE, initialState = initialDataState) => (state = initialState, {\n  type,\n  payload,\n  error\n}) => {\n  // TO-DO\n  switch (type) {\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"pending\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"pending\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n      return { ...state,\n        meta: { ...state.meta,\n          status: {\n            status: src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"PENDING\"]\n          }\n        }\n      };\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"failed\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"failed\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n      return { ...state,\n        ...payload\n      };\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(SINGLE_NAMESPACE)):\n      return {\n        meta: { ...state.meta,\n          ...payload.meta\n        },\n        data: { ...state.data,\n          ...payload.data\n        },\n        list: [...new Set([...(state.list || []), ...payload.list])]\n      };\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(SINGLE_NAMESPACE)):\n    default:\n      return state;\n  }\n};\nconst initialTimetableState = {};\nconst createTimetableReducer = (NAMESPACE, SINGLE_NAMESPACE, initialState = initialTimetableState) => (state = initialState, {\n  type,\n  payload\n}) => {\n  switch (type) {\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(SINGLE_NAMESPACE)):\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n      {\n        const timestamp = new Date().getTime();\n        return payload.list.reduce((state, id) => {\n          state[id] = timestamp;\n          return state;\n        }, { ...state\n        });\n      }\n\n    default:\n      return state;\n  }\n};\n\nconst setStatus = (STATUS, list, state) => list.reduce((state, id) => {\n  state[id] = STATUS;\n  return state;\n}, { ...state\n});\n\nconst setPending = (list, state) => setStatus(src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"PENDING\"], list, state);\n\nconst setSuccess = (list, state) => setStatus(src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"SUCCESS\"], list, state);\n\nconst setFailed = (list, state) => setStatus(src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"FAILED\"], list, state);\n\nconst initialFetchSingleCtrlState = {};\nconst createFetchSingleCtrlReducer = (NAMESPACE, SINGLE_NAMESPACE, initialState = initialFetchSingleCtrlState) => (state = initialState, {\n  type,\n  payload\n}) => {\n  switch (type) {\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"pending\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(SINGLE_NAMESPACE)):\n      {\n        return setPending([payload.id], state);\n      }\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(SINGLE_NAMESPACE)):\n      {\n        return setSuccess(payload.list, state);\n      }\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"failed\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(SINGLE_NAMESPACE)):\n      {\n        return setFailed([payload.id], state);\n      }\n\n    default:\n      return state;\n  }\n};\nconst initialFetchPaginatedCtrlState = {};\nconst createFetchPaginatedCtrlReducer = (NAMESPACE, initialState = initialFetchPaginatedCtrlState) => (state = initialState, {\n  type,\n  payload\n}) => {\n  switch (type) {\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"pending\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n      {\n        return setPending([payload.requestName], state);\n      }\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n      {\n        return setSuccess([payload.requestName], state);\n      }\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"failed\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"])(NAMESPACE)):\n      {\n        return setFailed([payload.id], state);\n      }\n\n    default:\n      return state;\n  }\n};\nconst initialAddCtrlState = {};\nconst createAddCtrlReducer = (NAMESPACE, initialState = initialAddCtrlState) => (state = initialState, {\n  type,\n  payload = {}\n}) => {\n  switch (type) {\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"pending\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n      {\n        return {\n          [payload.id || 'new']: src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"PENDING\"]\n        };\n      }\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"succeeded\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n      {\n        return {\n          [payload.list[0] || 'new']: src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"SUCCESS\"]\n        };\n      }\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"failed\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n      {\n        return {\n          [payload.id || 'new']: src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"FAILED\"]\n        };\n      }\n\n    case Object(_status_helper__WEBPACK_IMPORTED_MODULE_0__[\"reset\"])(Object(_operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"])(NAMESPACE)):\n      {\n        return {\n          [payload.id || 'new']: src_api_constants__WEBPACK_IMPORTED_MODULE_2__[\"EMPTY\"]\n        };\n      }\n\n    default:\n      return state;\n  }\n};\n\n//# sourceURL=webpack:///./src/service/helper/reducer-helper.js?");
+
+/***/ }),
+
+/***/ "./src/service/helper/selector-helper.js":
+/*!***********************************************!*\
+  !*** ./src/service/helper/selector-helper.js ***!
+  \***********************************************/
+/*! exports provided: createDataSelectors, createDataSelector, createTimetableSelector, createTimetableSelectors, createControllerSelector, createControllerSelectors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createDataSelectors\", function() { return createDataSelectors; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createDataSelector\", function() { return createDataSelector; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createTimetableSelector\", function() { return createTimetableSelector; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createTimetableSelectors\", function() { return createTimetableSelectors; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createControllerSelector\", function() { return createControllerSelector; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createControllerSelectors\", function() { return createControllerSelectors; });\n/* harmony import */ var reselect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! reselect */ \"./node_modules/reselect/es/index.js\");\n/* harmony import */ var _status_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./status-helper */ \"./src/service/helper/status-helper.js\");\n\n\nconst createDataSelectors = NAMESPACE => {\n  const baseSelector = state => state.data[NAMESPACE.toLowerCase()];\n\n  const selectData = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(baseSelector, state => state.data);\n  const selectList = Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(baseSelector, state => state.list);\n\n  const selectDataById = id => data => data ? data[id] : undefined;\n\n  return {\n    selectData,\n    selectList,\n    selectDataById: id => Object(reselect__WEBPACK_IMPORTED_MODULE_0__[\"createSelector\"])(selectData, selectDataById(id)),\n    selectPaginatedList: ({\n      from,\n      to\n    }) => state => selectList(state).slice(from, to)\n  };\n};\nconst createDataSelector = NAMESPACE => state => state.data[NAMESPACE.toLowerCase()];\nconst createTimetableSelector = NAMESPACE => state => state.app.metadata.timetable[NAMESPACE];\nconst createTimetableSelectors = NAMESPACE => {\n  const baseSelector = state => state.app.metadata.timetable[NAMESPACE.toLowerCase()];\n\n  const wasResourceUpdatedFiveMinutesAgo = resource => {\n    const fiveMinutes = 5 * 60 * 1000;\n    const currentTimestamp = new Date().getTime();\n    const fiveMinutesAgo = currentTimestamp - fiveMinutes;\n    return resource > fiveMinutesAgo;\n  };\n\n  const isResourceValid = resourceId => state => {\n    const timetable = baseSelector(state);\n    return wasResourceUpdatedFiveMinutesAgo(timetable[resourceId]);\n  };\n\n  const areResourcesValid = resourceIdList => state => {\n    const timetable = baseSelector(state);\n    return resourceIdList.every(resourceId => wasResourceUpdatedFiveMinutesAgo(timetable[resourceId]));\n  };\n\n  return {\n    isResourceValid,\n    areResourcesValid,\n    baseSelector\n  };\n};\nconst createControllerSelector = NAMESPACE => state => state.app.metadata.controllers[NAMESPACE];\nconst createControllerSelectors = (NAMESPACE, controllerName) => {\n  const baseSelector = state => state.app.metadata.controllers[NAMESPACE.toLowerCase()][controllerName];\n\n  const isResourceAvailable = resourceId => state => {\n    const resourceStatus = baseSelector(state)[resourceId];\n    return resourceStatus && Object(_status_helper__WEBPACK_IMPORTED_MODULE_1__[\"isSucceededStatus\"])(resourceStatus);\n  };\n\n  const selectStatus = resourceId => state => baseSelector(state)[resourceId];\n\n  return {\n    isResourceAvailable,\n    selectStatus\n  };\n};\n\n//# sourceURL=webpack:///./src/service/helper/selector-helper.js?");
+
+/***/ }),
+
+/***/ "./src/service/helper/status-helper.js":
+/*!*********************************************!*\
+  !*** ./src/service/helper/status-helper.js ***!
+  \*********************************************/
+/*! exports provided: pending, succeeded, failed, rejected, reset, isPendingStatus, isFailedStatus, isSucceededStatus, isEmptyStatus */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"pending\", function() { return pending; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"succeeded\", function() { return succeeded; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"failed\", function() { return failed; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"rejected\", function() { return rejected; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"reset\", function() { return reset; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isPendingStatus\", function() { return isPendingStatus; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isFailedStatus\", function() { return isFailedStatus; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isSucceededStatus\", function() { return isSucceededStatus; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isEmptyStatus\", function() { return isEmptyStatus; });\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n/* harmony import */ var _suffix__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./suffix */ \"./src/service/helper/suffix.js\");\n\n\nconst DELIMITER = ':';\nconst pending = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"PENDING\"]);\nconst succeeded = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"SUCCESS\"]);\nconst failed = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"]);\nconst rejected = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"REJECTED\"]);\nconst reset = NAMESPACE => Object(_suffix__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(NAMESPACE, DELIMITER, src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"RESET\"]);\n\nconst evaluateStatus = EXPECTED_STATUS => status => status === EXPECTED_STATUS;\n\nconst isPendingStatus = evaluateStatus(src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"PENDING\"]);\nconst isFailedStatus = evaluateStatus(src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"]);\nconst isSucceededStatus = evaluateStatus(src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"SUCCESS\"]);\nconst isEmptyStatus = evaluateStatus(src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"EMPTY\"]);\n\n//# sourceURL=webpack:///./src/service/helper/status-helper.js?");
+
+/***/ }),
+
+/***/ "./src/service/helper/suffix.js":
+/*!**************************************!*\
+  !*** ./src/service/helper/suffix.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony default export */ __webpack_exports__[\"default\"] = ((BASE, DELIMITER, SUFFIX) => `${BASE}${DELIMITER}${SUFFIX}`);\n\n//# sourceURL=webpack:///./src/service/helper/suffix.js?");
+
+/***/ }),
+
+/***/ "./src/service/helper/type-helper.js":
+/*!*******************************************!*\
+  !*** ./src/service/helper/type-helper.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var src_api_constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/api/constants */ \"./src/api/constants.js\");\n/* harmony import */ var _operation_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operation-helper */ \"./src/service/helper/operation-helper.js\");\n/* harmony import */ var _status_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./status-helper */ \"./src/service/helper/status-helper.js\");\n\n\n\nconst operationHelpers = {\n  FETCH: _operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"],\n  FETCH_SINGLE: _operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"fetch\"],\n  ADD: _operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"add\"],\n  DELETE: _operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"del\"],\n  UPDATE: _operation_helper__WEBPACK_IMPORTED_MODULE_1__[\"update\"]\n};\nconst statusHelpers = {\n  PENDING: _status_helper__WEBPACK_IMPORTED_MODULE_2__[\"pending\"],\n  SUCCESS: _status_helper__WEBPACK_IMPORTED_MODULE_2__[\"succeeded\"],\n  FAILED: _status_helper__WEBPACK_IMPORTED_MODULE_2__[\"failed\"],\n  REJECTED: _status_helper__WEBPACK_IMPORTED_MODULE_2__[\"rejected\"],\n  RESET: _status_helper__WEBPACK_IMPORTED_MODULE_2__[\"reset\"]\n};\n\nconst createOperationTypes = OPERATION_NAMESPACE => {\n  return [src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"PENDING\"], src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"SUCCESS\"], src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"FAILED\"], src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"REJECTED\"], src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"RESET\"]].reduce((states, status) => {\n    states[status] = statusHelpers[status](OPERATION_NAMESPACE);\n    return states;\n  }, {});\n};\n\nconst createTypes = (NAMESPACE, SINGLE_NAMESPACE) => {\n  const fetchSingleOperationNamespace = operationHelpers.FETCH_SINGLE(SINGLE_NAMESPACE);\n  const types = {\n    FETCH_SINGLE: { ...createOperationTypes(fetchSingleOperationNamespace),\n      DO: fetchSingleOperationNamespace\n    }\n  };\n  return [src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"FETCH\"], src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"ADD\"], src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"DELETE\"], src_api_constants__WEBPACK_IMPORTED_MODULE_0__[\"UPDATE\"]].reduce((types, operation) => {\n    const OPERATION_NAMESPACE = operationHelpers[operation](NAMESPACE);\n    types[operation] = createOperationTypes(OPERATION_NAMESPACE);\n    types[operation].DO = OPERATION_NAMESPACE;\n    return types;\n  }, types);\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (createTypes);\n\n//# sourceURL=webpack:///./src/service/helper/type-helper.js?");
+
+/***/ }),
+
+/***/ "./src/service/root-reducer.js":
+/*!*************************************!*\
+  !*** ./src/service/root-reducer.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./data */ \"./src/service/data/index.js\");\n/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app */ \"./src/service/app/index.js\");\n\n\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n  data: _data__WEBPACK_IMPORTED_MODULE_1__[\"default\"],\n  app: _app__WEBPACK_IMPORTED_MODULE_2__[\"default\"]\n}));\n\n//# sourceURL=webpack:///./src/service/root-reducer.js?");
+
+/***/ }),
+
+/***/ "./src/service/root-saga.js":
+/*!**********************************!*\
+  !*** ./src/service/root-saga.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return rootSaga; });\n/* harmony import */ var redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux-saga/effects */ \"./node_modules/redux-saga/es/effects.js\");\n/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./client */ \"./src/service/client/index.js\");\n/* harmony import */ var _booking__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./booking */ \"./src/service/booking/index.js\");\n\n\n\nfunction* rootSaga() {\n  yield Object(redux_saga_effects__WEBPACK_IMPORTED_MODULE_0__[\"all\"])([Object(_client__WEBPACK_IMPORTED_MODULE_1__[\"sagas\"])(), Object(_booking__WEBPACK_IMPORTED_MODULE_2__[\"sagas\"])()]);\n}\n\n//# sourceURL=webpack:///./src/service/root-saga.js?");
+
+/***/ }),
+
+/***/ "./src/service/store.js":
+/*!******************************!*\
+  !*** ./src/service/store.js ***!
+  \******************************/
+/*! exports provided: store, persistor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"store\", function() { return store; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"persistor\", function() { return persistor; });\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var redux_saga__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux-saga */ \"./node_modules/redux-saga/es/index.js\");\n/* harmony import */ var redux_persist__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux-persist */ \"./node_modules/redux-persist/es/index.js\");\n/* harmony import */ var redux_persist_lib_storage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux-persist/lib/storage */ \"./node_modules/redux-persist/lib/storage/index.js\");\n/* harmony import */ var redux_persist_lib_storage__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(redux_persist_lib_storage__WEBPACK_IMPORTED_MODULE_3__);\n/* harmony import */ var _root_saga__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./root-saga */ \"./src/service/root-saga.js\");\n/* harmony import */ var _root_reducer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./root-reducer */ \"./src/service/root-reducer.js\");\n\n\n\n\n\n\nconst composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || redux__WEBPACK_IMPORTED_MODULE_0__[\"compose\"];\nconst sagaMiddleware = Object(redux_saga__WEBPACK_IMPORTED_MODULE_1__[\"default\"])();\nconst persistConfig = {\n  key: 'root',\n  storage: (redux_persist_lib_storage__WEBPACK_IMPORTED_MODULE_3___default())\n};\nconst persistedReducer = Object(redux_persist__WEBPACK_IMPORTED_MODULE_2__[\"persistReducer\"])(persistConfig, _root_reducer__WEBPACK_IMPORTED_MODULE_5__[\"default\"]);\nconst store = Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"createStore\"])(persistedReducer, composeEnhancers(Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"applyMiddleware\"])(sagaMiddleware)));\nconst persistor = Object(redux_persist__WEBPACK_IMPORTED_MODULE_2__[\"persistStore\"])(store);\nsagaMiddleware.run(_root_saga__WEBPACK_IMPORTED_MODULE_4__[\"default\"]);\n\n//# sourceURL=webpack:///./src/service/store.js?");
+
+/***/ }),
+
+/***/ "./src/view/app/App.js":
+/*!*****************************!*\
+  !*** ./src/view/app/App.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var src_view_client__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/view/client */ \"./src/view/client/index.js\");\n/* harmony import */ var src_view_booking__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/view/booking */ \"./src/view/booking/index.js\");\n/* harmony import */ var src_routing_components_navigation_bar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/routing/components/navigation-bar */ \"./src/routing/components/navigation-bar/index.js\");\n/* harmony import */ var _AppContainer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./AppContainer */ \"./src/view/app/AppContainer.js\");\n/* harmony import */ var _styles_app_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./styles/app.scss */ \"./src/view/app/styles/app.scss\");\n/* harmony import */ var _styles_app_scss__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_styles_app_scss__WEBPACK_IMPORTED_MODULE_6__);\n/* harmony import */ var _styles_root_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./styles/root.scss */ \"./src/view/app/styles/root.scss\");\n/* harmony import */ var _styles_root_scss__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_styles_root_scss__WEBPACK_IMPORTED_MODULE_7__);\n\n\n\n\n\n\n\n\n\nconst Index = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"h2\", null, \"Home\");\n\nconst App = () => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AppContainer__WEBPACK_IMPORTED_MODULE_5__[\"default\"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"main\", {\n  className: _styles_app_scss__WEBPACK_IMPORTED_MODULE_6___default.a.app\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(src_routing_components_navigation_bar__WEBPACK_IMPORTED_MODULE_4__[\"default\"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"section\", {\n  className: _styles_app_scss__WEBPACK_IMPORTED_MODULE_6___default.a.pageBody\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Switch\"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n  path: \"/\",\n  exact: true,\n  component: Index\n}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n  path: \"/clients\",\n  component: src_view_client__WEBPACK_IMPORTED_MODULE_2__[\"ClientRouter\"]\n}), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n  path: \"/bookings\",\n  component: src_view_booking__WEBPACK_IMPORTED_MODULE_3__[\"BookingRouter\"]\n})))));\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (App);\n\n//# sourceURL=webpack:///./src/view/app/App.js?");
+
+/***/ }),
+
+/***/ "./src/view/app/AppContainer.js":
+/*!**************************************!*\
+  !*** ./src/view/app/AppContainer.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var redux_persist_integration_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux-persist/integration/react */ \"./node_modules/redux-persist/es/integration/react.js\");\n/* harmony import */ var src_service_store__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/service/store */ \"./src/service/store.js\");\n\n\n\n\n\n\nconst AppContainer = ({\n  children\n}) => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_redux__WEBPACK_IMPORTED_MODULE_1__[\"Provider\"], {\n  store: src_service_store__WEBPACK_IMPORTED_MODULE_4__[\"store\"]\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(redux_persist_integration_react__WEBPACK_IMPORTED_MODULE_3__[\"PersistGate\"], {\n  loading: null,\n  persistor: src_service_store__WEBPACK_IMPORTED_MODULE_4__[\"persistor\"]\n}, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__[\"HashRouter\"], null, children)));\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (AppContainer);\n\n//# sourceURL=webpack:///./src/view/app/AppContainer.js?");
+
+/***/ }),
+
+/***/ "./src/view/app/styles/app.scss":
+/*!**************************************!*\
+  !*** ./src/view/app/styles/app.scss ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"app\":\"app__app--D6Inl\",\"page-body\":\"app__page-body--3DULv\",\"pageBody\":\"app__page-body--3DULv\"};\n\n//# sourceURL=webpack:///./src/view/app/styles/app.scss?");
+
+/***/ }),
+
+/***/ "./src/view/app/styles/root.scss":
+/*!***************************************!*\
+  !*** ./src/view/app/styles/root.scss ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"root\":\"root__root--I6HmN\"};\n\n//# sourceURL=webpack:///./src/view/app/styles/root.scss?");
+
+/***/ }),
+
+/***/ "./src/view/booking/components/booking-list/index.js":
+/*!***********************************************************!*\
+  !*** ./src/view/booking/components/booking-list/index.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var src_service_booking__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/booking */ \"./src/service/booking/index.js\");\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! semantic-ui-react */ \"./node_modules/semantic-ui-react/dist/es/index.js\");\n/* harmony import */ var src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/service/helper/status-helper */ \"./src/service/helper/status-helper.js\");\n/* harmony import */ var src_view_commons_state_Loading__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/view/commons/state/Loading */ \"./src/view/commons/state/Loading.js\");\n/* harmony import */ var _booking_row__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../booking-row */ \"./src/view/booking/components/booking-row/index.js\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./index.scss */ \"./src/view/booking/components/booking-list/index.scss\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_index_scss__WEBPACK_IMPORTED_MODULE_7__);\n\n\n\n\n\n\n\n\n\nconst BookingList = ({\n  fetchBookings,\n  list: bookingList,\n  status\n}) => {\n  Object(react__WEBPACK_IMPORTED_MODULE_0__[\"useEffect\"])(() => {\n    fetchBookings();\n  }, []);\n\n  if (Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isSucceededStatus\"])(status)) {\n    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n      className: _index_scss__WEBPACK_IMPORTED_MODULE_7___default.a.bookingList\n    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__[\"Link\"], {\n      to: \"/bookings/new\"\n    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_3__[\"Button\"], {\n      color: \"green\",\n      content: \"Add new Booking\",\n      icon: \"add\",\n      labelPosition: \"right\"\n    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_3__[\"Table\"], {\n      className: _index_scss__WEBPACK_IMPORTED_MODULE_7___default.a.table\n    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_3__[\"Table\"].Body, null, bookingList.map(bookingId => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_booking_row__WEBPACK_IMPORTED_MODULE_6__[\"default\"], {\n      bookingId: bookingId,\n      key: bookingId\n    })))));\n  } else if (Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isFailedStatus\"])(status)) {\n    return 'oh 👃🏻';\n  }\n\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(src_view_commons_state_Loading__WEBPACK_IMPORTED_MODULE_5__[\"default\"], null);\n};\n\nconst mapDispatchToProps = dispatch => ({\n  fetchBookings: () => dispatch({\n    type: src_service_booking__WEBPACK_IMPORTED_MODULE_1__[\"types\"].FETCH.DO,\n    payload: {\n      from: 0,\n      to: 30\n    }\n  })\n});\n\nconst Connected = src_service_booking__WEBPACK_IMPORTED_MODULE_1__[\"connectors\"].fetchPaginated.connect(undefined, mapDispatchToProps)(BookingList);\nConnected.displayName = 'Bookings';\nConnected.url = '/bookings';\n/* harmony default export */ __webpack_exports__[\"default\"] = (Connected);\n\n//# sourceURL=webpack:///./src/view/booking/components/booking-list/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/booking/components/booking-list/index.scss":
+/*!*************************************************************!*\
+  !*** ./src/view/booking/components/booking-list/index.scss ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"booking-list\":\"index__booking-list--KL4u3\",\"bookingList\":\"index__booking-list--KL4u3\",\"table\":\"index__table--1yKDf\"};\n\n//# sourceURL=webpack:///./src/view/booking/components/booking-list/index.scss?");
+
+/***/ }),
+
+/***/ "./src/view/booking/components/booking-router/index.js":
+/*!*************************************************************!*\
+  !*** ./src/view/booking/components/booking-router/index.js ***!
+  \*************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var _booking_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../booking-list */ \"./src/view/booking/components/booking-list/index.js\");\n/* harmony import */ var _booking__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../booking */ \"./src/view/booking/components/booking/index.js\");\n\n\n\n\n\nconst BookingRouter = () => {\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Switch\"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/bookings\",\n    exact: true,\n    component: _booking_list__WEBPACK_IMPORTED_MODULE_2__[\"default\"]\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/bookings/new\",\n    component: _booking__WEBPACK_IMPORTED_MODULE_3__[\"NewBooking\"]\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/bookings/:bookingId\",\n    component: _booking__WEBPACK_IMPORTED_MODULE_3__[\"EditBooking\"]\n  })));\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (BookingRouter);\n\n//# sourceURL=webpack:///./src/view/booking/components/booking-router/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/booking/components/booking-row/index.js":
+/*!**********************************************************!*\
+  !*** ./src/view/booking/components/booking-row/index.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var src_service_booking__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/booking */ \"./src/service/booking/index.js\");\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n\n\n\n\nconst BookingRow = ({\n  booking\n}) => {\n  if (!booking) {\n    return 'sorry booking could not be found';\n  }\n\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"tr\", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, booking.course), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, booking.price, \" CHF\"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__[\"Link\"], {\n    to: `/clients/${booking.client}`\n  }, booking.client, \"# Client\")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__[\"Link\"], {\n    to: `/bookings/${booking.id}`\n  }, \"Detail\")));\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (src_service_booking__WEBPACK_IMPORTED_MODULE_1__[\"connectors\"].fetchSingle.connect()(BookingRow));\n\n//# sourceURL=webpack:///./src/view/booking/components/booking-row/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/booking/components/booking/index.js":
+/*!******************************************************!*\
+  !*** ./src/view/booking/components/booking/index.js ***!
+  \******************************************************/
+/*! exports provided: EditBooking, NewBooking */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"EditBooking\", function() { return EditBooking; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NewBooking\", function() { return NewBooking; });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! semantic-ui-react */ \"./node_modules/semantic-ui-react/dist/es/index.js\");\n/* harmony import */ var formik__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! formik */ \"./node_modules/formik/dist/formik.esm.js\");\n/* harmony import */ var src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/service/helper/status-helper */ \"./src/service/helper/status-helper.js\");\n/* harmony import */ var src_service_booking__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/service/booking */ \"./src/service/booking/index.js\");\n/* harmony import */ var src_view_commons_state_Loading__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/view/commons/state/Loading */ \"./src/view/commons/state/Loading.js\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./index.scss */ \"./src/view/booking/components/booking/index.scss\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_index_scss__WEBPACK_IMPORTED_MODULE_7__);\nfunction _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }\n\n\n\n\n\n\n\n\n\nconst defaultBooking = {\n  id: undefined,\n  price: 150,\n  course: 'yoga',\n  client: 5\n};\n\nconst Booking = ({\n  booking,\n  status,\n  fetchBooking,\n  addBooking,\n  postStatus\n}) => {\n  Object(react__WEBPACK_IMPORTED_MODULE_0__[\"useEffect\"])(() => {\n    fetchBooking && fetchBooking();\n  }, []);\n  if (Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isEmptyStatus\"])(status)) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(src_view_commons_state_Loading__WEBPACK_IMPORTED_MODULE_6__[\"default\"], null);\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"Formik\"], {\n    initialValues: booking || defaultBooking,\n    onSubmit: values => {\n      addBooking(values);\n    }\n  }, ({\n    handleSubmit,\n    handleChange,\n    handleBlur,\n    values\n  }) => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"form\", {\n    onSubmit: handleSubmit,\n    className: _index_scss__WEBPACK_IMPORTED_MODULE_7___default.a.form\n  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Course\",\n    type: \"text\",\n    name: \"course\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.course\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"course\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Client ID\",\n    type: \"text\",\n    name: \"client\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.client\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"client\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Price\",\n    type: \"text\",\n    name: \"price\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.price\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"price\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Button\"], {\n    type: \"submit\",\n    primary: true,\n    disabled: Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isPendingStatus\"])(postStatus)\n  }, Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isPendingStatus\"])(postStatus) ? 'Speichern...' : 'Submit'), Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isSucceededStatus\"])(postStatus) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Segment\"], {\n    color: \"green\"\n  }, \"Operation Successful\"), Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isFailedStatus\"])(postStatus) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Segment\"], {\n    color: \"red\"\n  }, \"Operation failed\")));\n};\n\nconst mapStateToProps = (state, props) => {\n  const {\n    bookingId\n  } = props.match.params;\n  return {\n    booking: bookingId ? selectors.selectDataById(bookingId)(state) : undefined,\n    status: selectors.selectStatus(state)\n  };\n};\n\nconst mapDispatchToProps = (dispatch, props) => ({\n  fetchBooking: () => dispatch({\n    type: src_service_booking__WEBPACK_IMPORTED_MODULE_5__[\"types\"].FETCH_SINGLE.DO,\n    payload: {\n      bookingId: props.bookingId\n    }\n  }),\n  addBooking: booking => dispatch({\n    type: src_service_booking__WEBPACK_IMPORTED_MODULE_5__[\"types\"].ADD.DO,\n    payload: booking\n  })\n});\n\nconst Connected = src_service_booking__WEBPACK_IMPORTED_MODULE_5__[\"connectors\"].fetchSingle.connect(undefined, mapDispatchToProps)(src_service_booking__WEBPACK_IMPORTED_MODULE_5__[\"connectors\"].add.connect()(Booking));\nconst EditBooking = ({\n  match,\n  ...rest\n}) => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Connected, _extends({\n  bookingId: match.params.bookingId\n}, rest));\n\nconst NewBookingDisconnected = props => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Booking, _extends({\n  booking: defaultBooking\n}, props));\n\nconst NewBooking = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__[\"connect\"])(undefined, dispatch => ({\n  addBooking: booking => dispatch({\n    type: src_service_booking__WEBPACK_IMPORTED_MODULE_5__[\"types\"].ADD.DO,\n    payload: booking\n  })\n}))(src_service_booking__WEBPACK_IMPORTED_MODULE_5__[\"connectors\"].add.connect()(NewBookingDisconnected));\n\n//# sourceURL=webpack:///./src/view/booking/components/booking/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/booking/components/booking/index.scss":
+/*!********************************************************!*\
+  !*** ./src/view/booking/components/booking/index.scss ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"form\":\"index__form--1w-xg\",\"error\":\"index__error--2aBbK\",\"success\":\"index__success--iwOC4\"};\n\n//# sourceURL=webpack:///./src/view/booking/components/booking/index.scss?");
+
+/***/ }),
+
+/***/ "./src/view/booking/index.js":
+/*!***********************************!*\
+  !*** ./src/view/booking/index.js ***!
+  \***********************************/
+/*! exports provided: NewBooking, EditBooking, BookingList, BookingRouter, BookingRow */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _components_booking__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/booking */ \"./src/view/booking/components/booking/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"NewBooking\", function() { return _components_booking__WEBPACK_IMPORTED_MODULE_0__[\"NewBooking\"]; });\n\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"EditBooking\", function() { return _components_booking__WEBPACK_IMPORTED_MODULE_0__[\"EditBooking\"]; });\n\n/* harmony import */ var _components_booking_list__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/booking-list */ \"./src/view/booking/components/booking-list/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"BookingList\", function() { return _components_booking_list__WEBPACK_IMPORTED_MODULE_1__[\"default\"]; });\n\n/* harmony import */ var _components_booking_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/booking-router */ \"./src/view/booking/components/booking-router/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"BookingRouter\", function() { return _components_booking_router__WEBPACK_IMPORTED_MODULE_2__[\"default\"]; });\n\n/* harmony import */ var _components_booking_row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/booking-row */ \"./src/view/booking/components/booking-row/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"BookingRow\", function() { return _components_booking_row__WEBPACK_IMPORTED_MODULE_3__[\"default\"]; });\n\n\n\n\n\n\n\n//# sourceURL=webpack:///./src/view/booking/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/client/components/client-list/index.js":
+/*!*********************************************************!*\
+  !*** ./src/view/client/components/client-list/index.js ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! semantic-ui-react */ \"./node_modules/semantic-ui-react/dist/es/index.js\");\n/* harmony import */ var _client_row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../client-row */ \"./src/view/client/components/client-row/index.js\");\n/* harmony import */ var src_service_client__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/service/client */ \"./src/service/client/index.js\");\n/* harmony import */ var src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/service/helper/status-helper */ \"./src/service/helper/status-helper.js\");\n/* harmony import */ var src_view_commons_state_Loading__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/view/commons/state/Loading */ \"./src/view/commons/state/Loading.js\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./index.scss */ \"./src/view/client/components/client-list/index.scss\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_index_scss__WEBPACK_IMPORTED_MODULE_7__);\n\n\n\n\n\n\n\n\n\nconst ClientList = ({\n  fetchClients,\n  list: clientList,\n  status\n}) => {\n  Object(react__WEBPACK_IMPORTED_MODULE_0__[\"useEffect\"])(() => {\n    fetchClients();\n  }, []);\n\n  if (Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_5__[\"isSucceededStatus\"])(status)) {\n    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"div\", {\n      className: _index_scss__WEBPACK_IMPORTED_MODULE_7___default.a.clientList\n    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Link\"], {\n      to: \"/clients/new\"\n    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Button\"], {\n      color: \"green\",\n      content: \"Add new Client\",\n      icon: \"add\",\n      labelPosition: \"right\"\n    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Table\"], {\n      className: _index_scss__WEBPACK_IMPORTED_MODULE_7___default.a.table\n    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Table\"].Body, null, clientList.map(clientId => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_client_row__WEBPACK_IMPORTED_MODULE_3__[\"default\"], {\n      clientId: clientId,\n      key: clientId\n    })))));\n  } else if (Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_5__[\"isFailedStatus\"])(status)) {\n    return 'oh 👃🏻';\n  }\n\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(src_view_commons_state_Loading__WEBPACK_IMPORTED_MODULE_6__[\"default\"], null);\n};\n\nconst mapDispatchToProps = dispatch => ({\n  fetchClients: () => dispatch({\n    type: src_service_client__WEBPACK_IMPORTED_MODULE_4__[\"types\"].FETCH.DO,\n    payload: {\n      from: 0,\n      to: 30\n    }\n  })\n});\n\nconst Connected = src_service_client__WEBPACK_IMPORTED_MODULE_4__[\"connectors\"].fetchPaginated.connect(() => ({}), mapDispatchToProps)(ClientList);\nConnected.displayName = 'Clients';\nConnected.url = '/clients';\n/* harmony default export */ __webpack_exports__[\"default\"] = (Connected);\n\n//# sourceURL=webpack:///./src/view/client/components/client-list/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/client/components/client-list/index.scss":
+/*!***********************************************************!*\
+  !*** ./src/view/client/components/client-list/index.scss ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"client-list\":\"index__client-list--6LsGY\",\"clientList\":\"index__client-list--6LsGY\",\"table\":\"index__table--3Ez9q\"};\n\n//# sourceURL=webpack:///./src/view/client/components/client-list/index.scss?");
+
+/***/ }),
+
+/***/ "./src/view/client/components/client-router/index.js":
+/*!***********************************************************!*\
+  !*** ./src/view/client/components/client-router/index.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n/* harmony import */ var _client_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../client-list */ \"./src/view/client/components/client-list/index.js\");\n/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../client */ \"./src/view/client/components/client/index.js\");\n\n\n\n\n\nconst ClientRouter = () => {\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Switch\"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/clients\",\n    exact: true,\n    component: _client_list__WEBPACK_IMPORTED_MODULE_2__[\"default\"]\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/clients/new\",\n    component: _client__WEBPACK_IMPORTED_MODULE_3__[\"NewClient\"]\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__[\"Route\"], {\n    path: \"/clients/:clientId\",\n    component: _client__WEBPACK_IMPORTED_MODULE_3__[\"EditClient\"]\n  })));\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (ClientRouter);\n\n//# sourceURL=webpack:///./src/view/client/components/client-router/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/client/components/client-row/index.js":
+/*!********************************************************!*\
+  !*** ./src/view/client/components/client-row/index.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var src_service_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/service/client */ \"./src/service/client/index.js\");\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ \"./node_modules/react-router-dom/es/index.js\");\n\n\n\n\nconst ClientRow = ({\n  client\n}) => {\n  if (!client) {\n    return 'sorry client could not be found';\n  }\n\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"tr\", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, client.firstName), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, client.lastName), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, client.emailAddress), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"td\", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__[\"Link\"], {\n    to: `/clients/${client.id}`\n  }, \"Detail\")));\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (src_service_client__WEBPACK_IMPORTED_MODULE_1__[\"connectors\"].fetchSingle.connect()(ClientRow));\n\n//# sourceURL=webpack:///./src/view/client/components/client-row/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/client/components/client/index.js":
+/*!****************************************************!*\
+  !*** ./src/view/client/components/client/index.js ***!
+  \****************************************************/
+/*! exports provided: EditClient, NewClient */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"EditClient\", function() { return EditClient; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"NewClient\", function() { return NewClient; });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/es/index.js\");\n/* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! semantic-ui-react */ \"./node_modules/semantic-ui-react/dist/es/index.js\");\n/* harmony import */ var formik__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! formik */ \"./node_modules/formik/dist/formik.esm.js\");\n/* harmony import */ var src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/service/helper/status-helper */ \"./src/service/helper/status-helper.js\");\n/* harmony import */ var src_service_client__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/service/client */ \"./src/service/client/index.js\");\n/* harmony import */ var src_view_commons_state_Loading__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/view/commons/state/Loading */ \"./src/view/commons/state/Loading.js\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./index.scss */ \"./src/view/client/components/client/index.scss\");\n/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_index_scss__WEBPACK_IMPORTED_MODULE_7__);\nfunction _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }\n\n\n\n\n\n\n\n\n\nconst defaultClient = {\n  id: undefined,\n  lastName: '',\n  firstName: '',\n  emailAddress: ''\n};\n\nconst Client = ({\n  client,\n  status,\n  fetchClient,\n  addClient,\n  postStatus,\n  resetPostStatus\n}) => {\n  Object(react__WEBPACK_IMPORTED_MODULE_0__[\"useEffect\"])(() => {\n    resetPostStatus();\n    fetchClient && fetchClient();\n  }, []);\n  if (Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isEmptyStatus\"])(status)) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(src_view_commons_state_Loading__WEBPACK_IMPORTED_MODULE_6__[\"default\"], null);\n  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"Formik\"], {\n    initialValues: client || defaultClient,\n    onSubmit: values => {\n      addClient(values);\n    }\n  }, ({\n    handleSubmit,\n    handleChange,\n    handleBlur,\n    values\n    /* and other goodies */\n\n  }) => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(\"form\", {\n    onSubmit: handleSubmit,\n    className: _index_scss__WEBPACK_IMPORTED_MODULE_7___default.a.form\n  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Firstname\",\n    type: \"text\",\n    name: \"firstName\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.firstName\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"firstName\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Lastname\",\n    type: \"text\",\n    name: \"lastName\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.lastName\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"lastName\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Input\"], {\n    placeholder: \"Email Address\",\n    type: \"text\",\n    name: \"emailAddress\",\n    onChange: handleChange,\n    onBlur: handleBlur,\n    value: values.emailAddress\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_3__[\"ErrorMessage\"], {\n    name: \"emailAddress\",\n    component: \"div\"\n  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Button\"], {\n    type: \"submit\",\n    primary: true,\n    disabled: Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isPendingStatus\"])(postStatus)\n  }, Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isPendingStatus\"])(postStatus) ? 'Speichern...' : 'Submit'), Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isSucceededStatus\"])(postStatus) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Segment\"], {\n    color: \"green\"\n  }, \"Operation Successful\"), Object(src_service_helper_status_helper__WEBPACK_IMPORTED_MODULE_4__[\"isFailedStatus\"])(postStatus) && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_2__[\"Segment\"], {\n    color: \"red\"\n  }, \"Operation failed\")));\n};\n\nconst mapDispatchToProps = (dispatch, props) => ({\n  fetchClient: () => dispatch({\n    type: src_service_client__WEBPACK_IMPORTED_MODULE_5__[\"types\"].FETCH_SINGLE.DO,\n    payload: {\n      clientId: props.clientId\n    }\n  }),\n  resetPostStatus: () => dispatch({\n    type: src_service_client__WEBPACK_IMPORTED_MODULE_5__[\"types\"].ADD.RESET,\n    payload: {\n      clientId: props.clientId\n    }\n  }),\n  addClient: client => dispatch({\n    type: src_service_client__WEBPACK_IMPORTED_MODULE_5__[\"types\"].ADD.DO,\n    payload: client\n  })\n});\n\nconst Connected = src_service_client__WEBPACK_IMPORTED_MODULE_5__[\"connectors\"].fetchSingle.connect(undefined, mapDispatchToProps)(src_service_client__WEBPACK_IMPORTED_MODULE_5__[\"connectors\"].add.connect()(Client));\nconst EditClient = ({\n  match,\n  ...rest\n}) => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Connected, _extends({\n  clientId: match.params.clientId\n}, rest));\n\nconst NewClientDisconnected = props => react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Client, _extends({\n  client: defaultClient\n}, props));\n\nconst NewClient = Object(react_redux__WEBPACK_IMPORTED_MODULE_1__[\"connect\"])(undefined, (dispatch, props) => ({\n  addClient: client => dispatch({\n    type: src_service_client__WEBPACK_IMPORTED_MODULE_5__[\"types\"].ADD.DO,\n    payload: client\n  }),\n  resetPostStatus: () => dispatch({\n    type: src_service_client__WEBPACK_IMPORTED_MODULE_5__[\"types\"].ADD.RESET,\n    payload: {\n      clientId: props.clientId\n    }\n  })\n}))(src_service_client__WEBPACK_IMPORTED_MODULE_5__[\"connectors\"].add.connect()(NewClientDisconnected));\n\n//# sourceURL=webpack:///./src/view/client/components/client/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/client/components/client/index.scss":
+/*!******************************************************!*\
+  !*** ./src/view/client/components/client/index.scss ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// extracted by mini-css-extract-plugin\nmodule.exports = {\"form\":\"index__form--3Fw4T\",\"error\":\"index__error--3hsMd\",\"success\":\"index__success--cqA3W\"};\n\n//# sourceURL=webpack:///./src/view/client/components/client/index.scss?");
+
+/***/ }),
+
+/***/ "./src/view/client/index.js":
+/*!**********************************!*\
+  !*** ./src/view/client/index.js ***!
+  \**********************************/
+/*! exports provided: NewClient, EditClient, ClientList, ClientRouter, ClientRow */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _components_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/client */ \"./src/view/client/components/client/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"NewClient\", function() { return _components_client__WEBPACK_IMPORTED_MODULE_0__[\"NewClient\"]; });\n\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"EditClient\", function() { return _components_client__WEBPACK_IMPORTED_MODULE_0__[\"EditClient\"]; });\n\n/* harmony import */ var _components_client_list__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/client-list */ \"./src/view/client/components/client-list/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"ClientList\", function() { return _components_client_list__WEBPACK_IMPORTED_MODULE_1__[\"default\"]; });\n\n/* harmony import */ var _components_client_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/client-router */ \"./src/view/client/components/client-router/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"ClientRouter\", function() { return _components_client_router__WEBPACK_IMPORTED_MODULE_2__[\"default\"]; });\n\n/* harmony import */ var _components_client_row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/client-row */ \"./src/view/client/components/client-row/index.js\");\n/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, \"ClientRow\", function() { return _components_client_row__WEBPACK_IMPORTED_MODULE_3__[\"default\"]; });\n\n\n\n\n\n\n\n//# sourceURL=webpack:///./src/view/client/index.js?");
+
+/***/ }),
+
+/***/ "./src/view/commons/state/Loading.js":
+/*!*******************************************!*\
+  !*** ./src/view/commons/state/Loading.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! semantic-ui-react */ \"./node_modules/semantic-ui-react/dist/es/index.js\");\n\n\n\nconst Loading = ({\n  isPending = true,\n  children\n}) => {\n  if (isPending) {\n    return children ? children : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__[\"Loader\"], {\n      active: isPending\n    });\n  }\n\n  return null;\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Loading);\n\n//# sourceURL=webpack:///./src/view/commons/state/Loading.js?");
 
 /***/ })
 
