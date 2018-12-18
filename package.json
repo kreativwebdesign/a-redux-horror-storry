@@ -22,6 +22,7 @@
   "homepage": "https://github.com/kreativwebdesign/a-redux-horror-story#readme",
   "dependencies": {
     "formik": "^1.4.0",
+    "history": "^4.7.2",
     "qs": "^6.6.0",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2",
