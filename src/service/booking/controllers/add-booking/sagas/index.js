@@ -1,5 +1,6 @@
 import { put, call, takeEvery } from 'redux-saga/effects'
 import { types } from '../../../types'
+import { push } from 'src/utils/js/history'
 import * as api from 'src/api'
 
 function* addBooking({ payload }) {
@@ -12,6 +13,9 @@ function* addBooking({ payload }) {
     })
   } else {
     yield put({ type: types.ADD.SUCCESS, payload: response })
+    if (payload.id === undefined) {
+      yield call(push, `/bookings/${response.list[0]}`)
+    }
   }
 }
 
